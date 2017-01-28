@@ -33,3 +33,11 @@ web	site	at	http://www.labouseur.com/courses/compilers/
 grammar.pdf.'
 
 Will be using javascript (most likely).
+
+How To Run:
+
+1.Download repo
+
+2.Extract repo to folder on PC
+
+3.Run the index.html file on a browser with Javascript enabled
