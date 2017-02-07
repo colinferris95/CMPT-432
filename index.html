@@ -1,16 +1,65 @@
+
+<!DOCTYPE html>
 <html>
 
 <head>
 
+
+<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
 <title>
 Colin's Compiler 
 </title>
 
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+<script src="jquery-linedtextarea.js"></script>
+<link href="jquery-linedtextarea.css" type="text/css" rel="stylesheet">
 </head>
 
-<h1>
-This page is under construction
-</h1>
+<body>
+
+<div class="container">
+	<div class="jumbotron">
+		<h1>
+		This page is under construction
+		</h1>
+		<ul class="nav nav-pills">
+			<li class="active">
+			<button onclick="lexer()">'compile'</button>
+			
+			</li>
+		</ul>
+  </li>
+	</div>
+</div>
+
+<div class="linedtextarea"><textarea class="lined" id="textInput" rows="10" cols="60" wrap="off" style="resize: none; width: 364px;">
+
+</textarea></div>
+
+<div class "conatiner">
+
+<textarea id = "output" rows="10" cols="60" wrap="off" style="resize: none; width: 364px;">
+
+
+</textarea>
+
+</div>
+
+<script>
+$(function() {
+	$(".lined").linedtextarea(
+		{selectedLine: 1}
+	);
+});
+</script>
+
+
+
+<script src="bootstrap/js/bootstrap.min.js"></script>
+<script src="JS/lexer.js"></script>
+
+</body>
 
 
 </html>
