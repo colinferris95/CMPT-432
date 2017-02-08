@@ -6,6 +6,10 @@ var tokenrecog;
 var run = true;
 var state;
 
+var scannerSuccess;
+
+var programCounter;
+
 var lexemeBegin;
 
 var tokeninstall = "";
@@ -24,7 +28,8 @@ var LBRACE = /[{]/;
 var RPAREN = /[)]/;
 var LPAREN = /[(]/;
 var INTOP = /[+]/;
-
+var nralpha = /[a,b,c,d,e,f,g,h,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z]/;
+//not resereved alpha
 
 //regular expressions and defintions
 // pattern {action}
@@ -53,12 +58,12 @@ var INTOP = /[+]/;
 //auxiliary functions
 //scans through each character of input text
 function lexer(){
-	
+	programCounter = 1;
 	
 	var inputText = document.getElementById("textInput").value;
 
 	//document.getElementBYId("output").value =  inputText;
-
+	console.log("scanning program " + programCounter);
 
 	
 	for (lexemeBegin=0; lexemeBegin<inputText.length;lexemeBegin++){
@@ -71,13 +76,15 @@ function lexer(){
 	//console.log('this is the current c:'  + c);
 	isID(c,lexemeBegin,inputText);
 	isSpace(c);
-	isEOL(c);
 	isRBRACE(c);
 	isLBRACE(c);
 	isRPAREN(c);
 	isLPAREN(c);
 	isINTOP(c);
+	isEOL(c);
 	}
+	console.log(scannerSuccess);
+	
 
 }
 
@@ -86,51 +93,44 @@ function nextChar(){
 	
 }
 
-
-// works for non reserved words currently
-function isID(currentchar,forward,input){
+function isIForID(currentchar,forward,input){
 	state = 0;
-	console.log('current state instance' + state);
 	tokeninstall = " "; //clear the token value
 	run = true;
-	//alert(run);
 	
 	while (run){
 		
 		switch(state){
-		
-			//entering the dfa
-			case 0:
-				/*
-				if ((input[forward]).match('i') != -1){
+			
+			case 0: 
+				if((input[forward]).search(nralpha) != -1){	
+					state = 1; //go to case 1 to determine if it is an id or not
 					
-					 //character other than i
-						state = 3;  //go to the IF keyword  dfa
-						console.log('case 0 state change ' +state);
-						tokeninstall = tokeninstall + input[forward]; //start building the token
-						forward++ //move the forward counter
-					
+					tokeninstall = tokeninstall + input[forward]; //start building the token
+					forward++ //move the forward counter
 				
 				}
-				*/
 				
-				//a lowercase letter is entered
-			    if((input[forward]).search(letter) != -1){		
-						state = 1; //go to case 1 to determine if it is an id or not
-						tokeninstall = tokeninstall + input[forward]; //start building the token
-						forward++ //move the forward counter
-						
-					}
+			    if ((input[forward]).match('i') != -1){
+					state = 3; 
+					tokeninstall = tokeninstall + input[forward]; //start building the token
+					forward++ //move the forward counter
+					
+					
+					
+				}
+				
+				
 				else{ //a character other than a lowercase letter is entered, break the switch and move on to the other lex functions
-
+					console.log('it broke');
 					run = false;
 					break;
 				}
-		
+				
+				
+				console.log('case zero' + state);
 			case 1:
 				
-			
-			
 				if ((input[forward]).search(letter) != -1){ //if the character is also a letter, move on to case 2 to build an unrecognized token 
 					state = 2;
 					console.log('case 1 change state ' + state);
@@ -160,21 +160,116 @@ function isID(currentchar,forward,input){
 				break;
 				
 				}
+				
 			case 3:
-			console.log('case 3');
-				if ((input[forward]).match('f') != -1){ //if the next character after i is f, build the IF keyword
+				
+				if ((input[forward]).match('f') != -1){
+					state = 4; 
+					tokeninstall = tokeninstall + input[forward]; //start building the token
+					forward++ //move the forward counter
 					
-					tokeninstall = tokeninstall + input[forward];
+				}
+				else{ //a character other than a lowercase letter is entered, break the switch and move on to the other lex functions
+					console.log('not if');
+					run = false;
+					break;
+				}
+				
+			/*
+			case 4:
+				if ((input[forward]).search(letter) == -1){
 					console.log('LEXER: '+ tokeninstall + '--> [IF]');
 					lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
 					run = false;//break the switch
 					break;
 					
-			}
-			else{
-				console.log('case 3');
-				state = 2;
+				}
+				else{
+					state =2;
+				}
+				*/
 				
+			
+			
+			
+			
+		}
+		
+	}
+	
+}
+
+
+
+
+// works for non reserved words currently
+function isID(currentchar,forward,input){
+	state = 0;
+	
+	tokeninstall = " "; //clear the token value
+	run = true;
+	//alert(run);
+	
+	while (run){
+		
+		switch(state){
+		
+			//entering the dfa
+			case 0:
+				
+				
+				//a lowercase letter is entered
+			    if((input[forward]).search(letter) != -1){		
+						state = 1; //go to case 1 to determine if it is an id or not
+						tokeninstall = tokeninstall + input[forward]; //start building the token
+						forward++ //move the forward counter
+						
+					}
+				else{ //a character other than a lowercase letter is entered, break the switch and move on to the other lex functions
+
+					run = false;
+					break;
+				}
+		
+			case 1:
+				
+			
+			
+				if ((input[forward]).search(letter) != -1){ //if the character is also a letter, move on to case 2 to build an unrecognized token 
+					state = 2;
+					tokeninstall = tokeninstall + input[forward];; //continue building the token
+					forward++//move the forward counter
+				
+				}
+				
+				else{
+					console.log('LEXER: '+ tokeninstall + '--> [ID]'); // the next character was not a letter, so we output the valid one character id
+					forward = forward-1;
+					lexemeBegin=forward; //move the lexemeBegin to where the forward is and continue scanning
+					
+					if (scannerSuccess != false){
+					scannerSuccess = true; //in this function the scanner passes
+					}
+					run = false; //break the switch
+					break;
+				}
+				
+				
+			case 2:
+				if ((input[forward]).search(letter) != -1){ //if each character added is also a letter, keep building the toekn
+					state = 2;
+					tokeninstall = tokeninstall + input[forward];;
+					forward++
+				}
+				else{
+				console.log('LEXER: unrecognized token ' + tokeninstall);//the next character was not a letter, so we output the unrecognized token
+				lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
+				scannerSuccess = false; //the scanner has failed
+				run = false;//break the switch
+				break;
+				
+				}
+			
 			}
 		
 				
@@ -204,13 +299,15 @@ function isID(currentchar,forward,input){
 	
 	
 	
-}
+
 
 function isSpace(c){
 	
 	if ( c.search(space) != -1 ){
-		console.log('THIS IS A SPACE IGNORE');
-	
+		
+		if (scannerSuccess != false){
+					scannerSuccess = true; //in this function the scanner passes
+		}
 		
 	}
 	
@@ -221,6 +318,19 @@ function isEOL(c){
 	if (c.search(EOL) != -1){
 		console.log('LEXER: '+ c +'--> [EOL]');
 		
+		if (scannerSuccess != false){
+					scannerSuccess = true; //in this function the scanner passes
+					console.log('LEXER: Lex program completed with no errors');
+		}
+		if (scannerSuccess == false){
+			console.log('LEXER: Lex program completed with errors');
+			
+			
+			
+		}
+		scannerSuccess = true;
+		programCounter = programCounter + 1;
+		console.log("scanning program " + programCounter);
 	}
 	
 }
@@ -228,6 +338,9 @@ function isEOL(c){
 function isRBRACE(c){
 	if (c.search(RBRACE) != -1){
 		console.log('LEXER: '+ c +'--> [RBRACE]');
+		if (scannerSuccess != false){
+					scannerSuccess = true; //in this function the scanner passes
+			}
 		
 	}
 }
@@ -236,6 +349,10 @@ function isLBRACE(c){
 	if (c.search(LBRACE) != -1){
 		console.log('LEXER: '+ c +'--> [LBRACE]');
 		
+		if (scannerSuccess != false){
+					scannerSuccess = true; //in this function the scanner passes
+					}
+		
 	}
 	
 }
@@ -243,6 +360,9 @@ function isLBRACE(c){
 function isLPAREN(c){
 	if (c.search(LPAREN) != -1){
 		console.log('LEXER: '+ c +'--> [LPAREN]');
+		if (scannerSuccess != false){
+					scannerSuccess = true; //in this function the scanner passes
+					}
 		
 	}
 	
@@ -251,6 +371,9 @@ function isLPAREN(c){
 function isRPAREN(c){
 	if (c.search(LPAREN) != -1){
 		console.log('LEXER: '+ c +'--> [RPAREN]');
+		if (scannerSuccess != false){
+					scannerSuccess = true; //in this function the scanner passes
+					}
 		
 	}
 	
@@ -259,6 +382,9 @@ function isRPAREN(c){
 function isINTOP(c){
 	if (c.search(INTOP) != -1){
 		console.log('LEXER: '+ c +'--> [INTOP]');
+		if (scannerSuccess != false){
+					scannerSuccess = true; //in this function the scanner passes
+					}
 		
 	}
 	
