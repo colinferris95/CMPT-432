@@ -92,10 +92,10 @@ function nextChar(){
 	
 	
 }
-
+/*
 function isIForID(currentchar,forward,input){
 	state = 0;
-	tokeninstall = " "; //clear the token value
+	tokeninstall = ""; //clear the token value
 	run = true;
 	
 	while (run){
@@ -152,8 +152,11 @@ function isIForID(currentchar,forward,input){
 					state = 2;
 					tokeninstall = tokeninstall + input[forward];;
 					forward++
+					
+					
 				}
 				else{
+					
 				console.log('unrecognized token ' + tokeninstall);//the next character was not a letter, so we output the unrecognized token
 				lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
 				run = false;//break the switch
@@ -175,20 +178,8 @@ function isIForID(currentchar,forward,input){
 					break;
 				}
 				
-			/*
-			case 4:
-				if ((input[forward]).search(letter) == -1){
-					console.log('LEXER: '+ tokeninstall + '--> [IF]');
-					lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
-					run = false;//break the switch
-					break;
-					
-				}
-				else{
-					state =2;
-				}
-				*/
-				
+			
+			
 			
 			
 			
@@ -198,7 +189,7 @@ function isIForID(currentchar,forward,input){
 	}
 	
 }
-
+*/
 
 
 
@@ -239,7 +230,7 @@ function isID(currentchar,forward,input){
 					state = 2;
 					tokeninstall = tokeninstall + input[forward];; //continue building the token
 					forward++//move the forward counter
-				
+					
 				}
 				
 				else{
@@ -260,14 +251,34 @@ function isID(currentchar,forward,input){
 					state = 2;
 					tokeninstall = tokeninstall + input[forward];;
 					forward++
+					
+					
 				}
 				else{
-				console.log('LEXER: unrecognized token ' + tokeninstall);//the next character was not a letter, so we output the unrecognized token
-				lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
-				scannerSuccess = false; //the scanner has failed
-				run = false;//break the switch
-				break;
-				
+					if (tokeninstall == ' if'){
+						console.log('LEXER: '+ tokeninstall + '--> [IF]');
+						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
+						scannerSuccess = true; //the scanner has failed
+						run = false;//break the switch
+						break;
+						
+					}
+					else if (tokeninstall == ' int'){
+						console.log('LEXER: '+ tokeninstall + '--> [INT]');
+						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
+						scannerSuccess = true; //the scanner has failed
+						run = false;//break the switch
+						break;
+						
+					}else{
+					
+					console.log('LEXER: unrecognized token' + tokeninstall);//the next character was not a letter, so we output the unrecognized token
+					lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
+					scannerSuccess = false; //the scanner has failed
+					run = false;//break the switch
+					break;
+					}
+					
 				}
 			
 			}
