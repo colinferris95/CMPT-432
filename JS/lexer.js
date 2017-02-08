@@ -28,7 +28,8 @@ var LBRACE = /[{]/;
 var RPAREN = /[)]/;
 var LPAREN = /[(]/;
 var INTOP = /[+]/;
-var nralpha = /[a,b,c,d,e,f,g,h,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z]/;
+var QUOT = /["]/;
+
 //not resereved alpha
 
 //regular expressions and defintions
@@ -81,6 +82,7 @@ function lexer(){
 	isRPAREN(c);
 	isLPAREN(c);
 	isINTOP(c);
+	isQuot(c);
 	isEOL(c);
 	}
 	console.log(scannerSuccess);
@@ -270,6 +272,38 @@ function isID(currentchar,forward,input){
 						run = false;//break the switch
 						break;
 						
+					}
+					else if (tokeninstall == ' print'){
+						console.log('LEXER: '+ tokeninstall + '--> [PRINT]');
+						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
+						scannerSuccess = true; //the scanner has failed
+						run = false;//break the switch
+						break;
+						
+					}
+					else if (tokeninstall == ' while'){
+						console.log('LEXER: '+ tokeninstall + '--> [WHILE]');
+						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
+						scannerSuccess = true; //the scanner has failed
+						run = false;//break the switch
+						break;
+						
+					}
+					else if (tokeninstall == ' string'){
+						console.log('LEXER: '+ tokeninstall + '--> [STRING]');
+						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
+						scannerSuccess = true; //the scanner has failed
+						run = false;//break the switch
+						break;
+						
+					}
+					else if (tokeninstall == ' boolean'){
+						console.log('LEXER: '+ tokeninstall + '--> [BOOLEAN]');
+						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
+						scannerSuccess = true; //the scanner has failed
+						run = false;//break the switch
+						break;
+						
 					}else{
 					
 					console.log('LEXER: unrecognized token' + tokeninstall);//the next character was not a letter, so we output the unrecognized token
@@ -321,6 +355,18 @@ function isSpace(c){
 		}
 		
 	}
+	
+}
+
+function isQuot(c){
+	if ( c.search(QUOT) != -1){
+		console.log('LEXER: '+ c +'--> [QUOTE]');
+		if (scannerSuccess != false){
+					scannerSuccess = true; //in this function the scanner passes
+		}
+		
+	}
+	
 	
 }
 
