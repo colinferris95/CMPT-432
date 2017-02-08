@@ -5,6 +5,8 @@
 var tokenrecog;
 var run = true;
 
+var lexemeBegin;
+
 var tokeninstall = "";
 
  
@@ -58,15 +60,15 @@ function lexer(){
 
 
 	
-	for (var i=0; i<inputText.length;i++){
+	for (lexemeBegin=0; lexemeBegin<inputText.length;lexemeBegin++){
 		
 		
 	//start scanning the file at the first character
-	var c = inputText[i];
+	var c = inputText[lexemeBegin];
 	
 	
 	console.log('this is the current c:'  + c);
-	isID(c,i,inputText);
+	isID(c,lexemeBegin,inputText);
 	isSpace(c);
 	isEOL(c);
 	isRBRACE(c);
@@ -85,20 +87,21 @@ function nextChar(){
 
 
 
-function isID(currentchar,counter,input){
+function isID(currentchar,forward,input){
 	var state = 0;
 	tokeninstall = " ";
 	run = true;
+	//alert(run);
 	
 	while (run){
 		
 		switch(state){
 		
 			case 0:
-				if ((input[counter]).search(letter) != -1){
+				if ((input[forward]).search(letter) != -1){
 					state = 1;
-					tokeninstall = tokeninstall + input[counter];
-					counter++
+					tokeninstall = tokeninstall + input[forward];
+					forward++
 				
 				}
 				else{
@@ -108,26 +111,28 @@ function isID(currentchar,counter,input){
 				}
 		
 			case 1:
-				if ((input[counter]).search(letter) != -1){
+				if ((input[forward]).search(letter) != -1){
 					state = 2;
-					tokeninstall = tokeninstall + input[counter];;
-					counter++
+					tokeninstall = tokeninstall + input[forward];;
+					forward++
 				
 				}
 				else{
 					console.log('LEXER: '+ tokeninstall + '--> [ID]');
+					lexemeBegin=forward;
 					run = false;
 					break;
 				}
 				
 			case 2:
-				if ((input[counter]).search(letter) != -1){
+				if ((input[forward]).search(letter) != -1){
 					state = 2;
-					tokeninstall = tokeninstall + input[counter];;
-					counter++
+					tokeninstall = tokeninstall + input[forward];;
+					forward++
 				}
 				else{
 				console.log('unrecognized token ' + tokeninstall);
+				lexemeBegin = forward;
 				run = false;
 				break;
 				
