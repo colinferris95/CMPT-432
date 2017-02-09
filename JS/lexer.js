@@ -35,7 +35,7 @@ var EXCLAM = /[!]/;
 
 var lexemeCount = 0;
 var tokenstream = [];
-
+var tokenCheck
 
 //not resereved alpha
 
@@ -95,7 +95,7 @@ function lexer(){
 		
 	//start scanning the file at the first character
 	var c = inputText[lexemeBegin];
-	
+	tokenCheck = false;
 	
 	//console.log('this is the current c:'  + c);
 	isBOOLOP(c,lexemeBegin,inputText);
@@ -108,6 +108,7 @@ function lexer(){
 	isINTOP(c);
 	isQuot(c,lexemeBegin,inputText);
 	isEOL(c);
+	badTokenCheck(c);
 	}
 	console.log(scannerSuccess);
 	console.log(tokenstream);
@@ -139,7 +140,7 @@ function isID(currentchar,forward,input){
 						state = 1; //go to case 1 to determine if it is an id or not
 						tokeninstall = tokeninstall + input[forward]; //start building the token
 						forward++; //move the forward counter
-						
+						tokenCheck = true;
 					}
 				else{ //a character other than a lowercase letter is entered, break the switch and move on to the other lex functions
 
@@ -150,17 +151,17 @@ function isID(currentchar,forward,input){
 			case 1:
 				
 			
-			
+				
 				if ((input[forward]).search(letter) != -1){ //if the character is also a letter, move on to case 2 to build an unrecognized token 
 					state = 2;
 					tokeninstall = tokeninstall + input[forward];; //continue building the token
 					forward++;//move the forward counter
-					
+					tokenCheck = true;
 				}
 				
 				else{
 					//console.log('LEXER: '+ tokeninstall + '--> [ID]'); // the next character was not a letter, so we output the valid one character id
-					
+					tokenCheck = true;
 					var idtoken = new token(tokeninstall, "identifier", 7);// build token
 					tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 					console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
@@ -179,6 +180,7 @@ function isID(currentchar,forward,input){
 				
 			case 2:
 				if ((input[forward]).search(letter) != -1){ //if each character added is also a letter, keep building the toekn
+					tokenCheck = true;
 					state = 2;
 					tokeninstall = tokeninstall + input[forward];;
 					forward++;
@@ -188,6 +190,7 @@ function isID(currentchar,forward,input){
 				else{
 					forward = forward-1;
 					if (tokeninstall == ' if'){
+						tokenCheck = true;
 						var idtoken = new token(tokeninstall, "keyword", 7);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 						console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
@@ -199,6 +202,7 @@ function isID(currentchar,forward,input){
 						
 					}
 					else if (tokeninstall == ' int'){
+						tokenCheck = true;
 						//console.log('LEXER: '+ tokeninstall + '--> [INT]');
 						var idtoken = new token(tokeninstall, "keyword", 7);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
@@ -211,7 +215,7 @@ function isID(currentchar,forward,input){
 						
 					}
 					else if (tokeninstall == ' print'){
-						
+						tokenCheck = true;
 						//console.log('LEXER: '+ tokeninstall + '--> [PRINT]');
 						var idtoken = new token(tokeninstall, "keyword", 7);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
@@ -224,6 +228,7 @@ function isID(currentchar,forward,input){
 						
 					}
 					else if (tokeninstall == ' while'){
+						tokenCheck = true;
 						//console.log('LEXER: '+ tokeninstall + '--> [WHILE]');
 						var idtoken = new token(tokeninstall, "keyword", 7);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
@@ -236,6 +241,7 @@ function isID(currentchar,forward,input){
 						
 					}
 					else if (tokeninstall == ' string'){
+						tokenCheck = true;
 						//console.log('LEXER: '+ tokeninstall + '--> [STRING]');
 						var idtoken = new token(tokeninstall, "keyword", 7);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
@@ -248,6 +254,7 @@ function isID(currentchar,forward,input){
 						
 					}
 					else if (tokeninstall == ' boolean'){
+						tokenCheck = true;
 						//console.log('LEXER: '+ tokeninstall + '--> [BOOLEAN]');
 						var idtoken = new token(tokeninstall, "keyword", 7);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
@@ -259,7 +266,7 @@ function isID(currentchar,forward,input){
 						break;
 						
 					}else{
-					
+					tokenCheck = true;
 					//console.log('LEXER: unrecognized token' + tokeninstall);//the next character was not a letter, so we output the unrecognized token
 					var idtoken = new token(tokeninstall, "unrecognized token", 7);// build token
 					tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
@@ -307,7 +314,7 @@ function isID(currentchar,forward,input){
 function isSpace(c){
 	
 	if ( c.search(space) != -1 ){
-		
+		tokenCheck = true;
 		if (scannerSuccess != false){
 					scannerSuccess = true; //in this function the scanner passes
 		}
@@ -342,7 +349,7 @@ function isQuot(currentchar,forward,input){
 						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
 						scannerSuccess = true; //the scanner has passed
 						tokeninstall = " ";
-						
+						tokenCheck = true;
 						
 					}
 				else{ //a character other than a lowercase letter is entered, break the switch and move on to the other lex functions
@@ -353,6 +360,7 @@ function isQuot(currentchar,forward,input){
 				case 1:
 					//a quote is entered
 			     if((input[forward]).search(QUOT) != -1){		
+						tokenCheck = true;
 						state = 1; //go to case 1 to determine if it is an id or not
 						tokeninstall = tokeninstall + input[forward]; //start building the token
 						forward++; //move the forward counter
@@ -368,23 +376,25 @@ function isQuot(currentchar,forward,input){
 						
 					}
 				else{ //a character other than a lowercase letter is entered, break the switch and move on to the other lex functions
-
+					tokenCheck = true;
 					state = 2;
 				}
 				case 2:
-				
+					
 					 if((input[forward]).search(letter) != -1){		
+						tokenCheck = true;
 						state = 2; //go to case 2 to determine if it is string
 						tokeninstall = tokeninstall + input[forward]; //start building the token
 						forward++; //move the forward counter
 					 }
 					
 					if((input[forward]).search(letter) == -1){	
+						tokenCheck = true;
 						state = 3;
 					}
 				case 3:
 					if((input[forward]).search(QUOT) != -1){	
-						
+						tokenCheck = true;
 						//forward++; //move the forward counter
 						var idtoken = new token(tokeninstall, "string", 7);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
@@ -418,6 +428,7 @@ function isQuot(currentchar,forward,input){
 function isEOL(c){
 	
 	if (c.search(EOL) != -1){
+		tokenCheck = true;
 		//console.log('LEXER: '+ c +'--> [EOL]');
 		var idtoken = new token(c, "end of line symbol", 7);// build token
 		tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
@@ -443,6 +454,7 @@ function isEOL(c){
 
 function isRBRACE(c){
 	if (c.search(RBRACE) != -1){
+		tokenCheck = true;
 		//console.log('LEXER: '+ c +'--> [RBRACE]');
 		var idtoken = new token(c, "right brace", 7);// build token
 		tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
@@ -457,6 +469,7 @@ function isRBRACE(c){
 	
 function isLBRACE(c){
 	if (c.search(LBRACE) != -1){
+		tokenCheck = true;
 		//console.log('LEXER: '+ c +'--> [LBRACE]');
 		var idtoken = new token(c, "left brace", 7);// build token
 		tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
@@ -473,6 +486,7 @@ function isLBRACE(c){
 
 function isLPAREN(c){
 	if (c.search(LPAREN) != -1){
+		tokenCheck = true;
 		//console.log('LEXER: '+ c +'--> [LPAREN]');
 		var idtoken = new token(c, "left parenthesis", 7);// build token
 		tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
@@ -488,6 +502,7 @@ function isLPAREN(c){
 
 function isRPAREN(c){
 	if (c.search(RPAREN) != -1){
+		tokenCheck = true;
 		//console.log('LEXER: '+ c +'--> [RPAREN]');
 		var idtoken = new token(c, "right parenthesis", 7);// build token
 		tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
@@ -503,6 +518,7 @@ function isRPAREN(c){
 
 function isINTOP(c){
 	if (c.search(INTOP) != -1){
+		tokenCheck = true;
 		//console.log('LEXER: '+ c +'--> [INTOP]');
 		var idtoken = new token(c, "intop", 7);// build token
 		tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
@@ -515,6 +531,16 @@ function isINTOP(c){
 	}
 }
 
+function badTokenCheck(c){
+	
+	//console.log(tokenstream[lexemeCount]);
+	if (tokenCheck == false){
+		console.log('LEXER: ERROR unrecognized token' + c);
+		
+	}
+	
+	
+}
 
 
 function isBOOLOP(currentchar,forward,input){ //checks for assignment or boolop
@@ -530,7 +556,8 @@ function isBOOLOP(currentchar,forward,input){ //checks for assignment or boolop
 			switch(state){
 				case 0: 
 					//a quote is entered
-					if((input[forward]).search(ASSIGN) != -1){		
+					if((input[forward]).search(ASSIGN) != -1){
+						tokenCheck = true;						
 						state = 1; //go to case 1 to determine if it is an id or not
 						tokeninstall = tokeninstall + input[forward]; //start building the token
 						forward++; //move the forward counter
@@ -539,7 +566,8 @@ function isBOOLOP(currentchar,forward,input){ //checks for assignment or boolop
 						
 					}
 					
-					else if((input[forward]).search(EXCLAM) != -1){		
+					else if((input[forward]).search(EXCLAM) != -1){
+						tokenCheck = true;
 						state = 2; //go to case 1 to determine if it is an id or not
 						tokeninstall = tokeninstall + input[forward]; //start building the token
 						forward++; //move the forward counter
@@ -554,7 +582,7 @@ function isBOOLOP(currentchar,forward,input){ //checks for assignment or boolop
 				case 1:
 					//a quote is entered
 					if((input[forward]).search(ASSIGN) != -1){		
-						
+						tokenCheck = true;
 						tokeninstall = tokeninstall + input[forward]; //start building the token
 						forward++; //move the forward counter
 						
@@ -569,7 +597,7 @@ function isBOOLOP(currentchar,forward,input){ //checks for assignment or boolop
 						
 					}
 					else{ //a character other than a lowercase letter is entered, break the switch and move on to the other lex functions
-					
+						tokenCheck = true;
 						var idtoken = new token(tokeninstall, "assignment statement", 7);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 						console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
@@ -581,7 +609,7 @@ function isBOOLOP(currentchar,forward,input){ //checks for assignment or boolop
 				}
 				case 1:
 					if((input[forward]).search(ASSIGN) != -1){		
-						
+						tokenCheck = true;
 						tokeninstall = tokeninstall + input[forward]; //start building the token
 						forward++; //move the forward counter
 						
@@ -596,7 +624,7 @@ function isBOOLOP(currentchar,forward,input){ //checks for assignment or boolop
 						
 					}
 				else{ //a character other than a lowercase letter is entered, break the switch and move on to the other lex functions
-					
+					tokenCheck = true;
 					var idtoken = new token(tokeninstall, "assignment statement", 7);// build token
 					tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 					console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
@@ -610,7 +638,7 @@ function isBOOLOP(currentchar,forward,input){ //checks for assignment or boolop
 				case 2:
 					//a quote is entered
 					if((input[forward]).search(ASSIGN) != -1){		
-						
+						tokenCheck = true;
 						tokeninstall = tokeninstall + input[forward]; //start building the token
 						forward++; //move the forward counter
 						
