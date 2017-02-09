@@ -82,12 +82,14 @@ var token = class{
 //auxiliary functions
 //scans through each character of input text
 function lexer(){
+	document.getElementById("output").value = ' ';  //clear output screen
 	programCounter = 1;
 	
 	var inputText = document.getElementById("textInput").value;
 
 	//document.getElementBYId("output").value =  inputText;
 	console.log("scanning program " + programCounter);
+	document.getElementById("output").value += "scanning program " + programCounter + '\n';
 
 	
 	for (lexemeBegin=0; lexemeBegin<inputText.length;lexemeBegin++){
@@ -108,8 +110,9 @@ function lexer(){
 	isLPAREN(c);
 	isINTOP(c);
 	isQuot(c,lexemeBegin,inputText);
-	badTokenCheck(c);
+	
 	isEOL(c);
+	badTokenCheck(c);
 	
 	}
 	console.log(scannerSuccess);
@@ -167,6 +170,7 @@ function isID(currentchar,forward,input){
 					var idtoken = new token(tokeninstall, "identifier", 7);// build token
 					tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 					console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+					document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
 					lexemeCount++; //move to the next place in the token array
 					forward = forward-1;
 					lexemeBegin=forward; //move the lexemeBegin to where the forward is and continue scanning
@@ -196,6 +200,7 @@ function isID(currentchar,forward,input){
 						var idtoken = new token(tokeninstall, "keyword", 7);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 						console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+						document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
 						lexemeCount++; //move to the next place in the token array
 						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
 						scannerSuccess = true; //the scanner has passed
@@ -209,6 +214,7 @@ function isID(currentchar,forward,input){
 						var idtoken = new token(tokeninstall, "keyword", 7);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 						console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+						document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
 						lexemeCount++; //move to the next place in the token array
 						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
 						scannerSuccess = true; //the scanner has passed
@@ -222,6 +228,7 @@ function isID(currentchar,forward,input){
 						var idtoken = new token(tokeninstall, "keyword", 7);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 						console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+						document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
 						lexemeCount++; //move to the next place in the token array
 						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
 						scannerSuccess = true; //the scanner has passed
@@ -235,6 +242,7 @@ function isID(currentchar,forward,input){
 						var idtoken = new token(tokeninstall, "keyword", 7);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 						console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+						document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
 						lexemeCount++; //move to the next place in the token array
 						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
 						scannerSuccess = true; //the scanner has passed
@@ -248,6 +256,7 @@ function isID(currentchar,forward,input){
 						var idtoken = new token(tokeninstall, "keyword", 7);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 						console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+						document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
 						lexemeCount++; //move to the next place in the token array
 						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
 						scannerSuccess = true; //the scanner has passed
@@ -261,6 +270,7 @@ function isID(currentchar,forward,input){
 						var idtoken = new token(tokeninstall, "keyword", 7);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 						console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+						document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
 						lexemeCount++; //move to the next place in the token array
 						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
 						scannerSuccess = true; //the scanner has passed
@@ -273,6 +283,7 @@ function isID(currentchar,forward,input){
 					var idtoken = new token(tokeninstall, "unrecognized token", 7);// build token
 					tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 					console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+					document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
 					lexemeCount++; //move to the next place in the token array
 					lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
 					scannerSuccess = false; //the scanner has passed
@@ -354,6 +365,7 @@ function isDigit(currentchar,forward,input){
 					var idtoken = new token(tokeninstall, "digit", 7);// build token
 					tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 					console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+					document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
 					lexemeCount++; //move to the next place in the token array
 					forward = forward-1;
 					lexemeBegin=forward; //move the lexemeBegin to where the forward is and continue scanning
@@ -382,6 +394,7 @@ function isDigit(currentchar,forward,input){
 					var idtoken = new token(tokeninstall, "unrecognized token", 7);// build token
 					tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 					console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+					document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
 					lexemeCount++; //move to the next place in the token array
 					lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
 					scannerSuccess = false; //the scanner has passed
@@ -445,6 +458,7 @@ function isQuot(currentchar,forward,input){
 						var idtoken = new token(tokeninstall, "quotation", 7);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 						console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+						document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
 						lexemeCount++; //move to the next place in the token array
 						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
 						scannerSuccess = true; //the scanner has passed
@@ -468,6 +482,7 @@ function isQuot(currentchar,forward,input){
 						var idtoken = new token(tokeninstall, "quotation", 7);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 						console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+						document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
 						lexemeCount++; //move to the next place in the token array
 						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
 						scannerSuccess = true; //the scanner has passed
@@ -499,6 +514,7 @@ function isQuot(currentchar,forward,input){
 						var idtoken = new token(tokeninstall, "string", 7);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 						console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+						document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
 						lexemeCount++; //move to the next place in the token array
 						
 						
@@ -506,6 +522,7 @@ function isQuot(currentchar,forward,input){
 						var idtoken = new token('"', "quotation", 7);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 						console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+						document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
 						lexemeCount++; //move to the next place in the token array
 						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
 						scannerSuccess = true; //the scanner has passed
@@ -533,14 +550,17 @@ function isEOL(c){
 		var idtoken = new token(c, "end of line symbol", 7);// build token
 		tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 		console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+		document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
 		lexemeCount++; //move to the next place in the token array
 		
 		if (scannerSuccess != false){
 					scannerSuccess = true; //in this function the scanner passes
 					console.log('LEXER: Lex program completed with no errors');
+					document.getElementById("output").value +=  'LEXER: Lex program completed with no errors' + '\n';
 		}
 		if (scannerSuccess == false){
 			console.log('LEXER: Lex program completed with errors');
+			document.getElementById("output").value +=  'LEXER: Lex program completed with errors' + '\n';
 			
 			
 			
@@ -548,7 +568,20 @@ function isEOL(c){
 		scannerSuccess = true;
 		programCounter = programCounter + 1;
 		console.log("scanning program " + programCounter);
+		document.getElementById("output").value += "scanning program " + programCounter + '\n';
 	}
+	
+}
+function badTokenCheck(c){
+	
+	//console.log(tokenstream[lexemeCount]);
+	if (tokenCheck == false){
+		console.log('LEXER: ERROR unrecognized token' + c);
+		document.getElementById("output").value += 'LEXER: ERROR unrecognized token' + c   + "\n";
+		
+		scannerSuccess = false;
+	}
+	
 	
 }
 
@@ -559,6 +592,7 @@ function isRBRACE(c){
 		var idtoken = new token(c, "right brace", 7);// build token
 		tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 		console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+		document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
 		lexemeCount++; //move to the next place in the token array
 		if (scannerSuccess != false){
 					scannerSuccess = true; //in this function the scanner passes
@@ -574,6 +608,7 @@ function isLBRACE(c){
 		var idtoken = new token(c, "left brace", 7);// build token
 		tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 		console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+		document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
 		lexemeCount++; //move to the next place in the token array
 		
 		if (scannerSuccess != false){
@@ -591,6 +626,7 @@ function isLPAREN(c){
 		var idtoken = new token(c, "left parenthesis", 7);// build token
 		tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 		console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+		document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
 		lexemeCount++; //move to the next place in the token array
 		if (scannerSuccess != false){
 					scannerSuccess = true; //in this function the scanner passes
@@ -607,6 +643,7 @@ function isRPAREN(c){
 		var idtoken = new token(c, "right parenthesis", 7);// build token
 		tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 		console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+		document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
 		lexemeCount++; //move to the next place in the token array
 		if (scannerSuccess != false){
 					scannerSuccess = true; //in this function the scanner passes
@@ -623,6 +660,7 @@ function isINTOP(c){
 		var idtoken = new token(c, "intop", 7);// build token
 		tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 		console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+		document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
 		lexemeCount++; //move to the next place in the token array
 		if (scannerSuccess != false){
 					scannerSuccess = true; //in this function the scanner passes
@@ -631,16 +669,7 @@ function isINTOP(c){
 	}
 }
 
-function badTokenCheck(c){
-	
-	//console.log(tokenstream[lexemeCount]);
-	if (tokenCheck == false){
-		console.log('LEXER: ERROR unrecognized token' + c);
-		scanner = false;
-	}
-	
-	
-}
+
 
 
 function isBOOLOP(currentchar,forward,input){ //checks for assignment or boolop
@@ -689,6 +718,7 @@ function isBOOLOP(currentchar,forward,input){ //checks for assignment or boolop
 						var idtoken = new token(tokeninstall, "boolop", 7);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 						console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+						document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
 						lexemeCount++; //move to the next place in the token array
 						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
 						scannerSuccess = true; //the scanner has passed
@@ -701,6 +731,7 @@ function isBOOLOP(currentchar,forward,input){ //checks for assignment or boolop
 						var idtoken = new token(tokeninstall, "assignment statement", 7);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 						console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+						document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
 						lexemeCount++; //move to the next place in the token array
 						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
 						scannerSuccess = true; //the scanner has passed
@@ -716,6 +747,7 @@ function isBOOLOP(currentchar,forward,input){ //checks for assignment or boolop
 						var idtoken = new token(tokeninstall, "boolop", 7);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 						console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+						document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
 						lexemeCount++; //move to the next place in the token array
 						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
 						scannerSuccess = true; //the scanner has passed
@@ -728,6 +760,7 @@ function isBOOLOP(currentchar,forward,input){ //checks for assignment or boolop
 					var idtoken = new token(tokeninstall, "assignment statement", 7);// build token
 					tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 					console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+					document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
 					lexemeCount++; //move to the next place in the token array
 					lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
 					scannerSuccess = true; //the scanner has passed
@@ -745,6 +778,7 @@ function isBOOLOP(currentchar,forward,input){ //checks for assignment or boolop
 						var idtoken = new token(tokeninstall, "boolop", 7);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 						console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+						document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
 						lexemeCount++; //move to the next place in the token array
 						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
 						scannerSuccess = true; //the scanner has passed
