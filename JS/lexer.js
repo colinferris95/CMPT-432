@@ -115,7 +115,18 @@ function lexer(){
 	badTokenCheck(c);
 	
 	}
-	console.log(scannerSuccess);
+	if (scannerSuccess != false){
+					scannerSuccess = true; //in this function the scanner passes
+					console.log('LEXER: Lex program completed with no errors');
+					document.getElementById("output").value +=  'LEXER: Lex program completed with no errors' + '\n';
+		}
+		if (scannerSuccess == false){
+			console.log('LEXER: Lex program completed with errors');
+			document.getElementById("output").value +=  'LEXER: Lex program completed with errors' + '\n';
+			
+			
+			
+		}
 	console.log(tokenstream);
 	
 
@@ -481,6 +492,13 @@ function isQuot(currentchar,forward,input){
 					}
 					else{
 						
+						
+						state = 2;
+						
+					}
+					
+				case 2:
+					if((input[forward]).search(QUOT) != -1){
 						tokeninstall = tokeninstall + input[forward]; //start building the token
 						forward++; //move the forward counter
 						var idtoken = new token(tokeninstall, "string", 7);// build token
@@ -492,16 +510,8 @@ function isQuot(currentchar,forward,input){
 						scannerSuccess = true; //the scanner has passed
 						tokenCheck = true;
 						tokeninstall = " ";
-						state = 2;
 						
-					}
-					
-				case 2:
-					if((input[forward]).search(QUOT) != -1){
-						tokeninstall = tokeninstall + input[forward]; //start building the token
-						forward++; //move the forward counter
-						
-						var idtoken = new token(tokeninstall, "quotation", 7);// build token
+						var idtoken = new token('"', "quotation", 7);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 						console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
 						document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
