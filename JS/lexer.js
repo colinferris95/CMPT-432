@@ -107,7 +107,6 @@ function lexer(){
 	isLPAREN(c);
 	isINTOP(c);
 	isQuot(c,lexemeBegin,inputText);
-	
 	isEOL(c);
 	}
 	console.log(scannerSuccess);
@@ -373,19 +372,20 @@ function isQuot(currentchar,forward,input){
 					state = 2;
 				}
 				case 2:
+				
 					 if((input[forward]).search(letter) != -1){		
 						state = 2; //go to case 2 to determine if it is string
 						tokeninstall = tokeninstall + input[forward]; //start building the token
 						forward++; //move the forward counter
 					 }
 					
-					else{
+					if((input[forward]).search(letter) == -1){	
 						state = 3;
 					}
 				case 3:
 					if((input[forward]).search(QUOT) != -1){	
 						
-						
+						//forward++; //move the forward counter
 						var idtoken = new token(tokeninstall, "string", 7);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 						console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
