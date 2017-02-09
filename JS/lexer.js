@@ -100,6 +100,7 @@ function lexer(){
 	//console.log('this is the current c:'  + c);
 	isBOOLOP(c,lexemeBegin,inputText);
 	isID(c,lexemeBegin,inputText);
+	isDigit(c,lexemeBegin,inputText);
 	isSpace(c);
 	isRBRACE(c);
 	isLBRACE(c);
@@ -306,9 +307,107 @@ function isID(currentchar,forward,input){
 		
 	}
 	*/
+
+function isDigit(currentchar,forward,input){
+	state = 0;
 	
+	tokeninstall = " "; //clear the token value
+	run = true;
+	//alert(run);
 	
-	
+	while (run){
+		
+		switch(state){
+		
+			//entering the dfa
+			case 0:
+				
+				
+				//a lowercase letter is entered
+			    if((input[forward]).search(digit) != -1){		
+						state = 1; //go to case 1 to determine if it is an id or not
+						tokeninstall = tokeninstall + input[forward]; //start building the token
+						forward++; //move the forward counter
+						tokenCheck = true;
+					}
+				else{ //a character other than a lowercase letter is entered, break the switch and move on to the other lex functions
+
+					run = false;
+					break;
+				}
+		
+			case 1:
+				
+			
+				
+				if ((input[forward]).search(digit) != -1){ //if the character is also a letter, move on to case 2 to build an unrecognized token 
+					state = 2;
+					tokeninstall = tokeninstall + input[forward];; //continue building the token
+					forward++;//move the forward counter
+					tokenCheck = true;
+				}
+				
+				else{
+					//console.log('LEXER: '+ tokeninstall + '--> [ID]'); // the next character was not a letter, so we output the valid one character id
+					tokenCheck = true;
+					var idtoken = new token(tokeninstall, "digit", 7);// build token
+					tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
+					console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+					lexemeCount++; //move to the next place in the token array
+					forward = forward-1;
+					lexemeBegin=forward; //move the lexemeBegin to where the forward is and continue scanning
+					
+					
+					if (scannerSuccess != false){
+					scannerSuccess = true; //in this function the scanner passes
+					}
+					run = false; //break the switch
+					break;
+				}
+				
+				
+			case 2:
+				if ((input[forward]).search(digit) != -1){ //if each character added is also a letter, keep building the toekn
+					tokenCheck = true;
+					state = 2;
+					tokeninstall = tokeninstall + input[forward];;
+					forward++;
+					
+					
+				}
+				else{
+					tokenCheck = true;
+					//console.log('LEXER: unrecognized token' + tokeninstall);//the next character was not a letter, so we output the unrecognized token
+					var idtoken = new token(tokeninstall, "unrecognized token", 7);// build token
+					tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
+					console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+					lexemeCount++; //move to the next place in the token array
+					lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
+					scannerSuccess = false; //the scanner has passed
+					run = false;//break the switch
+					break;
+					}
+					
+				}
+			
+			}
+		
+				
+			
+			
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
+
+
 
 
 function isSpace(c){
