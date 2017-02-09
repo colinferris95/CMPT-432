@@ -108,8 +108,9 @@ function lexer(){
 	isLPAREN(c);
 	isINTOP(c);
 	isQuot(c,lexemeBegin,inputText);
-	isEOL(c);
 	badTokenCheck(c);
+	isEOL(c);
+	
 	}
 	console.log(scannerSuccess);
 	console.log(tokenstream);
@@ -635,7 +636,7 @@ function badTokenCheck(c){
 	//console.log(tokenstream[lexemeCount]);
 	if (tokenCheck == false){
 		console.log('LEXER: ERROR unrecognized token' + c);
-		
+		scanner = false;
 	}
 	
 	
