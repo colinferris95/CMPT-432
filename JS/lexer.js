@@ -29,6 +29,9 @@ var RPAREN = /[)]/;
 var LPAREN = /[(]/;
 var INTOP = /[+]/;
 var QUOT = /["]/;
+var lexemeCount = 0;
+var tokenstream = [];
+
 
 //not resereved alpha
 
@@ -38,7 +41,23 @@ var QUOT = /["]/;
 //char      ::== a|b|c ... z
 
 
+//token constructor
 
+var token = class{
+	
+	constructor(desc,type,line_num){
+		this.desc = desc;
+		this.type = type;
+		this.line_num = line_num;
+		
+		
+	}
+	
+	
+	
+	
+	
+}
 
 
 
@@ -86,6 +105,7 @@ function lexer(){
 	isEOL(c);
 	}
 	console.log(scannerSuccess);
+	console.log(tokenstream);
 	
 
 }
@@ -94,105 +114,6 @@ function nextChar(){
 	
 	
 }
-/*
-function isIForID(currentchar,forward,input){
-	state = 0;
-	tokeninstall = ""; //clear the token value
-	run = true;
-	
-	while (run){
-		
-		switch(state){
-			
-			case 0: 
-				if((input[forward]).search(nralpha) != -1){	
-					state = 1; //go to case 1 to determine if it is an id or not
-					
-					tokeninstall = tokeninstall + input[forward]; //start building the token
-					forward++ //move the forward counter
-				
-				}
-				
-			    if ((input[forward]).match('i') != -1){
-					state = 3; 
-					tokeninstall = tokeninstall + input[forward]; //start building the token
-					forward++ //move the forward counter
-					
-					
-					
-				}
-				
-				
-				else{ //a character other than a lowercase letter is entered, break the switch and move on to the other lex functions
-					console.log('it broke');
-					run = false;
-					break;
-				}
-				
-				
-				console.log('case zero' + state);
-			case 1:
-				
-				if ((input[forward]).search(letter) != -1){ //if the character is also a letter, move on to case 2 to build an unrecognized token 
-					state = 2;
-					console.log('case 1 change state ' + state);
-					tokeninstall = tokeninstall + input[forward];; //continue building the token
-					forward++//move the forward counter
-				
-				}
-				
-				else{
-					console.log('LEXER: '+ tokeninstall + '--> [ID]'); // the next character was not a letter, so we output the valid one character id
-					lexemeBegin=forward; //move the lexemeBegin to where the forward is and continue scanning
-					run = false; //break the switch
-					break;
-				}
-				
-				
-			case 2:
-				if ((input[forward]).search(letter) != -1){ //if each character added is also a letter, keep building the toekn
-					state = 2;
-					tokeninstall = tokeninstall + input[forward];;
-					forward++
-					
-					
-				}
-				else{
-					
-				console.log('unrecognized token ' + tokeninstall);//the next character was not a letter, so we output the unrecognized token
-				lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
-				run = false;//break the switch
-				break;
-				
-				}
-				
-			case 3:
-				
-				if ((input[forward]).match('f') != -1){
-					state = 4; 
-					tokeninstall = tokeninstall + input[forward]; //start building the token
-					forward++ //move the forward counter
-					
-				}
-				else{ //a character other than a lowercase letter is entered, break the switch and move on to the other lex functions
-					console.log('not if');
-					run = false;
-					break;
-				}
-				
-			
-			
-			
-			
-			
-			
-		}
-		
-	}
-	
-}
-*/
-
 
 
 // works for non reserved words currently
@@ -236,9 +157,13 @@ function isID(currentchar,forward,input){
 				}
 				
 				else{
-					console.log('LEXER: '+ tokeninstall + '--> [ID]'); // the next character was not a letter, so we output the valid one character id
+					//console.log('LEXER: '+ tokeninstall + '--> [ID]'); // the next character was not a letter, so we output the valid one character id
+					var idtoken = new token(tokeninstall, "identifier", 7);
+					tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);				
+					console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]);
 					forward = forward-1;
 					lexemeBegin=forward; //move the lexemeBegin to where the forward is and continue scanning
+					lexemeCount++;
 					
 					if (scannerSuccess != false){
 					scannerSuccess = true; //in this function the scanner passes
