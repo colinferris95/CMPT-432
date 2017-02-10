@@ -1,14 +1,14 @@
-//This script is under construction
 
 
 
+//test program 1 passes the lexer with no errors
 function Program1(){
 	document.getElementById("textInput").value = ' { print("true") \n   int a \n   a = 2 \n   boolean b = true  \n }$	'
 	
 	
 	
 }
-
+//test program 2 passes the lexer with no errors
 function Program2(){
 	document.getElementById("textInput").value = ' { int x = 3 \n  if x == 3 {x = 0} }$	'
 	
@@ -16,43 +16,54 @@ function Program2(){
 	
 }
 
-//structure of a lex program
-var tokenrecog;
-var run = true;
+//variables needed for lexer function
+//for the switch cases
+var run = true; 
 var state;
 
+//flag to show if the program has lexed with or without errors
 var scannerSuccess;
 
+//keeps track of which program is being scanned
 var programCounter;
 
+//the first pointer in creating a lexeme, the other being the forward pointer
 var lexemeBegin;
 
+//variable for building up tokens
 var tokeninstall = "";
 
- 
-//declarations
-var letter = /[a-z]/;
-var digit = /[0-9]/;
-var space = /\s/;
-var ws = /[space]+/;
-var id = /[letter]/;
-var intexpr = /[digit]+/;
-var EOP = /[$]/;
-var RBRACE =/[}]/;
-var LBRACE = /[{]/;
-var RPAREN = /[)]/;
-var LPAREN = /[(]/;
-var INTOP = /[+]/;
-var QUOT = /["]/;
-var ASSIGN = /[=]/;
-var EXCLAM = /[!]/;
-var newLine = /\n/;
+//variable to keep track of the current line number
 var currLineNumber;
 
-
+//used for the 2d array tokenstream, increases for every lexeme token added to array tokenstream
 var lexemeCount = 0;
+
+//initalize the array to keep the tokens
 var tokenstream = [];
-var tokenCheck
+
+//boolean used for checking unrecognized character the other functions dont catch
+var tokenCheck;
+
+ 
+// regex declarations
+var letter = /[a-z]/; //alpha characters
+var digit = /[0-9]/; //number character
+var space = /\s/; //find space
+var ws = /[space]+/; //whitespace
+var id = /[letter]/; //id is made up of single letters
+var EOP = /[$]/; //finds the EOP symbol
+var RBRACE =/[}]/; //finds the rbrace symbol
+var LBRACE = /[{]/; //finds the lbrace symbol
+var RPAREN = /[)]/; //finds the rparen symbol
+var LPAREN = /[(]/; //finds the lparen symbol
+var INTOP = /[+]/; //finds the addition symbol
+var QUOT = /["]/; //finds the quotation mark
+var ASSIGN = /[=]/; //finds the equals sign
+var EXCLAM = /[!]/; //finds the exclamation point
+var newLine = /\n/; //finds new line
+
+
 
 //not resereved alpha
 
@@ -67,9 +78,9 @@ var tokenCheck
 var token = class{
 	
 	constructor(desc,type,line_num){
-		this.desc = desc;
-		this.type = type;
-		this.line_num = line_num;
+		this.desc = desc; //the character entered 
+		this.type = type; //the type of character ie. keyword, identifier etc.
+		this.line_num = line_num; //line number the character is at
 		
 		
 	}
@@ -87,52 +98,45 @@ var token = class{
 
 
 
-//translation rules
-/*
 
 
 
-
-
-*/
-
-//auxiliary functions
-//scans through each character of input text
+//scans through each character of input text, main function
 function lexer(){
 	
 	document.getElementById("output").value = ' ';  //clear output screen
-	programCounter = 1;
-	currLineNumber = 1;
+	programCounter = 1; //start the program counter
+	currLineNumber = 1; //start the line number
 	
-	var inputText = document.getElementById("textInput").value;
+	var inputText = document.getElementById("textInput").value; //inputText holds the value of the entered program
 
 	//document.getElementBYId("output").value =  inputText;
 	console.log("scanning program " + programCounter);
-	document.getElementById("output").value += "scanning program " + programCounter + '\n';
+	document.getElementById("output").value += "scanning program " + programCounter + '\n'; //output that scanning has begun
 
-	
+	//scan each character in the text
 	for (lexemeBegin=0; lexemeBegin<inputText.length;lexemeBegin++){
 		
 		
 	//start scanning the file at the first character
 	var c = inputText[lexemeBegin];
-	tokenCheck = false;
+	tokenCheck = false; //baseline, the auxillary functions must make this true to pass the scanner, or it is caught by badtokenCheck
 	
-	//console.log('this is the current c:'  + c);
-	findLineNumber(c);
-	isBOOLOP(c,lexemeBegin,inputText);
-	isID(c,lexemeBegin,inputText);
-	isDigit(c,lexemeBegin,inputText);
-	isSpace(c);
-	isRBRACE(c);
-	isLBRACE(c);
-	isRPAREN(c);
-	isLPAREN(c);
-	isINTOP(c);
-	isQuot(c,lexemeBegin,inputText);
+	//auxiallary functions to check each character one at a time
+	findLineNumber(c); //gets the current line number
+	isBOOLOP(c,lexemeBegin,inputText); //identifies assignment statement and boolops
+	isID(c,lexemeBegin,inputText); //identifies keywords,types, and ids
+	isDigit(c,lexemeBegin,inputText); //identifies single digit numbers
+	isSpace(c); //identifies space, to be ignored
+	isRBRACE(c); //identifies right bracket
+	isLBRACE(c); //identifies left bracket
+	isRPAREN(c); //identifies right parenthesis
+	isLPAREN(c); //identifies left parenthesis
+	isINTOP(c); //identifies intop
+	isQuot(c,lexemeBegin,inputText); //identifies quotes and strings
 	
-	isEOP(c);
-	badTokenCheck(c);
+	isEOP(c); //identifies the end of program symbol
+	badTokenCheck(c); //catches bad/unrecognized tokens
 	
 	}
 	if (scannerSuccess != false){
@@ -153,7 +157,7 @@ function lexer(){
 }
 
 function findLineNumber(c){
-	if (c.search(newLine) != -1){
+	if (c.search(newLine) != -1){ //if new line is detected, increase line number
 		
 		currLineNumber++;
 		
@@ -170,7 +174,7 @@ function findLineNumber(c){
 
 
 
-// works for non reserved words currently
+
 function isID(currentchar,forward,input){
 	state = 0;
 	
@@ -239,14 +243,14 @@ function isID(currentchar,forward,input){
 					
 					
 				}
-				else{
+				else{ //if the stream of letters has stopped
 					forward = forward-1;
-					if (tokeninstall == ' if'){
+					if (tokeninstall == ' if'){ //token matches if
 						tokenCheck = true;
 						var idtoken = new token(tokeninstall, "keyword", currLineNumber);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 						console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
-						document.getElementById("output").value += 'LEXER: Token found at line number '+ tokenstream[lexemeCount][2]+' "' + tokenstream[lexemeCount][0] + '" ----> '+ tokenstream[lexemeCount][1]   + '\n';
+						document.getElementById("output").value += 'LEXER: Token found at line number '+ tokenstream[lexemeCount][2]+' "' + tokenstream[lexemeCount][0] + '" ----> '+ tokenstream[lexemeCount][1]   + '\n'; //output
 						lexemeCount++; //move to the next place in the token array
 						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
 						scannerSuccess = true; //the scanner has passed
@@ -254,7 +258,7 @@ function isID(currentchar,forward,input){
 						break;
 						
 					}
-					else if (tokeninstall == ' int'){
+					else if (tokeninstall == ' int'){ //token matches int
 						tokenCheck = true;
 						//console.log('LEXER: '+ tokeninstall + '--> [INT]');
 						var idtoken = new token(tokeninstall, "type", currLineNumber);// build token
@@ -410,14 +414,14 @@ function isDigit(currentchar,forward,input){
 			case 0:
 				
 				
-				//a lowercase letter is entered
+				//a number letter is entered
 			    if((input[forward]).search(digit) != -1){		
-						state = 1; //go to case 1 to determine if it is an id or not
+						state = 1; //go to case 1 to determine if its a single digit or not
 						tokeninstall = tokeninstall + input[forward]; //start building the token
 						forward++; //move the forward counter
 						tokenCheck = true;
 					}
-				else{ //a character other than a lowercase letter is entered, break the switch and move on to the other lex functions
+				else{ //a character other than a digit is entered
 
 					run = false;
 					break;
@@ -427,7 +431,7 @@ function isDigit(currentchar,forward,input){
 				
 			
 				
-				if ((input[forward]).search(digit) != -1){ //if the character is also a letter, move on to case 2 to build an unrecognized token 
+				if ((input[forward]).search(digit) != -1){ //if the character is also a digit, move on to case 2 to build an unrecognized token 
 					state = 2;
 					tokeninstall = tokeninstall + input[forward];; //continue building the token
 					forward++;//move the forward counter
@@ -435,12 +439,12 @@ function isDigit(currentchar,forward,input){
 				}
 				
 				else{
-					//console.log('LEXER: '+ tokeninstall + '--> [ID]'); // the next character was not a letter, so we output the valid one character id
+					 // the next character was not a digit, so we output the valid one character digit
 					tokenCheck = true;
 					var idtoken = new token(tokeninstall, "digit", currLineNumber);// build token
 					tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 					console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
-					document.getElementById("output").value += 'LEXER: Token found at line number '+ tokenstream[lexemeCount][2]+' "' + tokenstream[lexemeCount][0] + '" ----> '+ tokenstream[lexemeCount][1]   + '\n';
+					document.getElementById("output").value += 'LEXER: Token found at line number '+ tokenstream[lexemeCount][2]+' "' + tokenstream[lexemeCount][0] + '" ----> '+ tokenstream[lexemeCount][1]   + '\n'; //output
 					lexemeCount++; //move to the next place in the token array
 					forward = forward-1;
 					lexemeBegin=forward; //move the lexemeBegin to where the forward is and continue scanning
@@ -455,7 +459,7 @@ function isDigit(currentchar,forward,input){
 				
 				
 			case 2:
-				if ((input[forward]).search(digit) != -1){ //if each character added is also a letter, keep building the toekn
+				if ((input[forward]).search(digit) != -1){ //if each character added is also a digit, keep building the toekn
 					tokenCheck = true;
 					state = 2;
 					tokeninstall = tokeninstall + input[forward];;
@@ -465,7 +469,7 @@ function isDigit(currentchar,forward,input){
 				}
 				else{
 					tokenCheck = true;
-					//console.log('LEXER: unrecognized token' + tokeninstall);//the next character was not a letter, so we output the unrecognized token
+					//console.log('LEXER: unrecognized token' + tokeninstall);//the next character was not a digit, so we output the unrecognized token
 					var idtoken = new token(tokeninstall, "unrecognized token", currLineNumber);// build token
 					tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 					console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
@@ -745,7 +749,7 @@ function isBOOLOP(currentchar,forward,input){ //checks for assignment or boolop
 					//a quote is entered
 					if((input[forward]).search(ASSIGN) != -1){
 						tokenCheck = true;						
-						state = 1; //go to case 1 to determine if it is an id or not
+						state = 1; //go to case 1 to determine if it is assignment or boolop
 						tokeninstall = tokeninstall + input[forward]; //start building the token
 						forward++; //move the forward counter
 						
@@ -755,7 +759,7 @@ function isBOOLOP(currentchar,forward,input){ //checks for assignment or boolop
 					
 					else if((input[forward]).search(EXCLAM) != -1){
 						tokenCheck = true;
-						state = 2; //go to case 1 to determine if it is an id or not
+						state = 2; //go to case 2 to determine if it is a boolop
 						tokeninstall = tokeninstall + input[forward]; //start building the token
 						forward++; //move the forward counter
 						
@@ -796,35 +800,7 @@ function isBOOLOP(currentchar,forward,input){ //checks for assignment or boolop
 						run = false;
 						break;
 				}
-				case 1:
-					if((input[forward]).search(ASSIGN) != -1){		
-						tokenCheck = true;
-						tokeninstall = tokeninstall + input[forward]; //start building the token
-						forward++; //move the forward counter
-						
-						var idtoken = new token(tokeninstall, "boolop", currLineNumber);// build token
-						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
-						console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
-						document.getElementById("output").value += 'LEXER: Token found at line number '+ tokenstream[lexemeCount][2]+' "' + tokenstream[lexemeCount][0] + '" ----> '+ tokenstream[lexemeCount][1]   + '\n';
-						lexemeCount++; //move to the next place in the token array
-						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
-						scannerSuccess = true; //the scanner has passed
-						run = false;
-						break;
-						
-					}
-				else{ //a character other than a lowercase letter is entered, break the switch and move on to the other lex functions
-					tokenCheck = true;
-					var idtoken = new token(tokeninstall, "assignment statement", currLineNumber);// build token
-					tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
-					console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
-					document.getElementById("output").value += 'LEXER: Token found at line number '+ tokenstream[lexemeCount][2]+' "' + tokenstream[lexemeCount][0] + '" ----> '+ tokenstream[lexemeCount][1]   + '\n';
-					lexemeCount++; //move to the next place in the token array
-					lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
-					scannerSuccess = true; //the scanner has passed
-					run = false;
-					break;
-				}
+				
 		
 				case 2:
 					//a quote is entered
