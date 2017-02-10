@@ -5,13 +5,14 @@
 <head>
 
 
-<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+
 <title>
 Colin's Compiler 
 </title>
 
-
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="jquery-linedtextarea.js"></script>
 <link href="jquery-linedtextarea.css" type="text/css" rel="stylesheet">
 </head>
@@ -28,34 +29,51 @@ Colin's Compiler
 	</div>
 </div>
 
-<div class="container">
-  <div class="row">
-  <div class="col">
+
+<div class = "container">
+<div class = "row">
+<div class = "col">
   <h2>Lexer Input</h2>
-<div class="linedtextarea"><textarea class="lined" id="textInput" rows="10" cols="60" wrap="off" style="resize: none; width: 364px;">
+  <ul class="nav nav-pills">
+			<li class="active">
+			<button onclick="Program1()" class="btn btn-primary">Load Test Program 1</button>
+			
+			</li>
+			<li class="active">
+			<button onclick="Program2()" class="btn btn-primary">Load Test Program 2</button>
+			
+			</li>
+		</ul>
+  
+<div class="linedtextarea"><textarea class="lined" id="textInput" rows="10" cols="60" wrap="off" style="resize: none; width: 400px; height: 400px;">
 
 </textarea></div>
 <ul class="nav nav-pills">
 			<li class="active">
-			<button onclick="lexer()">Lex</button>
+			<button onclick="lexer()" class="btn btn-primary">Lex</button>
 			
 			</li>
 		</ul>
+
+
+
 </div>
 
 
-
-<div class="col">
+<div class = "col">
 <h2>Lexer Output</h2>
+<div>
 <textarea id = "output" rows="10" cols="60" wrap="off" style="resize: none; width: 364px;">
 
 
-</textarea>
+</textarea></div>
+</div>
 </div>
 
 </div>
 
 </div>
+
 
 
 

@@ -1,6 +1,21 @@
 //This script is under construction
 
 
+
+function Program1(){
+	document.getElementById("textInput").value = ' { print("true") \n   int a \n   a = 2 \n   boolean b = true  \n }$	'
+	
+	
+	
+}
+
+function Program2(){
+	document.getElementById("textInput").value = ' { int x = 3 \n  if x == 3 {x = 0} }$	'
+	
+	
+	
+}
+
 //structure of a lex program
 var tokenrecog;
 var run = true;
@@ -288,7 +303,36 @@ function isID(currentchar,forward,input){
 						run = false;//break the switch
 						break;
 						
-					}else{
+					}
+					else if (tokeninstall == ' true'){
+						tokenCheck = true;
+						//console.log('LEXER: '+ tokeninstall + '--> [BOOLEAN]');
+						var idtoken = new token(tokeninstall, "boolval", 7);// build token
+						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
+						console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+						document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
+						lexemeCount++; //move to the next place in the token array
+						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
+						scannerSuccess = true; //the scanner has passed
+						run = false;//break the switch
+						break;
+						
+					}
+					else if (tokeninstall == ' false'){
+						tokenCheck = true;
+						//console.log('LEXER: '+ tokeninstall + '--> [BOOLEAN]');
+						var idtoken = new token(tokeninstall, "boolval", 7);// build token
+						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
+						console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+						document.getElementById("output").value += 'LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]   + "\n";
+						lexemeCount++; //move to the next place in the token array
+						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
+						scannerSuccess = true; //the scanner has passed
+						run = false;//break the switch
+						break;
+						
+					}
+					else{
 					tokenCheck = true;
 					//console.log('LEXER: unrecognized token' + tokeninstall);//the next character was not a letter, so we output the unrecognized token
 					var idtoken = new token(tokeninstall, "unrecognized token", 7);// build token
