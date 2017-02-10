@@ -65,12 +65,7 @@ var newLine = /\n/; //finds new line
 
 
 
-//not resereved alpha
 
-//regular expressions and defintions
-// pattern {action}
-
-//char      ::== a|b|c ... z
 
 
 //token constructor
@@ -387,17 +382,7 @@ function isID(currentchar,forward,input){
 		
 		
 		
-	}//end of while
-	
-	/*
-	if ( c.search(letter) != -1 &&  inputText[i+1].search(letter) == -1){
-		alert('LEXER: '+ c +'--> [ID]');
-		
-		
-		
-		
 	}
-	*/
 
 function isDigit(currentchar,forward,input){
 	state = 0;
@@ -844,15 +829,3 @@ function isBOOLOP(currentchar,forward,input){ //checks for assignment or boolop
 }
 	
 
-
-/*
-
-
-
-
-
-
-
-
-
-*/
