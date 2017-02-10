@@ -41,3 +41,9 @@ How To Run:
 2.Extract repo to folder on PC
 
 3.Run the index.html file on a browser with Javascript enabled
+
+4.Once loaded in a browser, there should be a lexer input box with line numbers and a lexer output box
+
+5.Write a program in the lexer input, or load up a test program, and then click the lex button
+
+6.Output should appear on the bottom with results
