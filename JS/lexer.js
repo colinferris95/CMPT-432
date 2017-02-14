@@ -581,7 +581,7 @@ function isQuot(currentchar,forward,input){
 							scannerSuccess = true; //in this function the scanner passes
 						}
 						
-						forward++;//move the forward counter
+						//forward++;//move the forward counter
 						
 						var idtoken = new token(tokeninstall, "close double quote", currLineNumber);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
@@ -592,6 +592,7 @@ function isQuot(currentchar,forward,input){
 						scannerSuccess = true; //the scanner has passed
 						tokenCheck = true;
 						tokeninstall = " ";
+
 						if (scannerSuccess != false){
 							scannerSuccess = true; //in this function the scanner passes
 						}
@@ -807,7 +808,9 @@ function isBOOLOP(currentchar,forward,input){ //checks for assignment or boolop
 						document.getElementById("output").value += 'LEXER: Token found at line number '+ tokenstream[lexemeCount][2]+' "' + tokenstream[lexemeCount][0] + '" ----> '+ tokenstream[lexemeCount][1]   + '\n';
 						lexemeCount++; //move to the next place in the token array
 						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
-						scannerSuccess = true; //the scanner has passed
+						if (scannerSuccess != false){
+							scannerSuccess = true; //in this function the scanner passes
+						}
 						run = false;
 						break;
 						
@@ -820,7 +823,9 @@ function isBOOLOP(currentchar,forward,input){ //checks for assignment or boolop
 						document.getElementById("output").value += 'LEXER: Token found at line number '+ tokenstream[lexemeCount][2]+' "' + tokenstream[lexemeCount][0] + '" ----> '+ tokenstream[lexemeCount][1]   + '\n';
 						lexemeCount++; //move to the next place in the token array
 						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
-						scannerSuccess = true; //the scanner has passed
+						if (scannerSuccess != false){
+							scannerSuccess = true; //in this function the scanner passes
+					}
 						run = false;
 						break;
 				}
@@ -839,7 +844,9 @@ function isBOOLOP(currentchar,forward,input){ //checks for assignment or boolop
 						document.getElementById("output").value += 'LEXER: Token found at line number '+ tokenstream[lexemeCount][2]+' "' + tokenstream[lexemeCount][0] + '" ----> '+ tokenstream[lexemeCount][1]   + '\n';
 						lexemeCount++; //move to the next place in the token array
 						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
-						scannerSuccess = true; //the scanner has passed
+						if (scannerSuccess != false){
+							scannerSuccess = true; //in this function the scanner passes
+						}
 						run = false;
 						break;
 						
