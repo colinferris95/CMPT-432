@@ -47,3 +47,6 @@ How To Run:
 5.Write a program in the lexer input, or load up a test program, and then click the lex button
 
 6.Output should appear on the bottom with results
+
+*****KNOWN ISSUE*******
+The lexer will think there is another program after the last '$' symbol and scan another empty program
