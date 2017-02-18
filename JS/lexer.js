@@ -558,9 +558,18 @@ function isQuot(currentchar,forward,input){
 				
 				
 			case 1:
-				
+				try{
+					var x = (input[forward]).search(QUOT);
 			
-				
+				}
+				catch (error){
+					
+					document.getElementById("output").value += 'LEXER: found open quote without closing quote \n' ;
+					document.getElementById("output").value += 'LEXER: Lex program completed with errors \n' ;
+					scannerSuccess = false; 
+					
+				}
+			
 				if ((input[forward]).search(QUOT) == -1){ //if the character is also a letter, move on to case 2 to build an unrecognized token 
 					if ((input[forward]).search(letter) != -1){
 					state = 1;
@@ -580,6 +589,8 @@ function isQuot(currentchar,forward,input){
 					
 					
 				}
+				
+				
 				else if((input[forward]).search(QUOT) != -1){
 					
 					
@@ -640,14 +651,14 @@ function isQuot(currentchar,forward,input){
 					
 				}
 				else{
-					
+					document.getElementById("output").value += 'broken string';
 					run = false;
 					break;
 					
 				}
 				
 				
-		
+			
 				
 				
 		
