@@ -518,7 +518,7 @@ function isSpace(c){
 
 function isQuot(currentchar,forward,input){
 		state = 0;
-	 
+		var invalidString = false;
 		tokeninstall = " "; //clear the token value
 		run = true;
 		//alert(run);
@@ -562,19 +562,28 @@ function isQuot(currentchar,forward,input){
 			
 				
 				if ((input[forward]).search(QUOT) == -1){ //if the character is also a letter, move on to case 2 to build an unrecognized token 
-					
+					if ((input[forward]).search(letter) != -1){
 					state = 1;
 					tokeninstall = tokeninstall + input[forward];; //continue building the token
 					forward++;//move the forward counter
 					tokenCheck = true;
-					
-					
+					}
+					else if ((input[forward]).search(letter) == -1){		
+						invalidString = true;
+						state = 1;
+						tokeninstall = tokeninstall + input[forward];; //continue building the token
+						forward++;//move the forward counter
+						tokenCheck = true;
+						
+					}
+				
 					
 					
 				}
 				else if((input[forward]).search(QUOT) != -1){
 					
-						
+					
+						if(invalidString == false){
 						var idtoken = new token(tokeninstall, "string", currLineNumber);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 						console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
@@ -586,6 +595,23 @@ function isQuot(currentchar,forward,input){
 						tokeninstall = " ";
 						if (scannerSuccess != false){
 							scannerSuccess = true; //in this function the scanner passes
+						}
+						}
+						if(invalidString){
+						var idtoken = new token(tokeninstall, "unrecognized token", currLineNumber);// build token
+						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
+						console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
+						document.getElementById("output").value += 'LEXER: Token found at line number '+ tokenstream[lexemeCount][2]+' "' + tokenstream[lexemeCount][0] + '" ----> '+ tokenstream[lexemeCount][1]   + '\n';
+						lexemeCount++; //move to the next place in the token array
+						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
+						
+						tokenCheck = true;
+						tokeninstall = " ";
+						
+						scannerSuccess = false; //in this function the scanner false
+						
+							
+							
 						}
 						
 						//forward++;//move the forward counter
@@ -603,6 +629,8 @@ function isQuot(currentchar,forward,input){
 						if (scannerSuccess != false){
 							scannerSuccess = true; //in this function the scanner passes
 						}
+						
+						
 						
 						run = false;
 						break;
