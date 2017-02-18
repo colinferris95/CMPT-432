@@ -541,7 +541,7 @@ function isQuot(currentchar,forward,input){
 						document.getElementById("output").value += 'LEXER: Token found at line number '+ tokenstream[lexemeCount][2]+' "' + tokenstream[lexemeCount][0] + '" ----> '+ tokenstream[lexemeCount][1]   + '\n';
 						lexemeCount++; //move to the next place in the token array
 						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
-						scannerSuccess = true; //the scanner has passed
+						
 						tokenCheck = true;
 						tokeninstall = " ";
 						if (scannerSuccess != false){
@@ -562,19 +562,26 @@ function isQuot(currentchar,forward,input){
 			
 				
 				if ((input[forward]).search(QUOT) == -1){ //if the character is also a letter, move on to case 2 to build an unrecognized token 
+					
 					state = 1;
 					tokeninstall = tokeninstall + input[forward];; //continue building the token
 					forward++;//move the forward counter
 					tokenCheck = true;
+					
+					
+					
+					
 				}
 				else if((input[forward]).search(QUOT) != -1){
+					
+						
 						var idtoken = new token(tokeninstall, "string", currLineNumber);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 						console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
 						document.getElementById("output").value += 'LEXER: Token found at line number '+ tokenstream[lexemeCount][2]+' "' + tokenstream[lexemeCount][0] + '" ----> '+ tokenstream[lexemeCount][1]   + '\n';
 						lexemeCount++; //move to the next place in the token array
 						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
-						scannerSuccess = true; //the scanner has passed
+						
 						tokenCheck = true;
 						tokeninstall = " ";
 						if (scannerSuccess != false){
@@ -589,7 +596,7 @@ function isQuot(currentchar,forward,input){
 						document.getElementById("output").value += 'LEXER: Token found at line number '+ tokenstream[lexemeCount][2]+' "' + tokenstream[lexemeCount][0] + '" ----> '+ tokenstream[lexemeCount][1]   + '\n';
 						lexemeCount++; //move to the next place in the token array
 						lexemeBegin = forward;//move the lexemeBegin to where the forward is and continue scanning
-						scannerSuccess = true; //the scanner has passed
+						
 						tokenCheck = true;
 						tokeninstall = " ";
 
