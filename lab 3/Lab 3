@@ -1,0 +1,92 @@
+Lab 3
+
+Exercise 4.7
+
+A grammar for infix expressions follows:
+
+1. Start -> E $
+2. E     -> T plus E
+3.		 |  T
+4. T     -> T times F
+5. 		 |  F
+6. F     -> (E)
+7.       |  num
+
+a) Show the leftmost derivation of the following string:
+	num plus num times num plus num $
+
+	start
+	E $
+	T plus E $
+	T plus T $
+	T plus T times F $
+	T plus T times E $
+	T plus T times T plus E $
+	F plus T times T plus E $
+	F plus F times T plus E $
+	F plus F times F plus E $
+	F plus F times F plus T $
+	F plus F times F plus F $
+	num plus F times F plus F $
+	num plus num times F plus F $
+	num plus num times num plus F $
+	num plus num times num plus num $
+
+b) Show the right most derivation of the following string
+	num times num plus num times num $
+
+	start
+	E $
+	T times F
+	F times F
+	E times F
+	T plus E times F
+	T times F plus E times F
+	T times F plus T times F
+	T times F plus F times F
+	F times F plus F times F
+	F times F plus F times num
+	F times F plus num times num
+	F times num plus num times num
+	num times num plus num times num
+
+c) Describe how this grammar structures expressions, in terms of the 
+   precedence and left or right associativity of operators.
+
+
+
+5.2c
+
+Construct a recursive descent parser based on the grammar
+
+	1. Start  -> value $
+	2. Value  -> num
+	3.        |  lparen Expr rparen
+	4. Expr   -> plus Value Value
+	5.        |  prod Values
+	6. Values -> value Values
+	7.        | e
+
+
+function start(){
+	switch ()
+		case ts.peek (value,values, num, paren, prod, plus, $)
+			call value()
+			call match($)
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
