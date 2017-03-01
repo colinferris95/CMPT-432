@@ -1,5 +1,6 @@
 Lab 3
 
+crafting a compiler
 Exercise 4.7
 
 A grammar for infix expressions follows:
@@ -59,24 +60,100 @@ c) Describe how this grammar structures expressions, in terms of the
 
 Construct a recursive descent parser based on the grammar
 
-	1. Start  -> value $
+	1. Start  -> Value $
 	2. Value  -> num
 	3.        |  lparen Expr rparen
 	4. Expr   -> plus Value Value
 	5.        |  prod Values
-	6. Values -> value Values
+	6. Values -> Value Values
 	7.        | e
 
 
-function start(){
-	switch ()
-		case ts.peek (value,values, num, paren, prod, plus, $)
-			call value()
-			call match($)
+	parse_Start(){
+		
+		parse_value()
+		match('$')
+	
+	}
 
+	parse_Value(){
+		if(nextToken() == 'num'){
+			match(num)
+		
+		}
+		else{
+			match('lparen')
+			parse_Expr()
+			match('rparen')
+		
+		}
+	}
+	
+	parse_Expr(){
+		if(nextToken() == 'plus'){
+			match(plus)
+			parse_Value()
+			parse_Value()
+		
+		}
+		else{
+			match(prod)
+			parse_Values()
+		
+		}
+	
+	
+	}
+	
+	parse_Values(){
+		if(nextToken() == 'Value'){
+			parse_Value()
+			parse_Values()
+		
+		
+		}
+		else
+		/// e production
+	
+	
+	}
+	
 
-}
+Dragon Book
+exercise 4.2.1
 
+S -> SS + | SS * | a
+
+a) the leftmost derivation
+
+	S -> SS *
+	S -> SS + S *
+	S -> aS + S *
+	S -> aa + S *
+	S -> aa + a *
+
+b) the rightmost derivation
+
+	S -> SS * 
+	S -> Sa *
+	S -> SS + a *
+	S -> Sa + a *
+	S -> aa + a *
+	
+c) parse tree
+
+		S
+	  / | \
+	 |	S  *
+	 |  |
+	 S  a  
+   / | \
+  S  S  +   
+  |	 |
+  a	 a
+
+	
+	
 
 
 
