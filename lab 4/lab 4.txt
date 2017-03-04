@@ -1,0 +1,30 @@
+Lab 4
+
+crafting a compiler
+exercise 4.9
+
+Compute the first and follow sets for the non-terminals
+
+1. S -> aSe
+2.   |  B
+3. B -> bBe
+4.   |  C
+5. C -> cCe
+6.   |  d
+
+First
+
+S | B | C
+----------
+a   b   c 
+b   c   d
+c   d
+d
+
+Follow
+
+S | B | C
+----------
+e   e   e
+
+exercise 5.10
