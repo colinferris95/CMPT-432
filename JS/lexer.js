@@ -39,6 +39,8 @@ var currLineNumber;
 //used for the 2d array tokenstream, increases for every lexeme token added to array tokenstream
 var lexemeCount = 0;
 
+var finalCount;
+
 //initalize the array to keep the tokens
 var tokenstream = [];
 
@@ -146,6 +148,7 @@ function lexer(){
 			
 			
 		}
+	
 	console.log(tokenstream);
 	
 

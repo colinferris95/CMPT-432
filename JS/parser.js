@@ -1,9 +1,59 @@
-// psuedo code of the parser
 // Recursion in a nutshell ----- https://www.youtube.com/watch?v=N_hG70ENBkQ -----
+
+var CST = [];
+var letter = /[a-z]/; //alpha characters
+var acceptableTokens = /[a-z]|[0-9]|[(]|[)]|[{]|[}]|["]/
+var parseEndTokenCount; //start processing tokens at the last token, start from the right
+var tokenDesc = 0;
+var tokenType = 1;
+var tokenLineNum = 2;
+var parseBeginCount =0;
+var lookAhead = parseBeginCount + 1;
+var nextToken; 
+var nextTokenType;
+
+// ex tokenstream[lexemeCount][0]
+function initParseToken(){
+	
+		parseEndTokenCount = tokenstream.length - 1;
+		nextToken = tokenstream[lookAhead][0];
+		nextTokenType = tokenstream[lookAhead][1];
+	
+	
+}
+
+
+
+
+function matchSpecChars(token,pos){ //matches brackets, quotes, parens etc.
+
+console.log(parseEndTokenCount);
+console.log('character compared ' + tokenstream[pos][0]);
+	if (token == tokenstream[pos][0]){		
+		//add leaf node
+		console.log('matched token ' + token);
+		
+		
+	}
+	else{
+		console.log('ERROR: token ' + token + ' was not matched'); 
+		
+	}
+	
+}
+
+
+
+
+function test(){
+	console.log("hello there");
+	console.log(tokenstream);
+	
+}
 
 //start parsing
 function parser(){
-	
+	initParseToken();
 	parse_Program();
 	
 }
@@ -12,17 +62,20 @@ function parser(){
 //production Program ::== Block $
 
 function parse_Program(){
-	parse_Block();
-	match('$');
+	parse_Block(); 
+	matchSpecChars('$',(tokenstream.length - 1));
 	
 }
+
 
 //production Block ::== { StatementList }
 
 function parse_Block(){
-	match('{');
-	parse_StatementList();
-	match('}');
+	matchSpecChars('{',0);
+	parseBeginCount = parseBeginCount + 1;
+	parse_StatementList(); 
+	parseEndTokenCount = parseEndTokenCount - 1;
+	matchSpecChars('}',parseEndTokenCount);
 	
 	
 	
@@ -32,8 +85,8 @@ function parse_Block(){
 //production StatementList ::== Statement StatementList
 //					       ::== e
 function parse_StatementList(){
-	if (nextToken == Statement){
-		parse_Statement();
+	if (nextTokenType == 'keyword'){ //if next token is a statment
+		parse_Statement(); 
 		parse_StatementList();
 		
 	}
@@ -45,6 +98,7 @@ function parse_StatementList(){
 	
 }
 
+
 //production  Statement ::== PrintStatement
 //          			::== AssignmentStatement
 //          			::== VarDecl
@@ -53,27 +107,27 @@ function parse_StatementList(){
 //          			::== Block
 
 function parse_Statement(){
-	if (nextToken == print){
+	if (nextToken == 'print'){
 		parse_PrintStatement();
 				
 	}
-	else if(nextToken == id){
-		parse_AssignmentStatement();
+	else if(nextToken == 'id'){
+		//parse_AssignmentStatement();
 		
 	}
-	else if (nextToken == type){
-		parse_VarDecl();
+	else if (nextToken == 'type'){
+		//parse_VarDecl();
 		
 	}
-	else if (nextToken == while){
-		parse_WhileStatement();
+	else if (nextToken == 'while'){
+		//parse_WhileStatement();
 		
 	}
-	else if (nextToken == if){
-		parse_IfStatement();
+	else if (nextToken == 'if'){
+		//parse_IfStatement();
 		
 	}
-	else if (nextToken == {){
+	else if (nextToken == '{'){
 		parse_Block();
 		
 	}
@@ -84,13 +138,14 @@ function parse_Statement(){
 
 //Production PrintStatement ::== print ( Expr ) 
 function parse_PrintStatement(){
-	match('print');
-	match('(');
-	parse_Expr();
-	match (')');
+	matchSpecChars('print');
+	matchSpecChars('(');
+	//parse_Expr(); test
+	matchSpecChars (')');
 	
 	
 }
+/*
 
 //Production AssignmentStatement ::== Id = Expr
 function parse_AssignmentStatement(){
@@ -290,7 +345,7 @@ function parse_intop(){
 	match(+);
 	
 }
-
+*/
 
 
 
