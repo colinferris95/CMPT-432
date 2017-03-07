@@ -11,6 +11,7 @@ var parseBeginCount =0;
 var lookAhead = parseBeginCount + 1;
 var nextToken; 
 var nextTokenType;
+var parentCounter = 0;
 
 // ex tokenstream[lexemeCount][0]
 function initParseToken(){
@@ -25,13 +26,15 @@ function initParseToken(){
 
 
 
-function matchSpecChars(token,pos){ //matches brackets, quotes, parens etc.
+function matchSpecChars(token,pos,parentValue){ //matches brackets, quotes, parens etc.
 
-console.log(parseEndTokenCount);
+
 console.log('character compared ' + tokenstream[pos][0]);
 	if (token == tokenstream[pos][0]){		
 		//add leaf node
+		addLeafNode(token,parentValue); //finish branch with matched token
 		console.log('matched token ' + token);
+		console.log(CST);
 		
 		
 	}
@@ -42,14 +45,22 @@ console.log('character compared ' + tokenstream[pos][0]);
 	
 }
 
+function addBranchNode(branchName,parentValue){
+	//var idtoken = new token(tokeninstall, "identifier", currLineNumber);// build token
+	//tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array	
 
-
-
-function test(){
-	console.log("hello there");
-	console.log(tokenstream);
+	CST.push([branchName,parentValue,'tempChildren']);
+	
 	
 }
+
+
+function addLeafNode(leafName,parentValue){
+
+	CST.push([leafName,parentValue,'tempChildren']);
+	
+}
+
 
 //start parsing
 function parser(){
@@ -62,8 +73,13 @@ function parser(){
 //production Program ::== Block $
 
 function parse_Program(){
+	addBranchNode('program',null); // start tree with program branch 
 	parse_Block(); 
-	matchSpecChars('$',(tokenstream.length - 1));
+	matchSpecChars('$',(tokenstream.length - 1),parentCounter); // match EOP symbol after
+	
+	parentCounter = parentCounter + 1; //all children of program have been added increase parent counter
+	
+	
 	
 }
 
@@ -71,29 +87,46 @@ function parse_Program(){
 //production Block ::== { StatementList }
 
 function parse_Block(){
-	matchSpecChars('{',0);
+	addBranchNode('block',parentCounter); //add to tree block 
+	parentCounter = parentCounter + 1;
+	matchSpecChars('{',0,parentCounter);
 	parseBeginCount = parseBeginCount + 1;
 	parse_StatementList(); 
 	parseEndTokenCount = parseEndTokenCount - 1;
-	matchSpecChars('}',parseEndTokenCount);
+	matchSpecChars('}',parseEndTokenCount,parentCounter);
+	
 	
 	
 	
 }
 
 
+
 //production StatementList ::== Statement StatementList
 //					       ::== e
 function parse_StatementList(){
-	if (nextTokenType == 'keyword'){ //if next token is a statment
+	addBranchNode('StatementList',parentCounter);
+	parentCounter = parentCounter + 1;
+	console.log('nextToken ' + nextTokenType);
+	console.log('parseBeingCount ' + parseBeginCount);
+	var temp = tokenstream[(parseBeginCount + 1)][1];
+
+	if (temp == 'keyword'){ //if next token is a statment
+		console.log('hey');	
+		parseBeginCount = parseBeginCount + 1;
+		
 		parse_Statement(); 
 		parse_StatementList();
+		
+		
+		
 		
 	}
 	else{
 		
 		//e production
 	}
+
 	
 	
 }
@@ -107,8 +140,12 @@ function parse_StatementList(){
 //          			::== Block
 
 function parse_Statement(){
-	if (nextToken == 'print'){
-		parse_PrintStatement();
+	console.log("added statment branch");
+	addBranchNode('Statement',parentCounter);
+	parentCounter = parentCounter + 1;
+	var temp = tokenstream[lookAhead][0]
+	if (temp == 'print'){
+		//parse_PrintStatement();
 				
 	}
 	else if(nextToken == 'id'){
@@ -135,9 +172,10 @@ function parse_Statement(){
 	
 	
 }
-
+/*
 //Production PrintStatement ::== print ( Expr ) 
 function parse_PrintStatement(){
+	addBranchNode('PrintStatement');
 	matchSpecChars('print');
 	matchSpecChars('(');
 	//parse_Expr(); test
