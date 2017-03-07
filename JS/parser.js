@@ -7,8 +7,8 @@ var parseEndTokenCount; //start processing tokens at the last token, start from 
 var tokenDesc = 0;
 var tokenType = 1;
 var tokenLineNum = 2;
-var parseBeginCount =0;
-var lookAhead = parseBeginCount + 1;
+var parseCounter =0;
+var lookAhead = parseCounter + 1;
 var nextToken; 
 var nextTokenType;
 var parentCounter = 0;
@@ -77,7 +77,7 @@ function parse_Program(){
 	parse_Block(); 
 	matchSpecChars('$',(tokenstream.length - 1),parentCounter); // match EOP symbol after
 	
-	parentCounter = parentCounter + 1; //all children of program have been added increase parent counter
+	
 	
 	
 	
@@ -88,9 +88,9 @@ function parse_Program(){
 
 function parse_Block(){
 	addBranchNode('block',parentCounter); //add to tree block 
-	parentCounter = parentCounter + 1;
+	
 	matchSpecChars('{',0,parentCounter);
-	parseBeginCount = parseBeginCount + 1;
+	parseCounter = parseCounter + 1;
 	parse_StatementList(); 
 	parseEndTokenCount = parseEndTokenCount - 1;
 	matchSpecChars('}',parseEndTokenCount,parentCounter);
@@ -106,14 +106,14 @@ function parse_Block(){
 //					       ::== e
 function parse_StatementList(){
 	addBranchNode('StatementList',parentCounter);
-	parentCounter = parentCounter + 1;
-	console.log('nextToken ' + nextTokenType);
-	console.log('parseBeingCount ' + parseBeginCount);
-	var temp = tokenstream[(parseBeginCount + 1)][1];
 
-	if (temp == 'keyword'){ //if next token is a statment
+	console.log('nextToken ' + nextTokenType);
+	console.log('parseBeingCount ' + parseCounter);
+	var temp = tokenstream[(parseCounter)][1]; //check type of token
+	console.log('this is the temp var' + temp);
+	if (temp == 'keyword' || temp == 'identifier'  ){ //if next token is a statment
 		console.log('hey');	
-		parseBeginCount = parseBeginCount + 1;
+		
 		
 		parse_Statement(); 
 		parse_StatementList();
@@ -142,14 +142,19 @@ function parse_StatementList(){
 function parse_Statement(){
 	console.log("added statment branch");
 	addBranchNode('Statement',parentCounter);
-	parentCounter = parentCounter + 1;
-	var temp = tokenstream[lookAhead][0]
-	if (temp == 'print'){
-		//parse_PrintStatement();
+	
+	var tempDesc = tokenstream[lookAhead][0]; //check desc of token
+	var tempType = tokenstream[lookAhead][1]; //check type of token
+	console.log('this is the temp desc ' + tempDesc);
+	console.log('this is the temp type' + tempType);
+	
+	if (tempDesc == ' print'){
+		parse_PrintStatement();
+		console.log('yo');
 				
 	}
-	else if(nextToken == 'id'){
-		//parse_AssignmentStatement();
+	else if(tempType == 'identifier'){
+		parse_AssignmentStatement();
 		
 	}
 	else if (nextToken == 'type'){
@@ -172,29 +177,34 @@ function parse_Statement(){
 	
 	
 }
-/*
+
 //Production PrintStatement ::== print ( Expr ) 
 function parse_PrintStatement(){
-	addBranchNode('PrintStatement');
-	matchSpecChars('print');
-	matchSpecChars('(');
+	addBranchNode('PrintStatement',parentCounter);
+	matchSpecChars('print',parseCounter,parentCounter);
+	parseCounter = parseCounter + 1;
+	matchSpecChars('(',parseCounter,parentCounter);
+	parseCounter = parseCounter + 1;
 	//parse_Expr(); test
-	matchSpecChars (')');
+	matchSpecChars (')',parseCounter,parentCounter);
+	parseCounter = parseCounter + 1;
 	
 	
 }
-/*
+
 
 //Production AssignmentStatement ::== Id = Expr
 function parse_AssignmentStatement(){
 	
 	parse_ID();
-	match('=');
-	parse_Expr();
+	matchSpecChars('=',parseCounter,parentCounter);
+	parseCounter = parseCounter + 1;
+	//parse_Expr();
 	
 	
 	
 }
+/*
 
 //Production VarDecl ::== type Id
 function parse_VarDecl(){
