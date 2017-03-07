@@ -101,6 +101,7 @@ var token = class{
 //scans through each character of input text, main function
 function lexer(){
 	
+	
 	document.getElementById("output").value = ' ';  //clear output screen
 	programCounter = 1; //start the program counter
 	currLineNumber = 1; //start the line number

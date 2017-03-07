@@ -29,7 +29,7 @@ function initParseToken(){
 function matchSpecChars(token,pos,parentValue){ //matches brackets, quotes, parens etc.
 
 
-console.log('character compared ' + tokenstream[pos][0]);
+console.log('character compared ' + tokenstream[pos][0] + ' with current token ' + token);
 	if (token == tokenstream[pos][0]){		
 		//add leaf node
 		addLeafNode(token,parentValue); //finish branch with matched token
@@ -44,6 +44,7 @@ console.log('character compared ' + tokenstream[pos][0]);
 	}
 	
 }
+
 
 function addBranchNode(branchName,parentValue){
 	//var idtoken = new token(tokeninstall, "identifier", currLineNumber);// build token
@@ -107,12 +108,12 @@ function parse_Block(){
 function parse_StatementList(){
 	addBranchNode('StatementList',parentCounter);
 
-	console.log('nextToken ' + nextTokenType);
-	console.log('parseBeingCount ' + parseCounter);
+	
+
 	var temp = tokenstream[(parseCounter)][1]; //check type of token
-	console.log('this is the temp var' + temp);
-	if (temp == 'keyword' || temp == 'identifier'  ){ //if next token is a statment
-		console.log('hey');	
+
+	if (temp == 'keyword' || temp == 'identifier' || temp == 'type' ){ //if next token is a statment
+		
 		
 		
 		parse_Statement(); 
@@ -140,36 +141,36 @@ function parse_StatementList(){
 //          			::== Block
 
 function parse_Statement(){
-	console.log("added statment branch");
+
 	addBranchNode('Statement',parentCounter);
 	
-	var tempDesc = tokenstream[lookAhead][0]; //check desc of token
-	var tempType = tokenstream[lookAhead][1]; //check type of token
-	console.log('this is the temp desc ' + tempDesc);
-	console.log('this is the temp type' + tempType);
+	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
+	var tempType = tokenstream[parseCounter][1]; //check type of token
+	console.log('this is the tempType in parse_statement' + tempType);
 	
 	if (tempDesc == ' print'){
 		parse_PrintStatement();
-		console.log('yo');
+
 				
 	}
 	else if(tempType == 'identifier'){
 		parse_AssignmentStatement();
 		
 	}
-	else if (nextToken == 'type'){
-		//parse_VarDecl();
+	else if (tempType == 'type'){
+		console.log('DEBUG: parse_statement type running');
+		parse_VarDecl();
 		
 	}
-	else if (nextToken == 'while'){
-		//parse_WhileStatement();
+	else if (tempDesc == ' while'){
+		parse_WhileStatement();
 		
 	}
-	else if (nextToken == 'if'){
-		//parse_IfStatement();
+	else if (tempDesc == ' if'){
+		parse_IfStatement();
 		
 	}
-	else if (nextToken == '{'){
+	else if (tempDesc == ' {'){
 		parse_Block();
 		
 	}
@@ -181,11 +182,11 @@ function parse_Statement(){
 //Production PrintStatement ::== print ( Expr ) 
 function parse_PrintStatement(){
 	addBranchNode('PrintStatement',parentCounter);
-	matchSpecChars('print',parseCounter,parentCounter);
+	matchSpecChars(' print',parseCounter,parentCounter);
 	parseCounter = parseCounter + 1;
 	matchSpecChars('(',parseCounter,parentCounter);
 	parseCounter = parseCounter + 1;
-	//parse_Expr(); test
+	parse_Expr(); 
 	matchSpecChars (')',parseCounter,parentCounter);
 	parseCounter = parseCounter + 1;
 	
@@ -197,17 +198,18 @@ function parse_PrintStatement(){
 function parse_AssignmentStatement(){
 	
 	parse_ID();
-	matchSpecChars('=',parseCounter,parentCounter);
+	matchSpecChars(' =',parseCounter,parentCounter);
 	parseCounter = parseCounter + 1;
-	//parse_Expr();
+	parse_Expr();
 	
 	
 	
 }
-/*
+
 
 //Production VarDecl ::== type Id
 function parse_VarDecl(){
+	console.log('DEBUG: parse_VarDecl running');
 	parse_type();
 	parse_ID();
 	
@@ -216,7 +218,8 @@ function parse_VarDecl(){
 
 //Production WhileStatement ::== while BooleanExpr Block
 function parse_WhileStatement(){
-	match('while');
+	matchSpecChars(' while',parseCounter,parentCounter);
+	parseCounter = parseCounter + 1;
 	parse_BooleanExpr();
 	parse_Block();
 	
@@ -224,7 +227,8 @@ function parse_WhileStatement(){
 
 //production IfStatement ::== if BooleanExpr Block
 function parse_IfStatement(){
-	match('if');
+	matchSpecChars(' if',parseCounter,parentCounter);
+	parseCounter = parseCounter + 1;
 	parse_BooleanExpr();
 	parse_Block();
 	
@@ -237,18 +241,20 @@ function parse_IfStatement(){
 //     ::== Id
 
 function parse_Expr(){
-	if(nextToken == digit){
+	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
+	var tempType = tokenstream[parseCounter][1]; //check type of token
+	if(tempType == 'digit'){
 		parse_IntExpr();
 		
 	}
-	else if (nextToken == "){
+	else if (tempDesc == ' "'){
 		parse_StringExpr();
 	}
-	else if (nextToken == '(' ){
+	else if (tempDesc == ' (' ){
 		parse_BooleanExpr();
 		
 	}
-	else if (nextToken == char ) {
+	else if (tempType == 'identifier' ) {
 		parse_ID();
 		
 	}
@@ -259,11 +265,14 @@ function parse_Expr(){
 //production IntExpr ::== digit intop Expr
 //					 ::== digit
 function parse_IntExpr(){
-	if (nextToken == digit){
-		match(digit);
+	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
+	var tempType = tokenstream[parseCounter][1]; //check type of token
+	if (tempType == 'digit'){
+		matchSpecChars(tempDesc,parseCounter,parentCounter);
+		parseCounter = parseCounter + 1;
 				
 	}
-	if (nextToken == +){
+	if (tempDesc == ' +'){
 		parse_intop();
 		parse_Expr();
 	}
@@ -273,9 +282,11 @@ function parse_IntExpr(){
 
 //production StringExpr ::== " CharList "
 function parse_StringExpr(){
-	match(");
+	matchSpecChars(' "',parseCounter,parentCounter);
+	parseCounter = parseCounter + 1;
 	parse_CharList();
-	match(");
+	matchSpecChars(' "',parseCounter,parentCounter);
+	parseCounter = parseCounter + 1;
 	
 }
 
@@ -283,8 +294,11 @@ function parse_StringExpr(){
 //						 ::== boolval
 
 function parse_BooleanExpr(){
-	if (nextToken == '('){
-		match('(');
+	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
+	var tempType = tokenstream[parseCounter][1]; //check type of token
+	if (tempDesc == ' ('){
+		matchSpecChars('(',parseCounter,parentCounter);
+		parseCounter = parseCounter + 1;
 		parse_Expr();
 		parse_boolop();
 		parse_Expr();
@@ -313,15 +327,19 @@ function parse_ID(){
 //					  ::== ε
 
 function parse_CharList(){
-	if (nextToken == char ){
+	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
+	var tempType = tokenstream[parseCounter][1]; //check type of token
+	if (tempType == 'string' ){
 		parse_char();
 		parse_CharList();
 	}
-	else if (nextToken == space ){
+	/*
+	else if (nextToken == space ){ //this is a problem
 		parse_space();
 		parse_CharList();
 		
 	}
+	*/
 	
 	else{
 		// e production
@@ -333,15 +351,21 @@ function parse_CharList(){
 //production type ::== int | string | boolean
 
 function parse_type(){
-	if (nextToken == int){
-		match(int);
+	console.log('DEBUG: parse_type running');
+	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
+	var tempType = tokenstream[parseCounter][1]; //check type of token
+	if (tempDesc == ' int'){
+		matchSpecChars(' int',parseCounter,parentCounter);
+		parseCounter = parseCounter + 1;
 	}
-	else if (nextToken == string){
-		match(string);
+	else if (tempDesc == ' string'){
+		matchSpecChars(' string',parseCounter,parentCounter);
+		parseCounter = parseCounter + 1;
 	}
-	else if (nextToken == boolean){
+	else if (nextToken == ' boolean'){
 		
-		match(boolean);
+		matchSpecChars(' boolean',parseCounter,parentCounter);
+		parseCounter = parseCounter + 1;
 	}
 	
 	
@@ -349,51 +373,70 @@ function parse_type(){
 
 //production char ::== a | b | c ... z
 function parse_char(){
-	match(letter);
+	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
+	var tempType = tokenstream[parseCounter][1]; //check type of token
+	matchSpecChars(tempDesc,parseCounter,parentCounter);
+	parseCounter = parseCounter + 1;
 	
 	
 }
 
 //production space ::== the space character
+/*
 function parse_space(){
 	match(space);
 	
 }
+*/
 
 //production digit ::== 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0
 function parse_digit(){
-	match(digit);
+	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
+	var tempType = tokenstream[parseCounter][1]; //check type of token
+	matchSpecChars('tempDesc',parseCounter,parentCounter);
+	parseCounter = parseCounter + 1;
 }
 
 //production boolop ::== == | !=
 
 function parse_boolop(){
-	if (nextToken == '=='){
-		match ('==');
+	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
+	var tempType = tokenstream[parseCounter][1]; //check type of token
+	if (tempDesc == ' =='){
+		matchSpecChars('==',parseCounter,parentCounter);
+		parseCounter = parseCounter + 1;
 	}
-	else if (nextToken == '!='){
-		match('!=');
+	else if (tempDesc == ' !='){
+		matchSpecChars('!=',parseCounter,parentCounter);
+		parseCounter = parseCounter + 1;
 	}
 	
 }
 
 //production boolval ::== false | true
 function parse_boolval(){
-	if (nextToken == 'false'){
-		match('false');
+	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
+	var tempType = tokenstream[parseCounter][1]; //check type of token
+	if (tempDesc == ' false'){
+		matchSpecChars('false',parseCounter,parentCounter);
+		parseCounter = parseCounter + 1;
 	}
-	else if (nextToken == 'true'){
-		match('true');
+	else if (tempDesc == 'true'){
+		matchSpecChars('true',parseCounter,parentCounter);
+		parseCounter = parseCounter + 1;
 	}
 	
 }
 
 //production intop ::== +
 function parse_intop(){
-	match(+);
+	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
+	var tempType = tokenstream[parseCounter][1]; //check type of token
+	matchSpecChars('+',parseCounter,parentCounter);
+	parseCounter = parseCounter + 1;
 	
 }
-*/
+
 
 
 
