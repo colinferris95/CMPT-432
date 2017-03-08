@@ -12,6 +12,7 @@ var lookAhead = parseCounter + 1;
 var nextToken; 
 var nextTokenType;
 var parentCounter = 0;
+var tokenID = 0;
 
 // ex tokenstream[lexemeCount][0]
 function initParseToken(){
@@ -46,19 +47,21 @@ console.log('character compared ' + tokenstream[pos][0] + ' with current token '
 }
 
 
-function addBranchNode(branchName,parentValue){
+function addBranchNode(branchName,parentValue,id){
 	//var idtoken = new token(tokeninstall, "identifier", currLineNumber);// build token
 	//tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array	
 
-	CST.push([branchName,parentValue,'tempChildren']);
+	CST.push(['name: ' + branchName,'parent ' +parentValue,'tempChildren',tokenID]);
+	tokenID ++;
 	
 	
 }
 
 
-function addLeafNode(leafName,parentValue){
+function addLeafNode(leafName,parentValue,id){
 
-	CST.push([leafName,parentValue,'tempChildren']);
+	CST.push(['name: ' + leafName,'parent ' + parentValue,'tempChildren',tokenID]);
+	tokenID ++;
 	
 }
 
@@ -75,8 +78,9 @@ function parser(){
 
 function parse_Program(){
 	addBranchNode('program',null); // start tree with program branch 
-	parse_Block(); 
-	matchSpecChars('$',(tokenstream.length - 1),parentCounter); // match EOP symbol after
+	var program_parent = CST[tokenID - 1][0];
+	parse_Block(program_parent); 
+	matchSpecChars('$',(tokenstream.length - 1),program_parent); // match EOP symbol after
 	
 	
 	
@@ -87,14 +91,23 @@ function parse_Program(){
 
 //production Block ::== { StatementList }
 
-function parse_Block(){
-	addBranchNode('block',parentCounter); //add to tree block 
+function parse_Block(parentArg){
 	
-	matchSpecChars('{',0,parentCounter);
+	
+	addBranchNode('block',parentArg); //add to tree block 
+	
+	
+	var block_parent = CST[tokenID - 1][0];
+	
+	console.log('test var block_parent  ' + block_parent);
+	
+	matchSpecChars('{',0,block_parent);
 	parseCounter = parseCounter + 1;
-	parse_StatementList(); 
+	
+	parse_StatementList(block_parent); 
+	
 	parseEndTokenCount = parseEndTokenCount - 1;
-	matchSpecChars('}',parseEndTokenCount,parentCounter);
+	matchSpecChars('}',parseEndTokenCount,block_parent);
 	
 	
 	
@@ -105,9 +118,9 @@ function parse_Block(){
 
 //production StatementList ::== Statement StatementList
 //					       ::== e
-function parse_StatementList(){
-	addBranchNode('StatementList',parentCounter);
-
+function parse_StatementList(parentArg){
+	addBranchNode('StatementList',parentArg);
+	var statementList_parent = CST[tokenID - 1][0];
 	
 
 	var temp = tokenstream[(parseCounter)][1]; //check type of token
@@ -116,8 +129,8 @@ function parse_StatementList(){
 		
 		
 		
-		parse_Statement(); 
-		parse_StatementList();
+		parse_Statement(statementList_parent); 
+		parse_StatementList(statementList_parent);
 		
 		
 		
@@ -140,38 +153,39 @@ function parse_StatementList(){
 //          			::== IfStatement
 //          			::== Block
 
-function parse_Statement(){
+function parse_Statement(parentArg){
 
-	addBranchNode('Statement',parentCounter);
+	addBranchNode('Statement',parentArg);
+	var statement_parent = CST[tokenID - 1][0];
 	
 	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
 	var tempType = tokenstream[parseCounter][1]; //check type of token
-	console.log('this is the tempType in parse_statement' + tempType);
+	
 	
 	if (tempDesc == ' print'){
-		parse_PrintStatement();
+		parse_PrintStatement(statement_parent);
 
 				
 	}
 	else if(tempType == 'identifier'){
-		parse_AssignmentStatement();
+		parse_AssignmentStatement(statement_parent);
 		
 	}
 	else if (tempType == 'type'){
-		console.log('DEBUG: parse_statement type running');
-		parse_VarDecl();
+		
+		parse_VarDecl(statement_parent);
 		
 	}
 	else if (tempDesc == ' while'){
-		parse_WhileStatement();
+		parse_WhileStatement(statement_parent);
 		
 	}
 	else if (tempDesc == ' if'){
-		parse_IfStatement();
+		parse_IfStatement(statement_parent);
 		
 	}
 	else if (tempDesc == ' {'){
-		parse_Block();
+		parse_Block(statement_parent);
 		
 	}
 	
@@ -180,14 +194,15 @@ function parse_Statement(){
 }
 
 //Production PrintStatement ::== print ( Expr ) 
-function parse_PrintStatement(){
-	addBranchNode('PrintStatement',parentCounter);
-	matchSpecChars(' print',parseCounter,parentCounter);
+function parse_PrintStatement(parentArg){
+	addBranchNode('PrintStatement',parentArg);
+	var print_parent = CST[tokenID - 1][0];
+	matchSpecChars(' print',parseCounter,print_parent);
 	parseCounter = parseCounter + 1;
-	matchSpecChars('(',parseCounter,parentCounter);
+	matchSpecChars('(',parseCounter,print_parent);
 	parseCounter = parseCounter + 1;
-	parse_Expr(); 
-	matchSpecChars (')',parseCounter,parentCounter);
+	parse_Expr(print_parent); 
+	matchSpecChars (')',parseCounter,print_parent);
 	parseCounter = parseCounter + 1;
 	
 	
@@ -195,12 +210,13 @@ function parse_PrintStatement(){
 
 
 //Production AssignmentStatement ::== Id = Expr
-function parse_AssignmentStatement(){
-	
-	parse_ID();
-	matchSpecChars(' =',parseCounter,parentCounter);
+function parse_AssignmentStatement(parentArg){
+	addBranchNode('AssignmentStatement',parentArg);
+	var assign_parent = CST[tokenID - 1][0];
+	parse_ID(assign_parent);
+	matchSpecChars(' =',parseCounter,assign_parent);
 	parseCounter = parseCounter + 1;
-	parse_Expr();
+	parse_Expr(assign_parent);
 	
 	
 	
@@ -208,29 +224,34 @@ function parse_AssignmentStatement(){
 
 
 //Production VarDecl ::== type Id
-function parse_VarDecl(){
-	console.log('DEBUG: parse_VarDecl running');
-	parse_type();
-	parse_ID();
+function parse_VarDecl(parentArg){
+	addBranchNode('VarDecl',parentArg);
+	var VarDecl_parent = CST[tokenID - 1][0];
+	parse_type(VarDecl_parent);
+	parse_ID(VarDecl_parent);
 	
 	
 }
 
 //Production WhileStatement ::== while BooleanExpr Block
-function parse_WhileStatement(){
-	matchSpecChars(' while',parseCounter,parentCounter);
+function parse_WhileStatement(parentArg){
+	addBranchNode('WhileStatement',parentArg);
+	var WhileStatement_parent = CST[tokenID - 1][0];
+	matchSpecChars(' while',parseCounter,WhileStatement_parent);
 	parseCounter = parseCounter + 1;
-	parse_BooleanExpr();
-	parse_Block();
+	parse_BooleanExpr(WhileStatement_parent);
+	parse_Block(WhileStatement_parent);
 	
 }
 
 //production IfStatement ::== if BooleanExpr Block
-function parse_IfStatement(){
-	matchSpecChars(' if',parseCounter,parentCounter);
+function parse_IfStatement(parentArg){
+	addBranchNode('IfStatment',parentArg);
+	var IfStatment_parent = CST[tokenID - 1][0];
+	matchSpecChars(' if',parseCounter,IfStatment_parent);
 	parseCounter = parseCounter + 1;
-	parse_BooleanExpr();
-	parse_Block();
+	parse_BooleanExpr(IfStatment_parent);
+	parse_Block(IfStatment_parent);
 	
 	
 }
@@ -240,22 +261,25 @@ function parse_IfStatement(){
 //	   ::== BooleanExpr
 //     ::== Id
 
-function parse_Expr(){
+function parse_Expr(parentArg){
+	addBranchNode('Expr',parentArg);
+	var Expr_parent = CST[tokenID - 1][0];
+	
 	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
 	var tempType = tokenstream[parseCounter][1]; //check type of token
 	if(tempType == 'digit'){
-		parse_IntExpr();
+		parse_IntExpr(Expr_parent);
 		
 	}
 	else if (tempDesc == ' "'){
-		parse_StringExpr();
+		parse_StringExpr(Expr_parent);
 	}
 	else if (tempDesc == ' (' ){
-		parse_BooleanExpr();
+		parse_BooleanExpr(Expr_parent);
 		
 	}
 	else if (tempType == 'identifier' ) {
-		parse_ID();
+		parse_ID(Expr_parent);
 		
 	}
 	
@@ -264,28 +288,34 @@ function parse_Expr(){
 
 //production IntExpr ::== digit intop Expr
 //					 ::== digit
-function parse_IntExpr(){
+function parse_IntExpr(parentArg){
+	addBranchNode('IntExpr',parentArg);
+	var IntExpr_parent = CST[tokenID - 1][0];
+	
 	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
 	var tempType = tokenstream[parseCounter][1]; //check type of token
 	if (tempType == 'digit'){
-		matchSpecChars(tempDesc,parseCounter,parentCounter);
+		matchSpecChars(tempDesc,parseCounter,IntExpr_parent);
 		parseCounter = parseCounter + 1;
 				
 	}
 	if (tempDesc == ' +'){
-		parse_intop();
-		parse_Expr();
+		parse_intop(IntExpr_parent);
+		parse_Expr(IntExpr_parent);
 	}
 	
 	
 }
 
 //production StringExpr ::== " CharList "
-function parse_StringExpr(){
-	matchSpecChars(' "',parseCounter,parentCounter);
+function parse_StringExpr(parentArg){
+	addBranchNode('StringExpr',parentArg);
+	var StringExpr_parent = CST[tokenID - 1][0];
+	
+	matchSpecChars(' "',parseCounter,StringExpr_parent);
 	parseCounter = parseCounter + 1;
-	parse_CharList();
-	matchSpecChars(' "',parseCounter,parentCounter);
+	parse_CharList(StringExpr_parent);
+	matchSpecChars(' "',parseCounter,StringExpr_parent);
 	parseCounter = parseCounter + 1;
 	
 }
@@ -293,20 +323,23 @@ function parse_StringExpr(){
 //production BooleanExpr ::== ( Expr boolop Expr )
 //						 ::== boolval
 
-function parse_BooleanExpr(){
+function parse_BooleanExpr(parentArg){
+	addBranchNode('BooleanExpr',parentArg);
+	var BooleanExpr_parent = CST[tokenID - 1][0];
+	
 	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
 	var tempType = tokenstream[parseCounter][1]; //check type of token
 	if (tempDesc == ' ('){
-		matchSpecChars('(',parseCounter,parentCounter);
+		matchSpecChars('(',parseCounter,BooleanExpr_parent);
 		parseCounter = parseCounter + 1;
-		parse_Expr();
-		parse_boolop();
-		parse_Expr();
+		parse_Expr(BooleanExpr_parent);
+		parse_boolop(BooleanExpr_parent);
+		parse_Expr(BooleanExpr_parent);
 		
 		
 	}
 	else{
-		parse_boolval();
+		parse_boolval(BooleanExpr_parent);
 		
 	}
 	
@@ -315,9 +348,10 @@ function parse_BooleanExpr(){
 
 //production Id ::== char
 
-function parse_ID(){
-	
-	parse_char();
+function parse_ID(parentArg){
+	addBranchNode('ID',parentArg);
+	var ID_parent = CST[tokenID - 1][0];
+	parse_char(ID_parent);
 	
 	
 }
@@ -326,12 +360,15 @@ function parse_ID(){
 //					  ::== space CharList
 //					  ::== ε
 
-function parse_CharList(){
+function parse_CharList(parentArg){
+	addBranchNode('CharList',parentArg);
+	var CharList_parent = CST[tokenID - 1][0];
+	
 	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
 	var tempType = tokenstream[parseCounter][1]; //check type of token
 	if (tempType == 'string' ){
-		parse_char();
-		parse_CharList();
+		parse_char(CharList_parent);
+		parse_CharList(CharList_parent);
 	}
 	/*
 	else if (nextToken == space ){ //this is a problem
@@ -350,21 +387,23 @@ function parse_CharList(){
 
 //production type ::== int | string | boolean
 
-function parse_type(){
-	console.log('DEBUG: parse_type running');
+function parse_type(parentArg){
+	addBranchNode('type',parentArg);
+	var type_parent = CST[tokenID - 1][0];
+
 	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
 	var tempType = tokenstream[parseCounter][1]; //check type of token
 	if (tempDesc == ' int'){
-		matchSpecChars(' int',parseCounter,parentCounter);
+		matchSpecChars(' int',parseCounter,type_parent);
 		parseCounter = parseCounter + 1;
 	}
 	else if (tempDesc == ' string'){
-		matchSpecChars(' string',parseCounter,parentCounter);
+		matchSpecChars(' string',parseCounter,type_parent);
 		parseCounter = parseCounter + 1;
 	}
 	else if (nextToken == ' boolean'){
 		
-		matchSpecChars(' boolean',parseCounter,parentCounter);
+		matchSpecChars(' boolean',parseCounter,type_parent);
 		parseCounter = parseCounter + 1;
 	}
 	
@@ -372,10 +411,13 @@ function parse_type(){
 }
 
 //production char ::== a | b | c ... z
-function parse_char(){
+function parse_char(parentArg){
+	addBranchNode('char',parentArg);
+	var char_parent = CST[tokenID - 1][0];
+	
 	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
 	var tempType = tokenstream[parseCounter][1]; //check type of token
-	matchSpecChars(tempDesc,parseCounter,parentCounter);
+	matchSpecChars(tempDesc,parseCounter,char_parent);
 	parseCounter = parseCounter + 1;
 	
 	
@@ -390,49 +432,61 @@ function parse_space(){
 */
 
 //production digit ::== 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0
-function parse_digit(){
+function parse_digit(parentArg){
+	addBranchNode('digit',parentArg);
+	var digit_parent = CST[tokenID - 1][0];
+	
 	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
 	var tempType = tokenstream[parseCounter][1]; //check type of token
-	matchSpecChars('tempDesc',parseCounter,parentCounter);
+	matchSpecChars('tempDesc',parseCounter,digit_parent);
 	parseCounter = parseCounter + 1;
 }
 
 //production boolop ::== == | !=
 
-function parse_boolop(){
+function parse_boolop(parentArg){
+	addBranchNode('boolop',parentArg);
+	var boolop_parent = CST[tokenID - 1][0];
+	
 	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
 	var tempType = tokenstream[parseCounter][1]; //check type of token
 	if (tempDesc == ' =='){
-		matchSpecChars('==',parseCounter,parentCounter);
+		matchSpecChars('==',parseCounter,boolop_parent);
 		parseCounter = parseCounter + 1;
 	}
 	else if (tempDesc == ' !='){
-		matchSpecChars('!=',parseCounter,parentCounter);
+		matchSpecChars('!=',parseCounter,boolop_parent);
 		parseCounter = parseCounter + 1;
 	}
 	
 }
 
 //production boolval ::== false | true
-function parse_boolval(){
+function parse_boolval(parentArg){
+	addBranchNode('boolval',parentArg);
+	var boolval_parent = CST[tokenID - 1][0];
+	
 	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
 	var tempType = tokenstream[parseCounter][1]; //check type of token
 	if (tempDesc == ' false'){
-		matchSpecChars('false',parseCounter,parentCounter);
+		matchSpecChars('false',parseCounter,boolval_parent);
 		parseCounter = parseCounter + 1;
 	}
 	else if (tempDesc == 'true'){
-		matchSpecChars('true',parseCounter,parentCounter);
+		matchSpecChars('true',parseCounter,boolval_parent);
 		parseCounter = parseCounter + 1;
 	}
 	
 }
 
 //production intop ::== +
-function parse_intop(){
+function parse_intop(parentArg){
+	addBranchNode('intop',parentArg);
+	var intop_parent = CST[tokenID - 1][0];
+	
 	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
 	var tempType = tokenstream[parseCounter][1]; //check type of token
-	matchSpecChars('+',parseCounter,parentCounter);
+	matchSpecChars('+',parseCounter,intop_parent);
 	parseCounter = parseCounter + 1;
 	
 }
