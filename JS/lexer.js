@@ -631,7 +631,7 @@ function isQuot(currentchar,forward,input){
 						
 						//forward++;//move the forward counter
 						
-						var idtoken = new token(tokeninstall, "close double quote", currLineNumber);// build token
+						var idtoken = new token(' "', "close double quote", currLineNumber);// build token
 						tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array			
 						console.log ('LEXER: ' + tokenstream[lexemeCount][1] + ' '+ tokenstream[lexemeCount][0]); //log the token (verbose mode)
 						document.getElementById("output").value += 'LEXER: Token found at line number '+ tokenstream[lexemeCount][2]+' "' + tokenstream[lexemeCount][0] + '" ----> '+ tokenstream[lexemeCount][1]   + '\n';

@@ -26,7 +26,6 @@ function initParseToken(){
 
 
 
-
 function matchSpecChars(token,pos,parentValue){ //matches brackets, quotes, parens etc.
 
 
@@ -36,6 +35,7 @@ console.log('character compared ' + tokenstream[pos][0] + ' with current token '
 		addLeafNode(token,parentValue); //finish branch with matched token
 		console.log('matched token ' + token);
 		console.log(CST);
+	
 		
 		
 	}
@@ -47,20 +47,20 @@ console.log('character compared ' + tokenstream[pos][0] + ' with current token '
 }
 
 
-function addBranchNode(branchName,parentValue,id){
+function addBranchNode(branchName,parentValue){
 	//var idtoken = new token(tokeninstall, "identifier", currLineNumber);// build token
 	//tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array	
-
-	CST.push(['name: ' + branchName,'parent ' +parentValue,'tempChildren',tokenID]);
+	//CST.push({name: branchName, parentName: parentValue, children: 'tempChildren', id: tokenID});
+	CST.push(['name: ' + branchName,'parent ' +parentValue,[],tokenID]);
 	tokenID ++;
 	
 	
 }
 
 
-function addLeafNode(leafName,parentValue,id){
-
-	CST.push(['name: ' + leafName,'parent ' + parentValue,'tempChildren',tokenID]);
+function addLeafNode(leafName,parentValue){
+	//CST.push({name: leafName, parentName: parentValue, children: 'tempChildren', id: tokenID});
+	CST.push(['name: ' + leafName,'parent ' + parentValue,[],tokenID]);
 	tokenID ++;
 	
 }
@@ -78,10 +78,21 @@ function parser(){
 
 function parse_Program(){
 	addBranchNode('program',null); // start tree with program branch 
+	/*
+	var branch = document.createElement("BUTTON");
+	var node = document.createTextNode('program');
+	branch.appendChild(node);
+	var element = document.getElementById('tree');
+	element.appendChild(branch);
+	*/
+	const program_id = tokenID - 1;
 	var program_parent = CST[tokenID - 1][0];
-	parse_Block(program_parent); 
-	matchSpecChars('$',(tokenstream.length - 1),program_parent); // match EOP symbol after
+	parse_Block(program_parent);
+	CST[program_id][2].push('child name: block, id : ' + (program_id + 1));
 	
+   	
+	matchSpecChars('$',(tokenstream.length - 1),program_parent); // match EOP symbol after
+	CST[program_id][2].push('child name: $, id : ' + (tokenID - 1));
 	
 	
 	
@@ -95,6 +106,7 @@ function parse_Block(parentArg){
 	
 	
 	addBranchNode('block',parentArg); //add to tree block 
+	
 	
 	
 	var block_parent = CST[tokenID - 1][0];
@@ -274,7 +286,7 @@ function parse_Expr(parentArg){
 	else if (tempDesc == ' "'){
 		parse_StringExpr(Expr_parent);
 	}
-	else if (tempDesc == ' (' ){
+	else if (tempDesc == ' (' || tempType == 'boolval'){
 		parse_BooleanExpr(Expr_parent);
 		
 	}
@@ -367,16 +379,14 @@ function parse_CharList(parentArg){
 	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
 	var tempType = tokenstream[parseCounter][1]; //check type of token
 	if (tempType == 'string' ){
-		parse_char(CharList_parent);
-		parse_CharList(CharList_parent);
+		//parse_char(CharList_parent);
+		//parse_CharList(CharList_parent);
+	
+		matchSpecChars(tempDesc,parseCounter,CharList_parent);
+		parseCounter = parseCounter + 1;
 	}
-	/*
-	else if (nextToken == space ){ //this is a problem
-		parse_space();
-		parse_CharList();
-		
-	}
-	*/
+	
+	
 	
 	else{
 		// e production
