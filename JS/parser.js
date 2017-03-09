@@ -35,6 +35,7 @@ console.log('character compared ' + tokenstream[pos][0] + ' with current token '
 		addLeafNode(token,parentValue); //finish branch with matched token
 		console.log('matched token ' + token);
 		console.log(CST);
+		document.getElementById("tree").innerHTML = CST;
 	
 		
 		
@@ -85,7 +86,7 @@ function parse_Program(){
 	var element = document.getElementById('tree');
 	element.appendChild(branch);
 	*/
-	const program_id = tokenID - 1;
+	var program_id = tokenID - 1;
 	var program_parent = CST[tokenID - 1][0];
 	parse_Block(program_parent);
 	CST[program_id][2].push('child name: block, id : ' + (program_id + 1));
@@ -108,18 +109,21 @@ function parse_Block(parentArg){
 	addBranchNode('block',parentArg); //add to tree block 
 	
 	
-	
+	var block_id = tokenID - 1;
 	var block_parent = CST[tokenID - 1][0];
 	
 	console.log('test var block_parent  ' + block_parent);
 	
 	matchSpecChars('{',0,block_parent);
+	CST[block_id][2].push('child name: {, id : ' + (block_id + 1));
 	parseCounter = parseCounter + 1;
 	
 	parse_StatementList(block_parent); 
+	CST[block_id][2].push('child name: StatementList, id : ' + (block_id + 2));
 	
 	parseEndTokenCount = parseEndTokenCount - 1;
 	matchSpecChars('}',parseEndTokenCount,block_parent);
+	CST[block_id][2].push('child name: }, id : ' + (tokenID - 1));
 	
 	
 	
@@ -132,6 +136,7 @@ function parse_Block(parentArg){
 //					       ::== e
 function parse_StatementList(parentArg){
 	addBranchNode('StatementList',parentArg);
+	var statementlist_id = tokenID - 1;
 	var statementList_parent = CST[tokenID - 1][0];
 	
 
@@ -142,7 +147,9 @@ function parse_StatementList(parentArg){
 		
 		
 		parse_Statement(statementList_parent); 
+		CST[statementlist_id][2].push('child name: Statement, id : ' + (statementlist_id + 1));
 		parse_StatementList(statementList_parent);
+		CST[statementlist_id][2].push('child name: StatementList, id : ' + (statementlist_id + 2));
 		
 		
 		
@@ -168,6 +175,7 @@ function parse_StatementList(parentArg){
 function parse_Statement(parentArg){
 
 	addBranchNode('Statement',parentArg);
+	var statement_id = tokenID - 1;
 	var statement_parent = CST[tokenID - 1][0];
 	
 	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
@@ -176,28 +184,34 @@ function parse_Statement(parentArg){
 	
 	if (tempDesc == ' print'){
 		parse_PrintStatement(statement_parent);
+		CST[statement_id][2].push('child name: Statement, id : ' + (statement_id + 1));
 
 				
 	}
 	else if(tempType == 'identifier'){
 		parse_AssignmentStatement(statement_parent);
+		CST[statement_id][2].push('child name: Statement, id : ' + (statement_id + 1));
 		
 	}
 	else if (tempType == 'type'){
 		
 		parse_VarDecl(statement_parent);
+		CST[statement_id][2].push('child name: Statement, id : ' + (statement_id + 1));
 		
 	}
 	else if (tempDesc == ' while'){
 		parse_WhileStatement(statement_parent);
+		CST[statement_id][2].push('child name: Statement, id : ' + (statement_id + 1));
 		
 	}
 	else if (tempDesc == ' if'){
 		parse_IfStatement(statement_parent);
+		CST[statement_id][2].push('child name: Statement, id : ' + (statement_id + 1));
 		
 	}
 	else if (tempDesc == ' {'){
 		parse_Block(statement_parent);
+		CST[statement_id][2].push('child name: Statement, id : ' + (statement_id + 1));
 		
 	}
 	
@@ -208,13 +222,21 @@ function parse_Statement(parentArg){
 //Production PrintStatement ::== print ( Expr ) 
 function parse_PrintStatement(parentArg){
 	addBranchNode('PrintStatement',parentArg);
+	var print_id = tokenID - 1;
 	var print_parent = CST[tokenID - 1][0];
+	
 	matchSpecChars(' print',parseCounter,print_parent);
+	CST[print_id][2].push('child name: print, id : ' + (print_id + 1));
 	parseCounter = parseCounter + 1;
+	
 	matchSpecChars('(',parseCounter,print_parent);
+	CST[print_id][2].push('child name: (, id : ' + (print_id + 2));
 	parseCounter = parseCounter + 1;
+	
 	parse_Expr(print_parent); 
+	CST[print_id][2].push('child name: Expr, id : ' + (print_id + 3));
 	matchSpecChars (')',parseCounter,print_parent);
+	CST[print_id][2].push('child name: ), id : ' + (print_id + 4));
 	parseCounter = parseCounter + 1;
 	
 	
@@ -224,11 +246,18 @@ function parse_PrintStatement(parentArg){
 //Production AssignmentStatement ::== Id = Expr
 function parse_AssignmentStatement(parentArg){
 	addBranchNode('AssignmentStatement',parentArg);
+	var assign_id = tokenID - 1;
 	var assign_parent = CST[tokenID - 1][0];
+	
 	parse_ID(assign_parent);
+	CST[assign_id][2].push('child name: ID, id : ' + (assign_id + 1));
+	
 	matchSpecChars(' =',parseCounter,assign_parent);
+	CST[assign_id][2].push('child name: =, id : ' + (assign_id + 2));
 	parseCounter = parseCounter + 1;
+	
 	parse_Expr(assign_parent);
+	CST[assign_id][2].push('child name: Expr, id : ' + (assign_id + 3));
 	
 	
 	
@@ -238,9 +267,15 @@ function parse_AssignmentStatement(parentArg){
 //Production VarDecl ::== type Id
 function parse_VarDecl(parentArg){
 	addBranchNode('VarDecl',parentArg);
+	var VarDecl_id = tokenID - 1;
 	var VarDecl_parent = CST[tokenID - 1][0];
+	
+	
 	parse_type(VarDecl_parent);
+	CST[VarDecl_id][2].push('child name: type, id : ' + (VarDecl_id + 1));
+	
 	parse_ID(VarDecl_parent);
+	CST[VarDecl_id][2].push('child name: ID, id : ' + (VarDecl_id + 2));
 	
 	
 }
@@ -248,22 +283,36 @@ function parse_VarDecl(parentArg){
 //Production WhileStatement ::== while BooleanExpr Block
 function parse_WhileStatement(parentArg){
 	addBranchNode('WhileStatement',parentArg);
+	var WhileStatement_id = tokenID - 1;
 	var WhileStatement_parent = CST[tokenID - 1][0];
+	
 	matchSpecChars(' while',parseCounter,WhileStatement_parent);
+	CST[WhileStatement_id][2].push('child name: while, id : ' + (WhileStatement_id + 1));
 	parseCounter = parseCounter + 1;
+	
 	parse_BooleanExpr(WhileStatement_parent);
+	CST[WhileStatement_id][2].push('child name: BooleanExpr, id : ' + (WhileStatement_id + 2));
+	
 	parse_Block(WhileStatement_parent);
+	CST[WhileStatement_id][2].push('child name: Block, id : ' + (WhileStatement_id + 3));
 	
 }
 
 //production IfStatement ::== if BooleanExpr Block
 function parse_IfStatement(parentArg){
 	addBranchNode('IfStatment',parentArg);
+	var IfStatement_id = tokenID - 1;
 	var IfStatment_parent = CST[tokenID - 1][0];
+	
 	matchSpecChars(' if',parseCounter,IfStatment_parent);
+	CST[IfStatement_id][2].push('child name: if, id : ' + (IfStatement_id + 1));
 	parseCounter = parseCounter + 1;
+	
 	parse_BooleanExpr(IfStatment_parent);
+	CST[IfStatement_id][2].push('child name: BooleanExpr, id : ' + (IfStatement_id + 2));
+	
 	parse_Block(IfStatment_parent);
+	CST[IfStatement_id][2].push('child name: Block, id : ' + (IfStatement_id + 3));
 	
 	
 }
@@ -275,23 +324,28 @@ function parse_IfStatement(parentArg){
 
 function parse_Expr(parentArg){
 	addBranchNode('Expr',parentArg);
+	var Expr_id = tokenID - 1;
 	var Expr_parent = CST[tokenID - 1][0];
 	
 	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
 	var tempType = tokenstream[parseCounter][1]; //check type of token
 	if(tempType == 'digit'){
 		parse_IntExpr(Expr_parent);
+		CST[Expr_id][2].push('child name: IntExpr, id : ' + (Expr_id + 1));
 		
 	}
 	else if (tempDesc == ' "'){
 		parse_StringExpr(Expr_parent);
+		CST[Expr_id][2].push('child name: StringExpr, id : ' + (Expr_id + 1));
 	}
 	else if (tempDesc == ' (' || tempType == 'boolval'){
 		parse_BooleanExpr(Expr_parent);
+		CST[Expr_id][2].push('child name: BooleanExpr, id : ' + (Expr_id + 1));
 		
 	}
 	else if (tempType == 'identifier' ) {
 		parse_ID(Expr_parent);
+		CST[Expr_id][2].push('child name: ID, id : ' + (Expr_id + 1));
 		
 	}
 	
@@ -302,18 +356,22 @@ function parse_Expr(parentArg){
 //					 ::== digit
 function parse_IntExpr(parentArg){
 	addBranchNode('IntExpr',parentArg);
+	var IntExpr_id = tokenID - 1;
 	var IntExpr_parent = CST[tokenID - 1][0];
 	
 	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
 	var tempType = tokenstream[parseCounter][1]; //check type of token
 	if (tempType == 'digit'){
 		matchSpecChars(tempDesc,parseCounter,IntExpr_parent);
+		CST[IntExpr_id][2].push('child name: ' + tempDesc + ', id : ' + (IntExpr_id + 1));
 		parseCounter = parseCounter + 1;
 				
 	}
 	if (tempDesc == ' +'){
 		parse_intop(IntExpr_parent);
+		CST[IntExpr_id][2].push('child name: intop, id : ' + (IntExpr_id + 2));
 		parse_Expr(IntExpr_parent);
+		CST[IntExpr_id][2].push('child name: Expr, id : ' + (IntExpr_id + 3));
 	}
 	
 	
@@ -322,12 +380,18 @@ function parse_IntExpr(parentArg){
 //production StringExpr ::== " CharList "
 function parse_StringExpr(parentArg){
 	addBranchNode('StringExpr',parentArg);
+	var StringExpr_id = tokenID - 1;
 	var StringExpr_parent = CST[tokenID - 1][0];
 	
 	matchSpecChars(' "',parseCounter,StringExpr_parent);
+	CST[StringExpr_id][2].push('child name: StringExpr, id : ' + (StringExpr_id + 1));
 	parseCounter = parseCounter + 1;
+	
 	parse_CharList(StringExpr_parent);
+	CST[StringExpr_id][2].push('child name: CharList, id : ' + (StringExpr_id + 2));
+	
 	matchSpecChars(' "',parseCounter,StringExpr_parent);
+	CST[StringExpr_id][2].push('child name: ", id : ' + (StringExpr_id + 3));
 	parseCounter = parseCounter + 1;
 	
 }
@@ -337,21 +401,30 @@ function parse_StringExpr(parentArg){
 
 function parse_BooleanExpr(parentArg){
 	addBranchNode('BooleanExpr',parentArg);
+	var BooleanExpr_id = tokenID - 1;
 	var BooleanExpr_parent = CST[tokenID - 1][0];
 	
 	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
 	var tempType = tokenstream[parseCounter][1]; //check type of token
 	if (tempDesc == ' ('){
 		matchSpecChars('(',parseCounter,BooleanExpr_parent);
+		CST[BooleanExpr_id][2].push('child name: (, id : ' + (BooleanExpr_id + 1));
 		parseCounter = parseCounter + 1;
+		
 		parse_Expr(BooleanExpr_parent);
+		CST[BooleanExpr_id][2].push('child name: Expr, id : ' + (BooleanExpr_id + 2));
+		
 		parse_boolop(BooleanExpr_parent);
+		CST[BooleanExpr_id][2].push('child name: BooleanExpr, id : ' + (BooleanExpr_id + 3));
+		
 		parse_Expr(BooleanExpr_parent);
+		CST[BooleanExpr_id][2].push('child name: BooleanExpr, id : ' + (BooleanExpr_id + 4));
 		
 		
 	}
 	else{
 		parse_boolval(BooleanExpr_parent);
+		CST[BooleanExpr_id][2].push('child name: BoolVal, id : ' + (BooleanExpr_id + 1));
 		
 	}
 	
@@ -362,8 +435,11 @@ function parse_BooleanExpr(parentArg){
 
 function parse_ID(parentArg){
 	addBranchNode('ID',parentArg);
+	var ID_id = tokenID - 1;
 	var ID_parent = CST[tokenID - 1][0];
+	
 	parse_char(ID_parent);
+	CST[ID_id][2].push('child name: char, id : ' + (ID_id + 1));
 	
 	
 }
@@ -374,6 +450,7 @@ function parse_ID(parentArg){
 
 function parse_CharList(parentArg){
 	addBranchNode('CharList',parentArg);
+	var CharList_id = tokenID - 1;
 	var CharList_parent = CST[tokenID - 1][0];
 	
 	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
@@ -383,6 +460,7 @@ function parse_CharList(parentArg){
 		//parse_CharList(CharList_parent);
 	
 		matchSpecChars(tempDesc,parseCounter,CharList_parent);
+		CST[CharList_id][2].push('child name: ' + tempDesc + ', id : ' + (CharList_id + 1));
 		parseCounter = parseCounter + 1;
 	}
 	
@@ -399,21 +477,25 @@ function parse_CharList(parentArg){
 
 function parse_type(parentArg){
 	addBranchNode('type',parentArg);
+	var type_id = tokenID - 1;
 	var type_parent = CST[tokenID - 1][0];
 
 	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
 	var tempType = tokenstream[parseCounter][1]; //check type of token
 	if (tempDesc == ' int'){
 		matchSpecChars(' int',parseCounter,type_parent);
+		CST[type_id][2].push('child name: type, id : ' + (type_id + 1));
 		parseCounter = parseCounter + 1;
 	}
 	else if (tempDesc == ' string'){
 		matchSpecChars(' string',parseCounter,type_parent);
+		CST[type_id][2].push('child name: string, id : ' + (type_id + 1));
 		parseCounter = parseCounter + 1;
 	}
 	else if (nextToken == ' boolean'){
 		
 		matchSpecChars(' boolean',parseCounter,type_parent);
+		CST[type_id][2].push('child name: boolean, id : ' + (type_id + 1));
 		parseCounter = parseCounter + 1;
 	}
 	
@@ -423,11 +505,13 @@ function parse_type(parentArg){
 //production char ::== a | b | c ... z
 function parse_char(parentArg){
 	addBranchNode('char',parentArg);
+	var char_id = tokenID - 1;
 	var char_parent = CST[tokenID - 1][0];
 	
 	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
 	var tempType = tokenstream[parseCounter][1]; //check type of token
 	matchSpecChars(tempDesc,parseCounter,char_parent);
+	CST[char_id][2].push('child name: char, id : ' + (char_id + 1));
 	parseCounter = parseCounter + 1;
 	
 	
@@ -444,11 +528,13 @@ function parse_space(){
 //production digit ::== 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0
 function parse_digit(parentArg){
 	addBranchNode('digit',parentArg);
+	var digit_id = tokenID - 1;
 	var digit_parent = CST[tokenID - 1][0];
 	
 	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
 	var tempType = tokenstream[parseCounter][1]; //check type of token
-	matchSpecChars('tempDesc',parseCounter,digit_parent);
+	matchSpecChars(tempDesc,parseCounter,digit_parent);
+	CST[digit_id][2].push('child name: ' + tempDesc + ', id : ' + (digit_id + 1));
 	parseCounter = parseCounter + 1;
 }
 
@@ -456,16 +542,19 @@ function parse_digit(parentArg){
 
 function parse_boolop(parentArg){
 	addBranchNode('boolop',parentArg);
+	var boolop_id = tokenID - 1;
 	var boolop_parent = CST[tokenID - 1][0];
 	
 	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
 	var tempType = tokenstream[parseCounter][1]; //check type of token
 	if (tempDesc == ' =='){
 		matchSpecChars('==',parseCounter,boolop_parent);
+		CST[boolop_id][2].push('child name:  ==, id : ' + (boolop_id + 1));
 		parseCounter = parseCounter + 1;
 	}
 	else if (tempDesc == ' !='){
 		matchSpecChars('!=',parseCounter,boolop_parent);
+		CST[boolop_id][2].push('child name:  !=, id : ' + (boolop_id + 1));
 		parseCounter = parseCounter + 1;
 	}
 	
@@ -474,16 +563,19 @@ function parse_boolop(parentArg){
 //production boolval ::== false | true
 function parse_boolval(parentArg){
 	addBranchNode('boolval',parentArg);
+	var boolval_id = tokenID - 1;
 	var boolval_parent = CST[tokenID - 1][0];
 	
 	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
 	var tempType = tokenstream[parseCounter][1]; //check type of token
 	if (tempDesc == ' false'){
 		matchSpecChars('false',parseCounter,boolval_parent);
+		CST[boolval_id][2].push('child name:  false, id : ' + (boolval_id + 1));
 		parseCounter = parseCounter + 1;
 	}
 	else if (tempDesc == 'true'){
 		matchSpecChars('true',parseCounter,boolval_parent);
+		CST[boolval_id][2].push('child name:  true, id : ' + (boolval_id + 1));
 		parseCounter = parseCounter + 1;
 	}
 	
@@ -492,11 +584,13 @@ function parse_boolval(parentArg){
 //production intop ::== +
 function parse_intop(parentArg){
 	addBranchNode('intop',parentArg);
+	var intop_id = tokenID - 1;
 	var intop_parent = CST[tokenID - 1][0];
 	
 	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
 	var tempType = tokenstream[parseCounter][1]; //check type of token
 	matchSpecChars('+',parseCounter,intop_parent);
+	CST[intop_id][2].push('child name:  +, id : ' + (intop_id + 1));
 	parseCounter = parseCounter + 1;
 	
 }
