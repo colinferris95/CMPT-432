@@ -14,12 +14,17 @@ var nextTokenType;
 var parentCounter = 0;
 var tokenID = 0;
 
-// ex tokenstream[lexemeCount][0]
+
+	
+
+
+
+// ex tokenstreamCOPY[lexemeCount][0]
 function initParseToken(){
 	
-		parseEndTokenCount = tokenstream.length - 1;
-		nextToken = tokenstream[lookAhead][0];
-		nextTokenType = tokenstream[lookAhead][1];
+		parseEndTokenCount = tokenstreamCOPY.length - 1;
+		nextToken = tokenstreamCOPY[lookAhead][0];
+		nextTokenType = tokenstreamCOPY[lookAhead][1];
 	
 	
 }
@@ -29,19 +34,35 @@ function initParseToken(){
 function matchSpecChars(token,pos,parentValue){ //matches brackets, quotes, parens etc.
 
 
-console.log('character compared ' + tokenstream[pos][0] + ' with current token ' + token);
-	if (token == tokenstream[pos][0]){		
+console.log('character compared ' + tokenstreamCOPY[pos][0] + ' with current token ' + token);
+	if (token == tokenstreamCOPY[pos][0]){		
 		//add leaf node
 		addLeafNode(token,parentValue); //finish branch with matched token
+		document.getElementById("tree").value += 'matched token ' + token + '\n';
 		console.log('matched token ' + token);
 		console.log(CST);
-		document.getElementById("tree").innerHTML = CST;
+		
+		/*
+		console.log(tokenstreamCOPY[(parseCounter + 1)]);
+		
+		
+		if (tokenstreamCOPY[(parseCounter+1)] == undefined){
+		console.log(CST);
+		document.getElementById("tree").value = CST;
+		CST = [];
+		tokenID = 0;
+		parseCounter =0;
+		lookAhead = parseCounter + 1;
+		}
+		*/
 	
 		
 		
 	}
 	else{
-		console.log('ERROR: token ' + token + ' was not matched'); 
+		document.getElementById("tree").value += 'ERROR: token ' + tokenstreamCOPY[pos][0] + ' was not matched, expecting ' + token  + '\n';
+		console.log('ERROR: token ' + tokenstreamCOPY[pos][0] + ' was not matched, expecting ' + token ); 
+		console.log(CST);
 		
 	}
 	
@@ -50,7 +71,7 @@ console.log('character compared ' + tokenstream[pos][0] + ' with current token '
 
 function addBranchNode(branchName,parentValue){
 	//var idtoken = new token(tokeninstall, "identifier", currLineNumber);// build token
-	//tokenstream.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array	
+	//tokenstreamCOPY.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array	
 	//CST.push({name: branchName, parentName: parentValue, children: 'tempChildren', id: tokenID});
 	CST.push(['name: ' + branchName,'parent ' +parentValue,[],tokenID]);
 	tokenID ++;
@@ -92,7 +113,7 @@ function parse_Program(){
 	CST[program_id][2].push('child name: block, id : ' + (program_id + 1));
 	
    	
-	matchSpecChars('$',(tokenstream.length - 1),program_parent); // match EOP symbol after
+	matchSpecChars('$',(tokenstreamCOPY.length - 1),program_parent); // match EOP symbol after
 	CST[program_id][2].push('child name: $, id : ' + (tokenID - 1));
 	
 	
@@ -124,6 +145,7 @@ function parse_Block(parentArg){
 	parseEndTokenCount = parseEndTokenCount - 1;
 	matchSpecChars('}',parseEndTokenCount,block_parent);
 	CST[block_id][2].push('child name: }, id : ' + (tokenID - 1));
+	parseCounter = parseCounter + 1;
 	
 	
 	
@@ -140,7 +162,7 @@ function parse_StatementList(parentArg){
 	var statementList_parent = CST[tokenID - 1][0];
 	
 
-	var temp = tokenstream[(parseCounter)][1]; //check type of token
+	var temp = tokenstreamCOPY[(parseCounter)][1]; //check type of token
 
 	if (temp == 'keyword' || temp == 'identifier' || temp == 'type' ){ //if next token is a statment
 		
@@ -178,8 +200,8 @@ function parse_Statement(parentArg){
 	var statement_id = tokenID - 1;
 	var statement_parent = CST[tokenID - 1][0];
 	
-	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
-	var tempType = tokenstream[parseCounter][1]; //check type of token
+	var tempDesc = tokenstreamCOPY[parseCounter][0]; //check desc of token
+	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
 	
 	
 	if (tempDesc == ' print'){
@@ -214,6 +236,7 @@ function parse_Statement(parentArg){
 		CST[statement_id][2].push('child name: Statement, id : ' + (statement_id + 1));
 		
 	}
+	
 	
 	
 	
@@ -327,8 +350,8 @@ function parse_Expr(parentArg){
 	var Expr_id = tokenID - 1;
 	var Expr_parent = CST[tokenID - 1][0];
 	
-	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
-	var tempType = tokenstream[parseCounter][1]; //check type of token
+	var tempDesc = tokenstreamCOPY[parseCounter][0]; //check desc of token
+	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
 	if(tempType == 'digit'){
 		parse_IntExpr(Expr_parent);
 		CST[Expr_id][2].push('child name: IntExpr, id : ' + (Expr_id + 1));
@@ -349,6 +372,9 @@ function parse_Expr(parentArg){
 		
 	}
 	
+		
+		
+	
 	
 }
 
@@ -359,8 +385,8 @@ function parse_IntExpr(parentArg){
 	var IntExpr_id = tokenID - 1;
 	var IntExpr_parent = CST[tokenID - 1][0];
 	
-	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
-	var tempType = tokenstream[parseCounter][1]; //check type of token
+	var tempDesc = tokenstreamCOPY[parseCounter][0]; //check desc of token
+	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
 	if (tempType == 'digit'){
 		matchSpecChars(tempDesc,parseCounter,IntExpr_parent);
 		CST[IntExpr_id][2].push('child name: ' + tempDesc + ', id : ' + (IntExpr_id + 1));
@@ -404,8 +430,8 @@ function parse_BooleanExpr(parentArg){
 	var BooleanExpr_id = tokenID - 1;
 	var BooleanExpr_parent = CST[tokenID - 1][0];
 	
-	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
-	var tempType = tokenstream[parseCounter][1]; //check type of token
+	var tempDesc = tokenstreamCOPY[parseCounter][0]; //check desc of token
+	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
 	if (tempDesc == ' ('){
 		matchSpecChars('(',parseCounter,BooleanExpr_parent);
 		CST[BooleanExpr_id][2].push('child name: (, id : ' + (BooleanExpr_id + 1));
@@ -453,8 +479,8 @@ function parse_CharList(parentArg){
 	var CharList_id = tokenID - 1;
 	var CharList_parent = CST[tokenID - 1][0];
 	
-	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
-	var tempType = tokenstream[parseCounter][1]; //check type of token
+	var tempDesc = tokenstreamCOPY[parseCounter][0]; //check desc of token
+	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
 	if (tempType == 'string' ){
 		//parse_char(CharList_parent);
 		//parse_CharList(CharList_parent);
@@ -480,8 +506,8 @@ function parse_type(parentArg){
 	var type_id = tokenID - 1;
 	var type_parent = CST[tokenID - 1][0];
 
-	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
-	var tempType = tokenstream[parseCounter][1]; //check type of token
+	var tempDesc = tokenstreamCOPY[parseCounter][0]; //check desc of token
+	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
 	if (tempDesc == ' int'){
 		matchSpecChars(' int',parseCounter,type_parent);
 		CST[type_id][2].push('child name: type, id : ' + (type_id + 1));
@@ -508,8 +534,8 @@ function parse_char(parentArg){
 	var char_id = tokenID - 1;
 	var char_parent = CST[tokenID - 1][0];
 	
-	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
-	var tempType = tokenstream[parseCounter][1]; //check type of token
+	var tempDesc = tokenstreamCOPY[parseCounter][0]; //check desc of token
+	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
 	matchSpecChars(tempDesc,parseCounter,char_parent);
 	CST[char_id][2].push('child name: char, id : ' + (char_id + 1));
 	parseCounter = parseCounter + 1;
@@ -531,8 +557,8 @@ function parse_digit(parentArg){
 	var digit_id = tokenID - 1;
 	var digit_parent = CST[tokenID - 1][0];
 	
-	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
-	var tempType = tokenstream[parseCounter][1]; //check type of token
+	var tempDesc = tokenstreamCOPY[parseCounter][0]; //check desc of token
+	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
 	matchSpecChars(tempDesc,parseCounter,digit_parent);
 	CST[digit_id][2].push('child name: ' + tempDesc + ', id : ' + (digit_id + 1));
 	parseCounter = parseCounter + 1;
@@ -545,8 +571,8 @@ function parse_boolop(parentArg){
 	var boolop_id = tokenID - 1;
 	var boolop_parent = CST[tokenID - 1][0];
 	
-	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
-	var tempType = tokenstream[parseCounter][1]; //check type of token
+	var tempDesc = tokenstreamCOPY[parseCounter][0]; //check desc of token
+	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
 	if (tempDesc == ' =='){
 		matchSpecChars('==',parseCounter,boolop_parent);
 		CST[boolop_id][2].push('child name:  ==, id : ' + (boolop_id + 1));
@@ -566,8 +592,8 @@ function parse_boolval(parentArg){
 	var boolval_id = tokenID - 1;
 	var boolval_parent = CST[tokenID - 1][0];
 	
-	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
-	var tempType = tokenstream[parseCounter][1]; //check type of token
+	var tempDesc = tokenstreamCOPY[parseCounter][0]; //check desc of token
+	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
 	if (tempDesc == ' false'){
 		matchSpecChars('false',parseCounter,boolval_parent);
 		CST[boolval_id][2].push('child name:  false, id : ' + (boolval_id + 1));
@@ -587,13 +613,14 @@ function parse_intop(parentArg){
 	var intop_id = tokenID - 1;
 	var intop_parent = CST[tokenID - 1][0];
 	
-	var tempDesc = tokenstream[parseCounter][0]; //check desc of token
-	var tempType = tokenstream[parseCounter][1]; //check type of token
+	var tempDesc = tokenstreamCOPY[parseCounter][0]; //check desc of token
+	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
 	matchSpecChars('+',parseCounter,intop_parent);
 	CST[intop_id][2].push('child name:  +, id : ' + (intop_id + 1));
 	parseCounter = parseCounter + 1;
 	
 }
+
 
 
 

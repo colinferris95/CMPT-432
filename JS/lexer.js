@@ -43,6 +43,7 @@ var finalCount;
 
 //initalize the array to keep the tokens
 var tokenstream = [];
+var tokenstreamCOPY = [];
 
 //boolean used for checking unrecognized character the other functions dont catch
 var tokenCheck;
@@ -113,6 +114,7 @@ function lexer(){
 	document.getElementById("output").value += "scanning program " + programCounter + '\n'; //output that scanning has begun
 
 	//scan each character in the text
+	
 	for (lexemeBegin=0; lexemeBegin<inputText.length;lexemeBegin++){
 		
 		
@@ -149,8 +151,12 @@ function lexer(){
 			
 			
 		}
+	tokenstreamCOPY = tokenstream
+	console.log(tokenstreamCOPY);
+	tokenstream = [];
+	lexemeCount = 0;
 	
-	console.log(tokenstream);
+
 	
 
 }
