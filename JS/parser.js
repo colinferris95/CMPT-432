@@ -13,6 +13,7 @@ var nextToken;
 var nextTokenType;
 var parentCounter = 0;
 var tokenID = 0;
+var CSTREE = new Tree();
 
 
 	
@@ -31,30 +32,15 @@ function initParseToken(){
 
 
 
-function matchSpecChars(token,pos,parentValue){ //matches brackets, quotes, parens etc.
+function matchSpecChars(token,pos){ //matches brackets, quotes, parens etc.
 
 
 console.log('character compared ' + tokenstreamCOPY[pos][0] + ' with current token ' + token);
 	if (token == tokenstreamCOPY[pos][0]){		
-		//add leaf node
-		addLeafNode(token,parentValue); //finish branch with matched token
-		document.getElementById("tree").value += 'matched token ' + token + '\n';
-		console.log('matched token ' + token);
-		console.log(CST);
 		
-		/*
-		console.log(tokenstreamCOPY[(parseCounter + 1)]);
-		
-		
-		if (tokenstreamCOPY[(parseCounter+1)] == undefined){
-		console.log(CST);
-		document.getElementById("tree").value = CST;
-		CST = [];
-		tokenID = 0;
-		parseCounter =0;
-		lookAhead = parseCounter + 1;
-		}
-		*/
+		CSTREE.addNode(token, 'leaf');
+	
+	
 	
 		
 		
@@ -62,34 +48,22 @@ console.log('character compared ' + tokenstreamCOPY[pos][0] + ' with current tok
 	else{
 		document.getElementById("tree").value += 'ERROR: token ' + tokenstreamCOPY[pos][0] + ' was not matched, expecting ' + token  + '\n';
 		console.log('ERROR: token ' + tokenstreamCOPY[pos][0] + ' was not matched, expecting ' + token ); 
-		console.log(CST);
+	
 		
 	}
 	
 }
 
 
-function addBranchNode(branchName,parentValue){
-	//var idtoken = new token(tokeninstall, "identifier", currLineNumber);// build token
-	//tokenstreamCOPY.push([idtoken.desc,idtoken.type,idtoken.line_num]);	//push token to the array	
-	//CST.push({name: branchName, parentName: parentValue, children: 'tempChildren', id: tokenID});
-	CST.push(['name: ' + branchName,'parent ' +parentValue,[],tokenID]);
-	tokenID ++;
-	
-	
-}
-
-
-function addLeafNode(leafName,parentValue){
-	//CST.push({name: leafName, parentName: parentValue, children: 'tempChildren', id: tokenID});
-	CST.push(['name: ' + leafName,'parent ' + parentValue,[],tokenID]);
-	tokenID ++;
-	
+function parseStart(){
+	document.getElementById("tree").value = ' ';
+	parser();
 }
 
 
 //start parsing
 function parser(){
+	document.getElementById("tree").value += "PARSER: parse()"+ '\n';
 	initParseToken();
 	parse_Program();
 	
@@ -99,23 +73,46 @@ function parser(){
 //production Program ::== Block $
 
 function parse_Program(){
-	addBranchNode('program',null); // start tree with program branch 
-	/*
-	var branch = document.createElement("BUTTON");
-	var node = document.createTextNode('program');
-	branch.appendChild(node);
-	var element = document.getElementById('tree');
-	element.appendChild(branch);
-	*/
-	var program_id = tokenID - 1;
-	var program_parent = CST[tokenID - 1][0];
-	parse_Block(program_parent);
-	CST[program_id][2].push('child name: block, id : ' + (program_id + 1));
+	document.getElementById("tree").value += "PARSER: parse_Program()" + '\n';
+	
+
+	CSTREE.addNode('program', 'branch');
+
+	
+	
+	parse_Block();
+	
 	
    	
-	matchSpecChars('$',(tokenstreamCOPY.length - 1),program_parent); // match EOP symbol after
-	CST[program_id][2].push('child name: $, id : ' + (tokenID - 1));
+	matchSpecChars('$',(tokenstreamCOPY.length - 1)); // match EOP symbol after
 	
+	CSTREE.endChildren();
+	
+	parseCounter = parseCounter + 1;
+
+	
+	document.getElementById("tree").value += "PARSER: Parsing complete" + '\n' + '\n';
+	
+	
+	document.getElementById("tree").value += CSTREE.toString();
+	
+	if (tokenstreamCOPY[parseCounter] != undefined){
+		 tokenID = 0;
+		 CSTREE = new Tree();
+		 parser();
+		
+	}
+	else{
+		document.getElementById("tree").value += '\n';
+		document.getElementById("tree").value += 'PARSER: done parsing programs';
+		parseCounter =0;
+		lookAhead = parseCounter + 1;
+		parentCounter = 0;
+		tokenID = 0;
+		CSTREE = new Tree();
+	}
+	
+	//print out cst
 	
 	
 	
@@ -124,27 +121,28 @@ function parse_Program(){
 
 //production Block ::== { StatementList }
 
-function parse_Block(parentArg){
+function parse_Block(){
+	document.getElementById("tree").value += "PARSER: parse_Block()"+ '\n';
 	
 	
-	addBranchNode('block',parentArg); //add to tree block 
+
+	CSTREE.addNode('block', 'branch');
 	
 	
-	var block_id = tokenID - 1;
-	var block_parent = CST[tokenID - 1][0];
+
 	
-	console.log('test var block_parent  ' + block_parent);
-	
-	matchSpecChars('{',0,block_parent);
-	CST[block_id][2].push('child name: {, id : ' + (block_id + 1));
+	matchSpecChars('{',0);
 	parseCounter = parseCounter + 1;
 	
-	parse_StatementList(block_parent); 
-	CST[block_id][2].push('child name: StatementList, id : ' + (block_id + 2));
+	parse_StatementList(); 
+	
 	
 	parseEndTokenCount = parseEndTokenCount - 1;
-	matchSpecChars('}',parseEndTokenCount,block_parent);
-	CST[block_id][2].push('child name: }, id : ' + (tokenID - 1));
+	
+	
+	
+	matchSpecChars('}',parseEndTokenCount);
+	CSTREE.endChildren();
 	parseCounter = parseCounter + 1;
 	
 	
@@ -156,22 +154,23 @@ function parse_Block(parentArg){
 
 //production StatementList ::== Statement StatementList
 //					       ::== e
-function parse_StatementList(parentArg){
-	addBranchNode('StatementList',parentArg);
-	var statementlist_id = tokenID - 1;
-	var statementList_parent = CST[tokenID - 1][0];
+function parse_StatementList(){
+	document.getElementById("tree").value += "PARSER: parse_StatementList()" + '\n';
+	CSTREE.addNode('StatementList', 'branch');
+
 	
 
-	var temp = tokenstreamCOPY[(parseCounter)][1]; //check type of token
+	var tempDesc = tokenstreamCOPY[parseCounter][0]; //check desc of token
+	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
 
-	if (temp == 'keyword' || temp == 'identifier' || temp == 'type' ){ //if next token is a statment
+	if (tempDesc == ' print' || tempType == 'identifier' || tempType == 'type' || tempDesc == ' while' || tempDesc == ' if' || tempDesc == '{' ){ //if next token is a statment
 		
 		
 		
-		parse_Statement(statementList_parent); 
-		CST[statementlist_id][2].push('child name: Statement, id : ' + (statementlist_id + 1));
-		parse_StatementList(statementList_parent);
-		CST[statementlist_id][2].push('child name: StatementList, id : ' + (statementlist_id + 2));
+		parse_Statement(); 
+	
+		parse_StatementList();
+
 		
 		
 		
@@ -179,8 +178,11 @@ function parse_StatementList(parentArg){
 	}
 	else{
 		
+		
 		//e production
 	}
+	CSTREE.endChildren();
+
 
 	
 	
@@ -194,72 +196,78 @@ function parse_StatementList(parentArg){
 //          			::== IfStatement
 //          			::== Block
 
-function parse_Statement(parentArg){
+function parse_Statement(){
+	document.getElementById("tree").value += "PARSER: parse_Statement()" + '\n';
 
-	addBranchNode('Statement',parentArg);
-	var statement_id = tokenID - 1;
-	var statement_parent = CST[tokenID - 1][0];
+	CSTREE.addNode('Statement', 'branch');
+
 	
 	var tempDesc = tokenstreamCOPY[parseCounter][0]; //check desc of token
 	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
 	
 	
 	if (tempDesc == ' print'){
-		parse_PrintStatement(statement_parent);
-		CST[statement_id][2].push('child name: Statement, id : ' + (statement_id + 1));
+		parse_PrintStatement();
+	
 
 				
 	}
 	else if(tempType == 'identifier'){
-		parse_AssignmentStatement(statement_parent);
-		CST[statement_id][2].push('child name: Statement, id : ' + (statement_id + 1));
+		parse_AssignmentStatement();
+	
 		
 	}
 	else if (tempType == 'type'){
 		
-		parse_VarDecl(statement_parent);
-		CST[statement_id][2].push('child name: Statement, id : ' + (statement_id + 1));
+		parse_VarDecl();
+
 		
 	}
 	else if (tempDesc == ' while'){
-		parse_WhileStatement(statement_parent);
-		CST[statement_id][2].push('child name: Statement, id : ' + (statement_id + 1));
+		parse_WhileStatement();
+
 		
 	}
 	else if (tempDesc == ' if'){
-		parse_IfStatement(statement_parent);
-		CST[statement_id][2].push('child name: Statement, id : ' + (statement_id + 1));
+		parse_IfStatement();
+
 		
 	}
-	else if (tempDesc == ' {'){
-		parse_Block(statement_parent);
-		CST[statement_id][2].push('child name: Statement, id : ' + (statement_id + 1));
+	else if (tempDesc == '{'){
+		parse_Block();
+
 		
 	}
-	
-	
+	CSTREE.endChildren();
+
 	
 	
 }
 
 //Production PrintStatement ::== print ( Expr ) 
-function parse_PrintStatement(parentArg){
-	addBranchNode('PrintStatement',parentArg);
-	var print_id = tokenID - 1;
-	var print_parent = CST[tokenID - 1][0];
+function parse_PrintStatement(){
+	document.getElementById("tree").value += "PARSER: parse_PrintStatement()" + '\n';
+	CSTREE.addNode('PrintStatment', 'branch');
+
 	
-	matchSpecChars(' print',parseCounter,print_parent);
-	CST[print_id][2].push('child name: print, id : ' + (print_id + 1));
+	matchSpecChars(' print',parseCounter);
+	
 	parseCounter = parseCounter + 1;
 	
-	matchSpecChars('(',parseCounter,print_parent);
-	CST[print_id][2].push('child name: (, id : ' + (print_id + 2));
+	
+	matchSpecChars('(',parseCounter);
+	
 	parseCounter = parseCounter + 1;
 	
-	parse_Expr(print_parent); 
-	CST[print_id][2].push('child name: Expr, id : ' + (print_id + 3));
-	matchSpecChars (')',parseCounter,print_parent);
-	CST[print_id][2].push('child name: ), id : ' + (print_id + 4));
+	
+	parse_Expr(); 
+	
+	
+	
+	matchSpecChars (')',parseCounter);
+	
+	CSTREE.endChildren();
+
 	parseCounter = parseCounter + 1;
 	
 	
@@ -267,77 +275,81 @@ function parse_PrintStatement(parentArg){
 
 
 //Production AssignmentStatement ::== Id = Expr
-function parse_AssignmentStatement(parentArg){
-	addBranchNode('AssignmentStatement',parentArg);
-	var assign_id = tokenID - 1;
-	var assign_parent = CST[tokenID - 1][0];
+function parse_AssignmentStatement(){
+	document.getElementById("tree").value += "PARSER: parse_AssignmentStatement()" + '\n';
+	CSTREE.addNode('AssignmentStatement', 'branch');
+
 	
-	parse_ID(assign_parent);
-	CST[assign_id][2].push('child name: ID, id : ' + (assign_id + 1));
+	parse_ID();
+	CSTREE.endChildren();
+	CSTREE.endChildren();
+
 	
-	matchSpecChars(' =',parseCounter,assign_parent);
-	CST[assign_id][2].push('child name: =, id : ' + (assign_id + 2));
+	matchSpecChars(' =',parseCounter);
+
 	parseCounter = parseCounter + 1;
 	
-	parse_Expr(assign_parent);
-	CST[assign_id][2].push('child name: Expr, id : ' + (assign_id + 3));
-	
+	parse_Expr();
+
+	CSTREE.endChildren();
 	
 	
 }
 
 
 //Production VarDecl ::== type Id
-function parse_VarDecl(parentArg){
-	addBranchNode('VarDecl',parentArg);
-	var VarDecl_id = tokenID - 1;
-	var VarDecl_parent = CST[tokenID - 1][0];
+function parse_VarDecl(){
+	document.getElementById("tree").value += "PARSER: parse_VarDecl()" + '\n';
+	CSTREE.addNode('VarDecl', 'branch');
+
 	
+	parse_type();
+	CSTREE.endChildren();
+
+
 	
-	parse_type(VarDecl_parent);
-	CST[VarDecl_id][2].push('child name: type, id : ' + (VarDecl_id + 1));
-	
-	parse_ID(VarDecl_parent);
-	CST[VarDecl_id][2].push('child name: ID, id : ' + (VarDecl_id + 2));
-	
+	parse_ID();
+	CSTREE.endChildren();
+	CSTREE.endChildren();
+	CSTREE.endChildren();
 	
 }
 
 //Production WhileStatement ::== while BooleanExpr Block
-function parse_WhileStatement(parentArg){
-	addBranchNode('WhileStatement',parentArg);
-	var WhileStatement_id = tokenID - 1;
-	var WhileStatement_parent = CST[tokenID - 1][0];
+function parse_WhileStatement(){
+	document.getElementById("tree").value += "PARSER: parse_WhileStatement()" + '\n';
+	CSTREE.addNode('WhileStatement', 'branch');
+
 	
-	matchSpecChars(' while',parseCounter,WhileStatement_parent);
-	CST[WhileStatement_id][2].push('child name: while, id : ' + (WhileStatement_id + 1));
+	matchSpecChars(' while',parseCounter);
+	CSTREE.endChildren();
 	parseCounter = parseCounter + 1;
 	
-	parse_BooleanExpr(WhileStatement_parent);
-	CST[WhileStatement_id][2].push('child name: BooleanExpr, id : ' + (WhileStatement_id + 2));
+	parse_BooleanExpr();
+
 	
-	parse_Block(WhileStatement_parent);
-	CST[WhileStatement_id][2].push('child name: Block, id : ' + (WhileStatement_id + 3));
+	parse_Block();
 	
+	CSTREE.endChildren();
 }
 
 //production IfStatement ::== if BooleanExpr Block
-function parse_IfStatement(parentArg){
-	addBranchNode('IfStatment',parentArg);
-	var IfStatement_id = tokenID - 1;
-	var IfStatment_parent = CST[tokenID - 1][0];
+function parse_IfStatement(){
+	document.getElementById("tree").value += "PARSER: parse_IfStatement()" + '\n';
+	CSTREE.addNode('IfStatement', 'branch');
+
 	
-	matchSpecChars(' if',parseCounter,IfStatment_parent);
-	CST[IfStatement_id][2].push('child name: if, id : ' + (IfStatement_id + 1));
+	matchSpecChars(' if',parseCounter);
+	CSTREE.endChildren();
 	parseCounter = parseCounter + 1;
 	
-	parse_BooleanExpr(IfStatment_parent);
-	CST[IfStatement_id][2].push('child name: BooleanExpr, id : ' + (IfStatement_id + 2));
+	parse_BooleanExpr();
+
 	
-	parse_Block(IfStatment_parent);
+	parse_Block();
 	CST[IfStatement_id][2].push('child name: Block, id : ' + (IfStatement_id + 3));
 	
-	
+	CSTREE.endChildren();
 }
 
 //Expr ::== IntExpr
@@ -345,79 +357,83 @@ function parse_IfStatement(parentArg){
 //	   ::== BooleanExpr
 //     ::== Id
 
-function parse_Expr(parentArg){
-	addBranchNode('Expr',parentArg);
-	var Expr_id = tokenID - 1;
-	var Expr_parent = CST[tokenID - 1][0];
+function parse_Expr(){
+	document.getElementById("tree").value += "PARSER: parse_Expr()" + '\n';
+	CSTREE.addNode('Expr', 'branch');
+
 	
 	var tempDesc = tokenstreamCOPY[parseCounter][0]; //check desc of token
 	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
 	if(tempType == 'digit'){
-		parse_IntExpr(Expr_parent);
-		CST[Expr_id][2].push('child name: IntExpr, id : ' + (Expr_id + 1));
+		parse_IntExpr();
+	
 		
 	}
 	else if (tempDesc == ' "'){
-		parse_StringExpr(Expr_parent);
-		CST[Expr_id][2].push('child name: StringExpr, id : ' + (Expr_id + 1));
+		parse_StringExpr();
+	
 	}
 	else if (tempDesc == ' (' || tempType == 'boolval'){
-		parse_BooleanExpr(Expr_parent);
-		CST[Expr_id][2].push('child name: BooleanExpr, id : ' + (Expr_id + 1));
+		parse_BooleanExpr();
+	
 		
 	}
 	else if (tempType == 'identifier' ) {
-		parse_ID(Expr_parent);
-		CST[Expr_id][2].push('child name: ID, id : ' + (Expr_id + 1));
+		parse_ID();
+	
 		
 	}
 	
 		
-		
+	CSTREE.endChildren();	
 	
 	
 }
 
 //production IntExpr ::== digit intop Expr
 //					 ::== digit
-function parse_IntExpr(parentArg){
-	addBranchNode('IntExpr',parentArg);
-	var IntExpr_id = tokenID - 1;
-	var IntExpr_parent = CST[tokenID - 1][0];
+function parse_IntExpr(){
+	document.getElementById("tree").value += "PARSER: parse_IntExpr()" + '\n';
+	CSTREE.addNode('IntExpr', 'branch');
+
 	
 	var tempDesc = tokenstreamCOPY[parseCounter][0]; //check desc of token
 	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
 	if (tempType == 'digit'){
-		matchSpecChars(tempDesc,parseCounter,IntExpr_parent);
-		CST[IntExpr_id][2].push('child name: ' + tempDesc + ', id : ' + (IntExpr_id + 1));
+		matchSpecChars(tempDesc,parseCounter);
+		CSTREE.endChildren();
 		parseCounter = parseCounter + 1;
 				
 	}
 	if (tempDesc == ' +'){
-		parse_intop(IntExpr_parent);
-		CST[IntExpr_id][2].push('child name: intop, id : ' + (IntExpr_id + 2));
-		parse_Expr(IntExpr_parent);
-		CST[IntExpr_id][2].push('child name: Expr, id : ' + (IntExpr_id + 3));
+		parse_intop();
+	
+		parse_Expr();
+	
+	}
+	else{
+		
 	}
 	
 	
 }
 
 //production StringExpr ::== " CharList "
-function parse_StringExpr(parentArg){
-	addBranchNode('StringExpr',parentArg);
-	var StringExpr_id = tokenID - 1;
-	var StringExpr_parent = CST[tokenID - 1][0];
+function parse_StringExpr(){
+	document.getElementById("tree").value += "PARSER: parse_StringExpr()" + '\n';
+	CSTREE.addNode('StringExpr', 'branch');
 	
-	matchSpecChars(' "',parseCounter,StringExpr_parent);
-	CST[StringExpr_id][2].push('child name: StringExpr, id : ' + (StringExpr_id + 1));
+	matchSpecChars(' "',parseCounter);
+	
 	parseCounter = parseCounter + 1;
 	
-	parse_CharList(StringExpr_parent);
-	CST[StringExpr_id][2].push('child name: CharList, id : ' + (StringExpr_id + 2));
+	parse_CharList();
+
 	
-	matchSpecChars(' "',parseCounter,StringExpr_parent);
-	CST[StringExpr_id][2].push('child name: ", id : ' + (StringExpr_id + 3));
+	matchSpecChars(' "',parseCounter);
+	
+	
+	
 	parseCounter = parseCounter + 1;
 	
 }
@@ -425,47 +441,46 @@ function parse_StringExpr(parentArg){
 //production BooleanExpr ::== ( Expr boolop Expr )
 //						 ::== boolval
 
-function parse_BooleanExpr(parentArg){
-	addBranchNode('BooleanExpr',parentArg);
-	var BooleanExpr_id = tokenID - 1;
-	var BooleanExpr_parent = CST[tokenID - 1][0];
+function parse_BooleanExpr(){
+	document.getElementById("tree").value += "PARSER: parse_BooleanExpr()" + '\n';
+	CSTREE.addNode('IntExpr', 'branch');
+
 	
 	var tempDesc = tokenstreamCOPY[parseCounter][0]; //check desc of token
 	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
 	if (tempDesc == ' ('){
-		matchSpecChars('(',parseCounter,BooleanExpr_parent);
-		CST[BooleanExpr_id][2].push('child name: (, id : ' + (BooleanExpr_id + 1));
+		matchSpecChars('(',parseCounter);
+		CSTREE.endChildren();
 		parseCounter = parseCounter + 1;
 		
-		parse_Expr(BooleanExpr_parent);
-		CST[BooleanExpr_id][2].push('child name: Expr, id : ' + (BooleanExpr_id + 2));
+		parse_Expr();
+	
 		
-		parse_boolop(BooleanExpr_parent);
-		CST[BooleanExpr_id][2].push('child name: BooleanExpr, id : ' + (BooleanExpr_id + 3));
+		parse_boolop();
+	
 		
-		parse_Expr(BooleanExpr_parent);
-		CST[BooleanExpr_id][2].push('child name: BooleanExpr, id : ' + (BooleanExpr_id + 4));
+		parse_Expr();
+	
 		
 		
 	}
 	else{
-		parse_boolval(BooleanExpr_parent);
-		CST[BooleanExpr_id][2].push('child name: BoolVal, id : ' + (BooleanExpr_id + 1));
-		
-	}
+		parse_boolval();
 	
+	}
+	CSTREE.endChildren();
 	
 }
 
 //production Id ::== char
 
-function parse_ID(parentArg){
-	addBranchNode('ID',parentArg);
-	var ID_id = tokenID - 1;
-	var ID_parent = CST[tokenID - 1][0];
+function parse_ID(){
+	document.getElementById("tree").value += "PARSER: parse_ID()" + '\n';
+	CSTREE.addNode('Id', 'branch');
+
 	
-	parse_char(ID_parent);
-	CST[ID_id][2].push('child name: char, id : ' + (ID_id + 1));
+	parse_char();
+	
 	
 	
 }
@@ -474,10 +489,10 @@ function parse_ID(parentArg){
 //					  ::== space CharList
 //					  ::== ε
 
-function parse_CharList(parentArg){
-	addBranchNode('CharList',parentArg);
-	var CharList_id = tokenID - 1;
-	var CharList_parent = CST[tokenID - 1][0];
+function parse_CharList(){
+	document.getElementById("tree").value += "PARSER: parse_CharList()" + '\n';
+	CSTREE.addNode('CharList', 'branch');
+
 	
 	var tempDesc = tokenstreamCOPY[parseCounter][0]; //check desc of token
 	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
@@ -485,8 +500,8 @@ function parse_CharList(parentArg){
 		//parse_char(CharList_parent);
 		//parse_CharList(CharList_parent);
 	
-		matchSpecChars(tempDesc,parseCounter,CharList_parent);
-		CST[CharList_id][2].push('child name: ' + tempDesc + ', id : ' + (CharList_id + 1));
+		matchSpecChars(tempDesc,parseCounter);
+		CSTREE.endChildren();
 		parseCounter = parseCounter + 1;
 	}
 	
@@ -501,27 +516,27 @@ function parse_CharList(parentArg){
 
 //production type ::== int | string | boolean
 
-function parse_type(parentArg){
-	addBranchNode('type',parentArg);
-	var type_id = tokenID - 1;
-	var type_parent = CST[tokenID - 1][0];
+function parse_type(){
+	document.getElementById("tree").value += "PARSER: parse_type()" + '\n';
+	CSTREE.addNode('Type', 'branch');;
+
 
 	var tempDesc = tokenstreamCOPY[parseCounter][0]; //check desc of token
 	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
 	if (tempDesc == ' int'){
-		matchSpecChars(' int',parseCounter,type_parent);
-		CST[type_id][2].push('child name: type, id : ' + (type_id + 1));
+		matchSpecChars(' int',parseCounter);
+	
 		parseCounter = parseCounter + 1;
 	}
 	else if (tempDesc == ' string'){
-		matchSpecChars(' string',parseCounter,type_parent);
-		CST[type_id][2].push('child name: string, id : ' + (type_id + 1));
+		matchSpecChars(' string',parseCounter);
+
 		parseCounter = parseCounter + 1;
 	}
 	else if (nextToken == ' boolean'){
 		
-		matchSpecChars(' boolean',parseCounter,type_parent);
-		CST[type_id][2].push('child name: boolean, id : ' + (type_id + 1));
+		matchSpecChars(' boolean',parseCounter);
+	
 		parseCounter = parseCounter + 1;
 	}
 	
@@ -529,15 +544,15 @@ function parse_type(parentArg){
 }
 
 //production char ::== a | b | c ... z
-function parse_char(parentArg){
-	addBranchNode('char',parentArg);
-	var char_id = tokenID - 1;
-	var char_parent = CST[tokenID - 1][0];
+function parse_char(){
+	document.getElementById("tree").value += "PARSER: parse_char()" + '\n';
+	CSTREE.addNode('char', 'branch');
+
 	
 	var tempDesc = tokenstreamCOPY[parseCounter][0]; //check desc of token
 	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
-	matchSpecChars(tempDesc,parseCounter,char_parent);
-	CST[char_id][2].push('child name: char, id : ' + (char_id + 1));
+	matchSpecChars(tempDesc,parseCounter);
+	
 	parseCounter = parseCounter + 1;
 	
 	
@@ -552,73 +567,179 @@ function parse_space(){
 */
 
 //production digit ::== 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0
-function parse_digit(parentArg){
-	addBranchNode('digit',parentArg);
-	var digit_id = tokenID - 1;
-	var digit_parent = CST[tokenID - 1][0];
+function parse_digit(){
+	document.getElementById("tree").value += "PARSER: parse_digit()" + '\n';
+	CSTREE.addNode('digit', 'branch');
+
 	
 	var tempDesc = tokenstreamCOPY[parseCounter][0]; //check desc of token
 	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
-	matchSpecChars(tempDesc,parseCounter,digit_parent);
-	CST[digit_id][2].push('child name: ' + tempDesc + ', id : ' + (digit_id + 1));
+	matchSpecChars(tempDesc,parseCounter);
+	CSTREE.endChildren();
 	parseCounter = parseCounter + 1;
 }
 
 //production boolop ::== == | !=
 
-function parse_boolop(parentArg){
-	addBranchNode('boolop',parentArg);
-	var boolop_id = tokenID - 1;
-	var boolop_parent = CST[tokenID - 1][0];
+function parse_boolop(){
+	document.getElementById("tree").value += "PARSER: parse_boolop()" + '\n';
+	CSTREE.addNode('char', 'branch');
+
 	
 	var tempDesc = tokenstreamCOPY[parseCounter][0]; //check desc of token
 	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
 	if (tempDesc == ' =='){
-		matchSpecChars('==',parseCounter,boolop_parent);
-		CST[boolop_id][2].push('child name:  ==, id : ' + (boolop_id + 1));
+		matchSpecChars('==',parseCounter);
+		CSTREE.endChildren();
 		parseCounter = parseCounter + 1;
 	}
 	else if (tempDesc == ' !='){
-		matchSpecChars('!=',parseCounter,boolop_parent);
-		CST[boolop_id][2].push('child name:  !=, id : ' + (boolop_id + 1));
+		matchSpecChars('!=',parseCounter);
+		CSTREE.endChildren();
 		parseCounter = parseCounter + 1;
 	}
-	
+	CSTREE.endChildren();
 }
 
 //production boolval ::== false | true
-function parse_boolval(parentArg){
-	addBranchNode('boolval',parentArg);
-	var boolval_id = tokenID - 1;
-	var boolval_parent = CST[tokenID - 1][0];
+function parse_boolval(){
+	document.getElementById("tree").value += "PARSER: parse_boolval()" + '\n';
+	CSTREE.addNode('boolval', 'branch');
+
 	
 	var tempDesc = tokenstreamCOPY[parseCounter][0]; //check desc of token
 	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
 	if (tempDesc == ' false'){
-		matchSpecChars('false',parseCounter,boolval_parent);
-		CST[boolval_id][2].push('child name:  false, id : ' + (boolval_id + 1));
+		matchSpecChars('false',parseCounter);
+		CSTREE.endChildren();
 		parseCounter = parseCounter + 1;
 	}
 	else if (tempDesc == 'true'){
-		matchSpecChars('true',parseCounter,boolval_parent);
-		CST[boolval_id][2].push('child name:  true, id : ' + (boolval_id + 1));
+		matchSpecChars('true',parseCounter);
+		CSTREE.endChildren();
 		parseCounter = parseCounter + 1;
 	}
-	
+	CSTREE.endChildren();
 }
 
 //production intop ::== +
-function parse_intop(parentArg){
-	addBranchNode('intop',parentArg);
-	var intop_id = tokenID - 1;
-	var intop_parent = CST[tokenID - 1][0];
+function parse_intop(){
+	document.getElementById("tree").value += "PARSER: parse_intop()" + '\n';
+	CSTREE.addNode('intop', 'branch');
+
 	
 	var tempDesc = tokenstreamCOPY[parseCounter][0]; //check desc of token
 	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
-	matchSpecChars('+',parseCounter,intop_parent);
-	CST[intop_id][2].push('child name:  +, id : ' + (intop_id + 1));
+	matchSpecChars('+',parseCounter);
+	CSTREE.endChildren();
 	parseCounter = parseCounter + 1;
 	
+}
+
+
+//-----------------------------------------
+// treeDemo.js
+//
+// By Alan G. Labouseur, based on the 2009
+// work by Michael Ardizzone and Tim Smith.
+//-----------------------------------------
+
+function Tree() {
+    // ----------
+    // Attributes
+    // ----------
+    
+    this.root = null;  // Note the NULL root node of this tree.
+    this.cur = {};     // Note the EMPTY current node of the tree we're building.
+
+
+    // -- ------- --
+    // -- Methods --
+    // -- ------- --
+
+    // Add a node: kind in {branch, leaf}.
+    this.addNode = function(name, kind) {
+        // Construct the node object.
+        var node = { name: name,
+                     children: [],
+                     parent: {}
+                   };
+
+        // Check to see if it needs to be the root node.
+        if ( (this.root == null) || (!this.root) )
+        {
+            // We are the root node.
+            this.root = node;
+        }
+        else
+        {
+            // We are the children.
+            // Make our parent the CURrent node...
+            node.parent = this.cur;
+            // ... and add ourselves (via the unfrotunately-named
+            // "push" function) to the children array of the current node.
+            this.cur.children.push(node);
+        }
+        // If we are an interior/branch node, then...
+        if (kind == "branch")
+        {
+            // ... update the CURrent node pointer to ourselves.
+            this.cur = node;
+        }
+    };
+
+    // Note that we're done with this branch of the tree...
+    this.endChildren = function() {
+        // ... by moving "up" to our parent node (if possible).
+        if ((this.cur.parent !== null) && (this.cur.parent.name !== undefined))
+        {
+            this.cur = this.cur.parent;
+        }
+        else
+        {
+            // TODO: Some sort of error logging.
+            // This really should not happen, but it will, of course.
+        }
+    };
+
+    // Return a string representation of the tree.
+    this.toString = function() {
+        // Initialize the result string.
+        var traversalResult = "";
+
+        // Recursive function to handle the expansion of the nodes.
+        function expand(node, depth)
+        {
+            // Space out based on the current depth so
+            // this looks at least a little tree-like.
+            for (var i = 0; i < depth; i++)
+            {
+                traversalResult += "-";
+            }
+
+            // If there are no children (i.e., leaf nodes)...
+            if (!node.children || node.children.length === 0)
+            {
+                // ... note the leaf node.
+                traversalResult += "[" + node.name + "]";
+                traversalResult += "\n";
+            }
+            else
+            {
+                // There are children, so note these interior/branch nodes and ...
+                traversalResult += "<" + node.name + "> \n";
+                // .. recursively expand them.
+                for (var i = 0; i < node.children.length; i++)
+                {
+                    expand(node.children[i], depth + 1);
+                }
+            }
+        }
+        // Make the initial call to expand from the root.
+        expand(this.root, 0);
+        // Return the result.
+        return traversalResult;
+    };
 }
 
 

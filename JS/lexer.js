@@ -3,7 +3,7 @@
 
 //test program 1 passes the lexer with no errors
 function Program1(){
-	document.getElementById("textInput").value = ' { print("true") \n   int a \n   a = 2 \n   boolean b = true  \n }$	'
+	document.getElementById("textInput").value = ' { print("true") \n   int a \n   a = 2 \n }$	'
 	
 	
 	
@@ -151,7 +151,7 @@ function lexer(){
 			
 			
 		}
-	tokenstreamCOPY = tokenstream
+	tokenstreamCOPY = tokenstream;
 	console.log(tokenstreamCOPY);
 	tokenstream = [];
 	lexemeCount = 0;
