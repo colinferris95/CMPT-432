@@ -35,7 +35,7 @@ function initParseToken(){
 function matchSpecChars(token,pos){ //matches brackets, quotes, parens etc.
 
 
-console.log('character compared ' + tokenstreamCOPY[pos][0] + ' with current token ' + token);
+console.log('character compared from lexer array ' + tokenstreamCOPY[pos][0] + ' with current token ' + token);
 	if (token == tokenstreamCOPY[pos][0]){		
 		
 		CSTREE.addNode(token, 'leaf');
@@ -47,7 +47,7 @@ console.log('character compared ' + tokenstreamCOPY[pos][0] + ' with current tok
 	}
 	else{
 		document.getElementById("tree").value += 'ERROR: token ' + tokenstreamCOPY[pos][0] + ' was not matched, expecting ' + token  + '\n';
-		console.log('ERROR: token ' + tokenstreamCOPY[pos][0] + ' was not matched, expecting ' + token ); 
+		console.log('ERROR: token ' +token  + ' was not matched, expecting ' + tokenstreamCOPY[pos][0] ); 
 	
 		
 	}
@@ -84,7 +84,7 @@ function parse_Program(){
 	
 	
    	
-	matchSpecChars('$',(tokenstreamCOPY.length - 1)); // match EOP symbol after
+	matchSpecChars('$',parseCounter); // match EOP symbol after
 	
 	CSTREE.endChildren();
 	
@@ -131,17 +131,17 @@ function parse_Block(){
 	
 
 	
-	matchSpecChars('{',0);
+	matchSpecChars('{',parseCounter);
 	parseCounter = parseCounter + 1;
 	
 	parse_StatementList(); 
 	
 	
-	parseEndTokenCount = parseEndTokenCount - 1;
 	
 	
 	
-	matchSpecChars('}',parseEndTokenCount);
+	
+	matchSpecChars('}',parseCounter);
 	CSTREE.endChildren();
 	parseCounter = parseCounter + 1;
 	
@@ -340,14 +340,14 @@ function parse_IfStatement(){
 
 	
 	matchSpecChars(' if',parseCounter);
-	CSTREE.endChildren();
+	
 	parseCounter = parseCounter + 1;
 	
 	parse_BooleanExpr();
 
 	
 	parse_Block();
-	CST[IfStatement_id][2].push('child name: Block, id : ' + (IfStatement_id + 3));
+
 	
 	CSTREE.endChildren();
 }
@@ -366,20 +366,27 @@ function parse_Expr(){
 	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
 	if(tempType == 'digit'){
 		parse_IntExpr();
+		CSTREE.endChildren();
+		
+		
 	
 		
 	}
 	else if (tempDesc == ' "'){
 		parse_StringExpr();
-	
+		CSTREE.endChildren();
 	}
 	else if (tempDesc == ' (' || tempType == 'boolval'){
 		parse_BooleanExpr();
+		CSTREE.endChildren();
 	
 		
 	}
 	else if (tempType == 'identifier' ) {
 		parse_ID();
+		CSTREE.endChildren();
+		CSTREE.endChildren();
+		
 	
 		
 	}
@@ -401,19 +408,19 @@ function parse_IntExpr(){
 	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
 	if (tempType == 'digit'){
 		matchSpecChars(tempDesc,parseCounter);
-		CSTREE.endChildren();
+		
 		parseCounter = parseCounter + 1;
+		
+			if (tokenstreamCOPY[parseCounter][0] == '+'){
+			document.getElementById("tree").value += 'H E Y B O SS ' + '\n';
+			parse_intop();
+	
+			parse_Expr();
+	
+		}
 				
 	}
-	if (tempDesc == ' +'){
-		parse_intop();
 	
-		parse_Expr();
-	
-	}
-	else{
-		
-	}
 	
 	
 }
@@ -423,14 +430,14 @@ function parse_StringExpr(){
 	document.getElementById("tree").value += "PARSER: parse_StringExpr()" + '\n';
 	CSTREE.addNode('StringExpr', 'branch');
 	
-	matchSpecChars(' "',parseCounter);
+	matchSpecChars('"',parseCounter);
 	
 	parseCounter = parseCounter + 1;
 	
 	parse_CharList();
 
 	
-	matchSpecChars(' "',parseCounter);
+	matchSpecChars('"',parseCounter);
 	
 	
 	
@@ -448,7 +455,7 @@ function parse_BooleanExpr(){
 	
 	var tempDesc = tokenstreamCOPY[parseCounter][0]; //check desc of token
 	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
-	if (tempDesc == ' ('){
+	if (tempDesc == '('){
 		matchSpecChars('(',parseCounter);
 		CSTREE.endChildren();
 		parseCounter = parseCounter + 1;
@@ -468,7 +475,7 @@ function parse_BooleanExpr(){
 		parse_boolval();
 	
 	}
-	CSTREE.endChildren();
+
 	
 }
 
@@ -588,12 +595,12 @@ function parse_boolop(){
 	
 	var tempDesc = tokenstreamCOPY[parseCounter][0]; //check desc of token
 	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
-	if (tempDesc == ' =='){
+	if (tempDesc == '=='){
 		matchSpecChars('==',parseCounter);
 		CSTREE.endChildren();
 		parseCounter = parseCounter + 1;
 	}
-	else if (tempDesc == ' !='){
+	else if (tempDesc == '!='){
 		matchSpecChars('!=',parseCounter);
 		CSTREE.endChildren();
 		parseCounter = parseCounter + 1;
@@ -610,12 +617,12 @@ function parse_boolval(){
 	var tempDesc = tokenstreamCOPY[parseCounter][0]; //check desc of token
 	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
 	if (tempDesc == ' false'){
-		matchSpecChars('false',parseCounter);
+		matchSpecChars(' false',parseCounter);
 		CSTREE.endChildren();
 		parseCounter = parseCounter + 1;
 	}
-	else if (tempDesc == 'true'){
-		matchSpecChars('true',parseCounter);
+	else if (tempDesc == ' true'){
+		matchSpecChars(' true',parseCounter);
 		CSTREE.endChildren();
 		parseCounter = parseCounter + 1;
 	}
