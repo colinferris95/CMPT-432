@@ -48,5 +48,9 @@ How To Run:
 
 6.Output should appear on the bottom with results
 
+7.To parse a program, make sure the program has been lexed first.
+
+8.Click the Parse button, and the Parser output and CST should appear if there are no errors
+
 *****KNOWN ISSUE*******
 The lexer will think there is another program after the last '$' symbol and scan another empty program

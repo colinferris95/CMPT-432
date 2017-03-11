@@ -10,7 +10,7 @@ function Program1(){
 }
 //test program 2 passes the lexer with no errors
 function Program2(){
-	document.getElementById("textInput").value = ' { int x = 3 \n  if x == 3 {x = 0} }$	'
+	document.getElementById("textInput").value = ' {{{{{{}}}}}}$	'
 	
 	
 	
@@ -140,11 +140,13 @@ function lexer(){
 	
 	}
 	if (scannerSuccess != false){
+					
 					scannerSuccess = true; //in this function the scanner passes
 					console.log('LEXER: Lex program completed with no errors');
 					document.getElementById("output").value +=  'LEXER: Lex program completed with no errors' + '\n';
 		}
 		if (scannerSuccess == false){
+		
 			console.log('LEXER: Lex program completed with errors');
 			document.getElementById("output").value +=  'LEXER: Lex program completed with errors' + '\n';
 			
