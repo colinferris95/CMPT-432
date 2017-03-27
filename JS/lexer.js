@@ -24,6 +24,8 @@ var state;
 //flag to show if the program has lexed with or without errors
 var scannerSuccess;
 
+var moveToParse;
+
 //keeps track of which program is being scanned
 var programCounter;
 
@@ -121,6 +123,7 @@ function lexer(){
 	//start scanning the file at the first character
 	var c = inputText[lexemeBegin];
 	tokenCheck = false; //baseline, the auxillary functions must make this true to pass the scanner, or it is caught by badtokenCheck
+	tokenstreamCOPY = tokenstream;
 	
 	//auxiallary functions to check each character one at a time
 	findLineNumber(c); //gets the current line number
@@ -699,11 +702,17 @@ function isEOP(c){
 		lexemeCount++; //move to the next place in the token array
 		
 		if (scannerSuccess != false){
+				if(moveToParse != false){
+					parseStart();
+				}
+					
 					scannerSuccess = true; //in this function the scanner passes
 					console.log('LEXER: Lex program completed with no errors');
 					document.getElementById("output").value +=  'LEXER: Lex program completed with no errors' + '\n';
 		}
 		if (scannerSuccess == false){
+			alert('not moving to parse');
+			moveToParse = false;
 			console.log('LEXER: Lex program completed with errors');
 			document.getElementById("output").value +=  'LEXER: Lex program completed with errors' + '\n';
 			
@@ -714,6 +723,8 @@ function isEOP(c){
 		programCounter = programCounter + 1;
 		console.log("scanning program " + programCounter);
 		document.getElementById("output").value += "scanning program " + programCounter + '\n';
+		
+		
 	}
 	
 }
