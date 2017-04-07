@@ -422,7 +422,7 @@ function parse_IntExpr(){
 		parseCounter = parseCounter + 1;
 		
 			if (tokenstreamCOPY[parseCounter][0] == '+'){
-			document.getElementById("tree").value += 'H E Y B O SS ' + '\n';
+			document.getElementById("tree").value +=  '\n';
 			parse_intop();
 	
 			parse_Expr();

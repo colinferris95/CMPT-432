@@ -701,10 +701,11 @@ function isEOP(c){
 		document.getElementById("output").value += 'LEXER: Token found at line number '+ tokenstream[lexemeCount][2]+' "' + tokenstream[lexemeCount][0] + '" ----> '+ tokenstream[lexemeCount][1]   + '\n';
 		lexemeCount++; //move to the next place in the token array
 		
+		
 		if (scannerSuccess != false){
-				if(moveToParse != false){
+				
 					parseStart();
-				}
+				
 					
 					scannerSuccess = true; //in this function the scanner passes
 					console.log('LEXER: Lex program completed with no errors');
@@ -712,7 +713,7 @@ function isEOP(c){
 		}
 		if (scannerSuccess == false){
 			alert('not moving to parse');
-			moveToParse = false;
+			
 			console.log('LEXER: Lex program completed with errors');
 			document.getElementById("output").value +=  'LEXER: Lex program completed with errors' + '\n';
 			
