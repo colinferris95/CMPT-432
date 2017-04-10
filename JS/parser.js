@@ -14,8 +14,8 @@ var nextTokenType;
 var parentCounter = 0;
 var tokenID = 0;
 var CSTREE = new Tree();
-var outputCST =true;
-var tokenstreamCOPY2;
+
+
 	
 
 
@@ -48,7 +48,7 @@ console.log('character compared from lexer array ' + tokenstreamCOPY[pos][0] + '
 	else{
 		document.getElementById("tree").value += 'ERROR: token ' + tokenstreamCOPY[pos][0] + ' was not matched, expecting ' + token  + '\n';
 		console.log('ERROR: token ' +token  + ' was not matched, expecting ' + tokenstreamCOPY[pos][0] ); 
-		outputCST = false;
+	
 		
 	}
 	
@@ -93,16 +93,9 @@ function parse_Program(){
 
 	
 	document.getElementById("tree").value += "PARSER: Parsing complete" + '\n' + '\n';
-	if (outputCST == false){
-		alert('parse failed, not moving on to cst');
-	}
-	else{
+	
 	
 	document.getElementById("tree").value += CSTREE.toString();
-	console.log(tokenstreamCOPY);
-	tokenstreamCOPY2 = tokenstreamCOPY
-	ASTparseStart();
-	}
 	
 	if (tokenstreamCOPY[parseCounter] != undefined){
 		 tokenID = 0;
