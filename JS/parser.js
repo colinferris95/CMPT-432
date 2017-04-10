@@ -111,6 +111,7 @@ function parse_Program(){
 		parentCounter = 0;
 		tokenID = 0;
 		CSTREE = new Tree();
+		ASTparseStart();
 	}
 	
 	//print out cst
