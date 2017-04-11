@@ -313,7 +313,7 @@ function ASTparse_VarDecl(){
 
 	
 	ASTparse_type();
-	ASTREE.endChildren();
+	//ASTREE.endChildren();
 
 
 	
@@ -330,7 +330,7 @@ function ASTparse_WhileStatement(){
 	ASTREE.addNode('WhileStatement', 'branch');
 
 	
-	ASTmatchSpecChars(' while',ASTparseCounter);
+	//ASTmatchSpecChars(' while',ASTparseCounter);
 	
 	ASTparseCounter = ASTparseCounter + 1;
 	
@@ -349,7 +349,7 @@ function ASTparse_IfStatement(){
 	ASTREE.addNode('IfStatement', 'branch');
 
 	
-	ASTmatchSpecChars(' if',ASTparseCounter);
+	//ASTmatchSpecChars(' if',ASTparseCounter);
 	
 	ASTparseCounter = ASTparseCounter + 1;
 	
@@ -394,15 +394,15 @@ function ASTparse_Expr(){
 	}
 	else if (ASTtempType == 'identifier' ) {
 		ASTparse_ID();
-		ASTREE.endChildren();
-		ASTREE.endChildren();
+		//ASTREE.endChildren();
+		//ASTREE.endChildren();
 		
 	
 		
 	}
 	
 		
-	ASTREE.endChildren();	
+	//ASTREE.endChildren();	
 	
 	
 }
@@ -466,21 +466,25 @@ function ASTparse_BooleanExpr(){
 	var ASTtempDesc = tokenstreamCOPY[ASTparseCounter][0]; //check desc of token
 	var ASTtempType = tokenstreamCOPY[ASTparseCounter][1]; //check type of token
 	if (ASTtempDesc == '('){
-		ASTmatchSpecChars('(',ASTparseCounter);
+		//ASTmatchSpecChars('(',ASTparseCounter);
 		
-		ASTREE.addNode('BooleanExpr', 'branch');
+		//ASTREE.addNode('BooleanExpr', 'branch');
+		
+		ASTparseCounter = ASTparseCounter + 2;
+		
+		ASTparse_boolop();
+		
+		ASTparseCounter = ASTparseCounter - 2;
+		
+		ASTparse_Expr();
+	
+		
 		
 		ASTparseCounter = ASTparseCounter + 1;
 		
 		ASTparse_Expr();
 	
-		
-		ASTparse_boolop();
-	
-		
-		ASTparse_Expr();
-	
-		ASTmatchSpecChars(')',ASTparseCounter);
+		//ASTmatchSpecChars(')',ASTparseCounter);
 		ASTparseCounter = ASTparseCounter + 1;
 		
 	}
@@ -538,7 +542,7 @@ function ASTASTparse_charList(){
 
 function ASTparse_type(){
 	document.getElementById("AStree").value += "ASTparser: ASTparse_type()" + '\n';
-	ASTREE.addNode('Type', 'branch');;
+	//ASTREE.addNode('Type', 'branch');;
 
 
 	var ASTtempDesc = tokenstreamCOPY[ASTparseCounter][0]; //check desc of token
@@ -603,22 +607,24 @@ function ASTparse_digit(){
 
 function ASTparse_boolop(){
 	document.getElementById("AStree").value += "ASTparser: ASTparse_boolop()" + '\n';
-	ASTREE.addNode('boolop', 'branch');
+	//ASTREE.addNode('boolop', 'branch');
 
 	
 	var ASTtempDesc = tokenstreamCOPY[ASTparseCounter][0]; //check desc of token
 	var ASTtempType = tokenstreamCOPY[ASTparseCounter][1]; //check type of token
 	if (ASTtempDesc == ' =='){
-		ASTmatchSpecChars(' ==',ASTparseCounter);
+		//ASTmatchSpecChars(' ==',ASTparseCounter);
+		ASTREE.addNode('isEq', 'branch');
 		
 		ASTparseCounter = ASTparseCounter + 1;
 	}
 	else if (ASTtempDesc == ' !='){
-		ASTmatchSpecChars(' !=',ASTparseCounter);
+		//ASTmatchSpecChars(' !=',ASTparseCounter);
+		ASTREE.addNode('notEq', 'branch');
 		
 		ASTparseCounter = ASTparseCounter + 1;
 	}
-	ASTREE.endChildren();
+	//ASTREE.endChildren();
 }
 
 //production boolval ::== false | true
