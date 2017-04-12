@@ -106,11 +106,13 @@ function ASTparse_Program(){
 	else{
 		document.getElementById("AStree").value += '\n';
 		document.getElementById("AStree").value += 'ASTparser: done parsing programs';
+		start();
 		ASTparseCounter =0;
 		ASTlookAhead = ASTparseCounter + 1;
 		ASTparentCounter = 0;
 		ASTtokenID = 0;
 		ASTREE = new Tree();
+		
 	}
 	
 	//print out AST
