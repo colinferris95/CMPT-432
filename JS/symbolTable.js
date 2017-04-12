@@ -47,22 +47,51 @@ public class Env{
 
 //ASTREE.root.name
 
+var letter = /[a-z]/;
+
 function start(){
 console.log("this is the AST from AST.js " + ASTREE.getNodes());
+buildSymbolTable();
 }
 function buildSymbolTable(){
-	processNode(ASTREE.root);
+	for (i = 0; i < ASTREE.getNodes().length; i++){
+		processNode(ASTREE.getNodes()[i]);
+		
+		
+	}
 	
 	
 }
 
 
 function processNode(node){
-	switch(node.name){
-		case block:
+	alert(node);
+	/*
+	switch(node){
+		case 'block':
 			alert('symtab.openScope()');
-	//	case 
+		case 'VarDecl':
+			alert('symtab.enterSymbol(node.name,node.type) var decl');
+		default:
+			if ( (node).search(letter) != -1){
+				alert('symtab.enterSymbol(node.name,node.type) default');
+			}
+	
+
+	
 		
+	}
+	*/
+	
+	if (node == 'block'){
+		alert('symtab.openScope()');
+	}
+	else if (node == 'VarDecl'){
+		alert('symtab.enterSymbol(node.name,node.type) var decl');
+		
+	}
+	else if ( (node).search(letter) != -1){
+		alert('symtab.enterSymbol(node.name,node.type) default');
 	}
 	
 
