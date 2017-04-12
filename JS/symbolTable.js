@@ -45,8 +45,10 @@ public class Env{
 */
 //symbol table
 
+//ASTREE.root.name
+
 function start(){
-console.log("this is the AST from AST.js " + ASTREE.root.name);
+console.log("this is the AST from AST.js " + ASTREE.getNodes());
 }
 function buildSymbolTable(){
 	processNode(ASTREE.root);

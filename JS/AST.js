@@ -768,6 +768,42 @@ function Tree() {
         // Return the result.
         return traversalResult;
     };
+	
+	this.getNodes = function() {
+        // Initialize the result string.
+        var traversalResult = [];
+		x = 0
+
+        // Recursive function to handle the expansion of the nodes.
+        function expand(node, depth)
+        {
+           
+
+            // If there are no children (i.e., leaf nodes)...
+            if (!node.children || node.children.length === 0)
+            {
+                // ... note the leaf node.
+                traversalResult[x] = node.name ;
+				x++;
+               // traversalResult += "\n";
+            }
+            else
+            {
+                // There are children, so note these interior/branch nodes and ...
+                traversalResult[x] = node.name ;
+				x++;
+                // .. recursively expand them.
+                for (var i = 0; i < node.children.length; i++)
+                {
+                    expand(node.children[i], depth + 1);
+                }
+            }
+        }
+        // Make the initial call to expand from the root.
+        expand(this.root, 0);
+        // Return the result.
+        return traversalResult;
+    };
 }
 
 
