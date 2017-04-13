@@ -126,6 +126,7 @@ function processNode(){
 
 	}
 	table.outputTable();
+	table = new symbolTable();
 }
 
 
@@ -136,6 +137,7 @@ function symbolTable(){
 	var symtable = [];
 	var scopePointer = -1;
 	var i = 0;
+	var addSymbol;
 	
 	this.openScope = function(){
 		scopePointer++
@@ -148,22 +150,53 @@ function symbolTable(){
 	this.enterSymbol = function (type,name){
 	   //alert('hey look' + type);
 	   
-		symtable.push([type,name,scopePointer]);
-		i++
-		console.log(symtable);
+		if (symtable.length == 0){
+			 symtable.push([type,name,scopePointer]);
+				i++
+				console.log(symtable);
+			
+		}
+		else{
+	   
+	   
+	   for (w = 0; w < symtable.length; w++){
 		
+		   if (symtable[w][1] == name && symtable[w][2] == scopePointer){
+			   alert("trying to declare a symbol used in this scope");
+			   addSymbol = false;
+			   
+		   }
+		   
+		   else{
+			   addSymbol = true;
+		
+		   }
+		   
+	   
+	   }
+	   
+	   if(addSymbol){
+	   symtable.push([type,name,scopePointer]);
+				i++
+				console.log(symtable);
+	   }
+	   
+	   
 	}
+		
+}
 	
 	this.retrieveSymbol = function(name){
 		
 		for (j = 0; j < symtable.length; j++){
 			//alert(symtable[j][1]);
 			if (symtable[j][1] == name){
-				//alert('symbol is declared, no error');
+				alert('symbol is declared, no error');
 				
 			}
 			else{
-				//alert('symbol has not been declared, ERROR');
+				alert('symbol has not been declared, ERROR');
+				document.getElementById("AStree").value += 'error, trying to use a symbol that has not been decalred';
 				
 			}
 			
