@@ -104,6 +104,14 @@ $(function() {
 </script>
 
 
+	
+
+
+
+
+
+
+
 
 <script src="bootstrap/js/bootstrap.min.js"></script>
 <script src="JS/lexer.js"></script>
@@ -111,6 +119,28 @@ $(function() {
 <script src="JS/AST.js"></script>
 <script src="JS/symbolTable.js"></script>
 <script src="jshashtable-master/hashtable.js"></script>
+
+
+<script type="text/javascript">
+
+
+			
+
+
+
+</script>
+
+<script type="text/javascript">
+    var typesHash = new Hashtable();
+
+    typesHash.put("A string", "string");
+    typesHash.put(1, "number");
+
+    var o = {};
+    typesHash.put(o, "object");
+
+  //  alert( typesHash.get(o) ); // "object"
+</script>
 
 
 
