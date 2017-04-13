@@ -98,6 +98,7 @@ function ASTparse_Program(){
 	document.getElementById("AStree").value += ASTREE.toString();
 	
 	if (tokenstreamCOPY[ASTparseCounter] != undefined){
+		symstart();
 		 ASTtokenID = 0;
 		 ASTREE = new Tree();
 		 ASTparser();
@@ -106,7 +107,7 @@ function ASTparse_Program(){
 	else{
 		document.getElementById("AStree").value += '\n';
 		document.getElementById("AStree").value += 'ASTparser: done parsing programs';
-		start();
+		symstart();
 		ASTparseCounter =0;
 		ASTlookAhead = ASTparseCounter + 1;
 		ASTparentCounter = 0;

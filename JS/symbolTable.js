@@ -76,57 +76,64 @@ public class Env{
 //ASTREE.root.name
 
 var letter = /[a-z]/;
+var digit = /[0-9]/
 var table = new symbolTable();
 
-function start(){
+function symstart(){ //called from AST.js
 console.log("this is the AST from AST.js " + ASTREE.getNodes());
 processNode();
 }
-/*
-function buildSymbolTable(){
-	for (i = 0; i < ASTREE.getNodes().length; i++){
-		processNode(ASTREE.getNodes()[i]);
-		
-		
-	}
-	
-	
-}
-*/
 
-function processNode(){
-	
-	for (i = 0; i < ASTREE.getNodes().length; i++){
-	//alert(ASTREE.getNodes()[i]);
 	
 	
-	if (ASTREE.getNodes()[i] == 'block'){
+
+
+
+function processNode(){ //start processing the tree nodes from the AST
+	
+	for (i = 0; i < ASTREE.getNodes().length; i++){ //iterate through each node
+
+	
+	
+	if (ASTREE.getNodes()[i] == 'block'){ //if the node is a block, open a new scope
 		table.openScope();
 	}
-	else if (ASTREE.getNodes()[i] == 'VarDecl'){
-		//alert('symtab.enterSymbol(node.name,node.type) var decl');
+	else if (ASTREE.getNodes()[i] == 'VarDecl'){ //if a variable is being decalred, enter the next two nodes into the symbol table
+	
 		i++;
-		//alert(ASTREE.getNodes()[i]);
-		//alert('node type');
-		var type = ASTREE.getNodes()[i];
+	
+		var type = ASTREE.getNodes()[i]; //type of variable, int string etc.
 		i++;
-		//alert(ASTREE.getNodes()[i]);
-		//alert('node name');
-		var name = ASTREE.getNodes()[i];
+	
+		var name = ASTREE.getNodes()[i]; //name of variable
 		
-		table.enterSymbol(type,name);
+		table.enterSymbol(type,name); //enter the values into the table
 	
 	}
-	else if ( (ASTREE.getNodes()[i]).search(letter) != -1 && ((ASTREE.getNodes()[i]).length) <= 2){
+	else if (ASTREE.getNodes()[i] == 'AssignmentStatement'){ 
+		i--;
+		var id1 = ASTREE.getNodes()[i];
+		i++;
+		i++;
+		var id2 = ASTREE.getNodes()[i];
+		table.typeCheck(id1,id2);
+	
+	}
+	else if ( (ASTREE.getNodes()[i]).search(letter) != -1 && ((ASTREE.getNodes()[i]).length) <= 2){ //check for 1 letter symbols, ref
 		var name = ASTREE.getNodes()[i];
-		//alert('symtab.retrieveSymbol(node.name,node.type) default');
-		table.retrieveSymbol(name);
+		
+		table.retrieveSymbol(name); //make sure the symbol is in the table
+	}
+	else{
+		
+		document.getElementById("AStree").value += 'ERROR';
+		
 	}
 	
 
 	}
-	table.outputTable();
-	table = new symbolTable();
+	table.outputTable(); //display the symbol table
+	table = new symbolTable(); //clear the table for the next program
 }
 
 
@@ -183,6 +190,8 @@ function symbolTable(){
 	   
 	   
 	}
+	
+	
 		
 }
 	
@@ -211,9 +220,32 @@ function symbolTable(){
 			document.getElementById("AStree").value += ' ' + symtable[x][1];
 			document.getElementById("AStree").value += '        ' + symtable[x][0];
 			document.getElementById("AStree").value += '        ' + symtable[x][2];
+			document.getElementById("AStree").value += ' \n';
 			
 			
 		}
+		
+		
+	}
+	
+	
+	this.typeCheck = function(id1,id2){
+		
+		for (s = 0; s < symtable.length; s++){
+			if (symtable[s][1] == id1 && symtable[s][2] == scopePointer){
+				var id1Type = symtable[s][0];
+				if (id1Type == ' int' && id2.search(digit) == -1){
+					document.getElementById("AStree").value += ' error type mismatch';
+					
+				}
+				
+			}
+			else{
+				document.getElementById("AStree").value += 'error id not in scope or not declared';
+			}
+			
+		}
+		
 		
 		
 	}
