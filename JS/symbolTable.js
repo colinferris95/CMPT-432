@@ -111,11 +111,14 @@ function processNode(){ //start processing the tree nodes from the AST
 	
 	}
 	else if (ASTREE.getNodes()[i] == 'AssignmentStatement'){ 
-		i--;
-		var id1 = ASTREE.getNodes()[i];
+		
+		
 		i++;
+		var id1 = ASTREE.getNodes()[i];
+		
 		i++;
 		var id2 = ASTREE.getNodes()[i];
+
 		table.typeCheck(id1,id2);
 	
 	}
@@ -234,6 +237,9 @@ function symbolTable(){
 		for (s = 0; s < symtable.length; s++){
 			if (symtable[s][1] == id1 && symtable[s][2] == scopePointer){
 				var id1Type = symtable[s][0];
+				alert(id1);
+				alert(id2);
+				alert(id2.search(digit));
 				if (id1Type == ' int' && id2.search(digit) == -1){
 					document.getElementById("AStree").value += ' error type mismatch';
 					
