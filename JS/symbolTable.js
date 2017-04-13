@@ -237,12 +237,22 @@ function symbolTable(){
 		for (s = 0; s < symtable.length; s++){
 			if (symtable[s][1] == id1 && symtable[s][2] == scopePointer){
 				var id1Type = symtable[s][0];
-				alert(id1);
+				alert(id1Type);
 				alert(id2);
-				alert(id2.search(digit));
 				if (id1Type == ' int' && id2.search(digit) == -1){
 					document.getElementById("AStree").value += ' error type mismatch';
 					
+				}
+				if (id1Type == ' string' && id2.search(letter) == -1){
+					document.getElementById("AStree").value += ' error type mismatch';
+					
+				}
+				if (id1Type == ' boolean' && (id2 == 'true' || id2 == 'false')){
+					
+					
+				}
+				else{
+					document.getElementById("AStree").value += ' error type mismatch';
 				}
 				
 			}
