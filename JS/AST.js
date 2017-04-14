@@ -660,7 +660,7 @@ function ASTparse_intop(){
 	var ASTtempDesc = tokenstreamCOPY[ASTparseCounter][0]; //check desc of token
 	var ASTtempType = tokenstreamCOPY[ASTparseCounter][1]; //check type of token
 	ASTmatchSpecChars('+',ASTparseCounter);
-	ASTREE.endChildren();
+	//ASTREE.endChildren();
 	ASTparseCounter = ASTparseCounter + 1;
 	
 }

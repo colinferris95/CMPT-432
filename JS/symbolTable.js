@@ -114,12 +114,13 @@ function processNode(){ //start processing the tree nodes from the AST
 		
 		
 		i++;
-		var id1 = ASTREE.getNodes()[i];
+		var id1 = ASTREE.getNodes()[i]; //get the first half the assignment
+		table.retrieveSymbol(id1); //check to make the sure the symbol is decalred
 		
 		i++;
-		var id2 = ASTREE.getNodes()[i];
+		var id2 = ASTREE.getNodes()[i]; //get the second half of the assignment
 
-		table.typeCheck(id1,id2);
+		table.typeCheck(id1,id2); //run the type check
 	
 	}
 	else if ( (ASTREE.getNodes()[i]).search(letter) != -1 && ((ASTREE.getNodes()[i]).length) <= 2){ //check for 1 letter symbols, ref
@@ -144,13 +145,13 @@ function processNode(){ //start processing the tree nodes from the AST
 
 
 function symbolTable(){
-	var symtable = [];
-	var scopePointer = -1;
+	var symtable = []; //initalize the symbol table
+	var scopePointer = -1; //start the scope pointer (at -1 so the first scope is 0)
 	var i = 0;
 	var addSymbol;
 	
 	this.openScope = function(){
-		scopePointer++
+		scopePointer++; //declare a new scope
 			
 	}
 	this.closeScope = function(){
@@ -160,7 +161,7 @@ function symbolTable(){
 	this.enterSymbol = function (type,name){
 	   //alert('hey look' + type);
 	   
-		if (symtable.length == 0){
+		if (symtable.length == 0){ //for when the symbol table is empty
 			 symtable.push([type,name,scopePointer]);
 				i++
 				console.log(symtable);
@@ -171,8 +172,8 @@ function symbolTable(){
 	   
 	   for (w = 0; w < symtable.length; w++){
 		
-		   if (symtable[w][1] == name && symtable[w][2] == scopePointer){
-			   alert("trying to declare a symbol used in this scope");
+		   if (symtable[w][1] == name && symtable[w][2] == scopePointer){ //if the symbol is declared in the current scope
+			   document.getElementById("AStree").value += "trying to declare a symbol used in this scope";
 			   addSymbol = false;
 			   
 		   }
@@ -186,7 +187,7 @@ function symbolTable(){
 	   }
 	   
 	   if(addSymbol){
-	   symtable.push([type,name,scopePointer]);
+	   symtable.push([type,name,scopePointer]); //add symbol to the symbol table
 				i++
 				console.log(symtable);
 	   }
@@ -199,18 +200,29 @@ function symbolTable(){
 }
 	
 	this.retrieveSymbol = function(name){
+			if (symtable.length == 0){ //if the symbol table is empty, then the symbol is certainly not declared
+			 
+			 document.getElementById("AStree").value += 'symbol has not been declared, ERROR'
+			
+		}
 		
 		for (j = 0; j < symtable.length; j++){
 			//alert(symtable[j][1]);
-			if (symtable[j][1] == name){
-				alert('symbol is declared, no error');
+			if (symtable[j][2] == scopePointer ){ //only looking at symbols in current scope
+				
+				if(symtable[j][1] == name){ //does symbol match
+
+						//no error
+				}
+				else{
+
+					document.getElementById("AStree").value += 'error, trying to use a symbol that has not been decalred';
+				
+				}
+				//document.getElementById("AStree").value += 'symbol is declared, no error'
 				
 			}
-			else{
-				alert('symbol has not been declared, ERROR');
-				document.getElementById("AStree").value += 'error, trying to use a symbol that has not been decalred';
-				
-			}
+			
 			
 		}
 		
@@ -235,7 +247,7 @@ function symbolTable(){
 	this.typeCheck = function(id1,id2){
 		
 		for (s = 0; s < symtable.length; s++){
-			if (symtable[s][1] == id1 && symtable[s][2] == scopePointer){
+			if (symtable[s][1] == id1 && symtable[s][2] == scopePointer){ //looking for symbols in scope
 				var id1Type = symtable[s][0];
 				
 				
@@ -271,7 +283,7 @@ function symbolTable(){
 				
 			}
 			else{
-				document.getElementById("AStree").value += 'error id not in scope or not declared';
+				//document.getElementById("AStree").value += 'error id not in scope or not declared';
 			}
 			
 		}
