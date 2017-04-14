@@ -129,7 +129,7 @@ function processNode(){ //start processing the tree nodes from the AST
 	}
 	else{
 		
-		document.getElementById("AStree").value += 'ERROR';
+	
 		
 	}
 	
@@ -237,23 +237,37 @@ function symbolTable(){
 		for (s = 0; s < symtable.length; s++){
 			if (symtable[s][1] == id1 && symtable[s][2] == scopePointer){
 				var id1Type = symtable[s][0];
-				alert(id1Type);
-				alert(id2);
+				
+				
 				if (id1Type == ' int' && id2.search(digit) == -1){
-					document.getElementById("AStree").value += ' error type mismatch';
+					document.getElementById("AStree").value += ' error type mismatch int';
 					
 				}
 				if (id1Type == ' string' && id2.search(letter) == -1){
-					document.getElementById("AStree").value += ' error type mismatch';
+					document.getElementById("AStree").value += ' error type mismatch string';
 					
 				}
-				if (id1Type == ' boolean' && (id2 == 'true' || id2 == 'false')){
+				if (id1Type == ' boolean'  ){
+
+					if (id2 == 'boolvalfalse'  ){
+						
+					}
+					else if (id2 == 'boolvaltrue'  ){
+
+
+
+					}
+					else{
+						document.getElementById("AStree").value += ' error type mismatch boolean';
+
+					}
+
+
 					
 					
 				}
-				else{
-					document.getElementById("AStree").value += ' error type mismatch';
-				}
+
+			
 				
 			}
 			else{
