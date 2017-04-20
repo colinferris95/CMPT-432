@@ -84,6 +84,11 @@ function parse_Program(){
 	parse_Block();
 	
 	
+	/*
+	{
+	}
+	$
+	*/
    	
 	matchSpecChars('$',parseCounter); // match EOP symbol after
 	
@@ -223,7 +228,16 @@ function parse_Statement(){
 				
 	}
 	else if(tempType == 'identifier'){
+		parseCounter = parseCounter + 1;
+		
+		var desc = tokenstreamCOPY[parseCounter][0];
+		
+		if (desc == ' ='){
+			
+		parseCounter = parseCounter - 1;
+		
 		parse_AssignmentStatement();
+		}
 	
 		
 	}

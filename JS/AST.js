@@ -225,7 +225,16 @@ function ASTparse_Statement(){
 				
 	}
 	else if(ASTtempType == 'identifier'){
+		ASTparseCounter = ASTparseCounter + 1;
+		
+		var ASTdesc = tokenstreamCOPY[ASTparseCounter][0];
+		
+		if (ASTdesc == ' ='){
+			
+		ASTparseCounter = ASTparseCounter - 1;
+		
 		ASTparse_AssignmentStatement();
+		}
 	
 		
 	}
