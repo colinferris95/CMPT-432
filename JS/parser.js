@@ -56,6 +56,7 @@ console.log('character compared from lexer array ' + tokenstreamCOPY[pos][0] + '
 
 
 function parseStart(){
+	console.log(tokenstreamCOPY);
 	document.getElementById("tree").value = ' ';
 	parser();
 	
@@ -568,7 +569,7 @@ function parse_type(){
 
 		parseCounter = parseCounter + 1;
 	}
-	else if (nextToken == ' boolean'){
+	else if (tempDesc == ' boolean'){
 		
 		matchSpecChars(' boolean',parseCounter);
 	

@@ -569,7 +569,7 @@ function ASTparse_type(){
 
 		ASTparseCounter = ASTparseCounter + 1;
 	}
-	else if (ASTnextToken == ' boolean'){
+	else if (ASTtempDesc == ' boolean'){
 		
 		ASTmatchSpecChars(' boolean',ASTparseCounter);
 	
