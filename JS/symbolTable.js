@@ -200,29 +200,28 @@ function symbolTable(){
 }
 	
 	this.retrieveSymbol = function(name){
+		var symbolRetrieved = false;
 			if (symtable.length == 0){ //if the symbol table is empty, then the symbol is certainly not declared
 			 
 			 document.getElementById("AStree").value += 'symbol has not been declared, ERROR'
 			
 		}
 		
-		for (j = 0; j < symtable.length; j++){
-			//alert(symtable[j][1]);
-			if (symtable[j][2] == scopePointer ){ //only looking at symbols in current scope
-				
-				if(symtable[j][1] == name){ //does symbol match
-
-						//no error
-				}
-				else{
-
-					document.getElementById("AStree").value += 'error, trying to use a symbol that has not been decalred';
-				
-				}
-				//document.getElementById("AStree").value += 'symbol is declared, no error'
+	
+		
+		for (l = 0; l < symtable.length; l++){
+			
+			if (symtable[l][2] == scopePointer && symtable[l][1] == name){
+				symbolRetrieved = true;
+				break;
 				
 			}
 			
+			
+		}
+		
+		if (symbolRetrieved == false){
+			document.getElementById("AStree").value += ' The symbol' + name + ' has not been declared, ERROR';
 			
 		}
 		
