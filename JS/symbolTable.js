@@ -152,6 +152,8 @@ function symbolTable(){
 	
 	this.openScope = function(){
 		scopePointer++; //declare a new scope
+		document.getElementById("AStree").value += "entering scope" + scopePointer + "\n";
+		//verbose
 			
 	}
 	this.closeScope = function(){
@@ -163,6 +165,7 @@ function symbolTable(){
 	   
 		if (symtable.length == 0){ //for when the symbol table is empty
 			 symtable.push([type,name,scopePointer]);
+			 document.getElementById("AStree").value += "Adding symbol " + name + " with type " + type + " in scope " + scopePointer + "\n";
 				i++
 				console.log(symtable);
 			
@@ -188,6 +191,7 @@ function symbolTable(){
 	   
 	   if(addSymbol){
 	   symtable.push([type,name,scopePointer]); //add symbol to the symbol table
+	    document.getElementById("AStree").value += "Adding symbol " + name + " with type " + type + " in scope " + scopePointer + "\n";
 				i++
 				console.log(symtable);
 	   }
@@ -210,18 +214,35 @@ function symbolTable(){
 	
 		
 		for (l = 0; l < symtable.length; l++){
+			for (z = scopePointer; z >= 0; z--){
 			
-			if (symtable[l][2] == scopePointer && symtable[l][1] == name){
+			if (symtable[l][2] == z && symtable[l][1] == name){ //check current scope
+				document.getElementById("AStree").value += 'Retrieved symbol ' + name + ' from scope ' + z + '\n';
 				symbolRetrieved = true;
 				break;
 				
 			}
 			
 			
+				
+				
+			
+			
+			/*
+			else if (symtable[l][2] == (scopePointer - 1) && symtable[l][1] == name){ //check parent scope(s)
+				document.getElementById("AStree").value += 'Retrieved symbol ' + name + ' from scope ' + scopePointer;
+				symbolRetrieved = true;
+				break;
+				
+			}
+			*/
+			
+			}
+			
 		}
 		
 		if (symbolRetrieved == false){
-			document.getElementById("AStree").value += ' The symbol' + name + ' has not been declared, ERROR';
+			document.getElementById("AStree").value += ' The symbol' + name + ' has not been declared, ERROR' + '\n';
 			
 		}
 		

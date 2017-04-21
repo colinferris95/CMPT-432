@@ -107,6 +107,7 @@ function ASTparse_Program(){
 	else{
 		document.getElementById("AStree").value += '\n';
 		document.getElementById("AStree").value += 'ASTparser: done parsing programs';
+		document.getElementById("AStree").value += '\n';
 		symstart();
 		ASTparseCounter =0;
 		ASTlookAhead = ASTparseCounter + 1;
