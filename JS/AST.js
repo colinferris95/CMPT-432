@@ -536,8 +536,9 @@ function ASTASTparse_charList(){
 	if (ASTtempType == 'string' ){
 		//ASTparse_char(CharList_parent);
 		//ASTASTparse_charList(CharList_parent);
-	
-		ASTmatchSpecChars(ASTtempDesc,ASTparseCounter);
+		
+		//ASTmatchSpecChars(ASTtempDesc,ASTparseCounter);
+		ASTREE.addNode(('"' + ASTtempDesc + '"'), 'leaf');
 		ASTREE.endChildren();
 		ASTparseCounter = ASTparseCounter + 1;
 	}

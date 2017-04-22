@@ -78,6 +78,7 @@ public class Env{
 var letter = /[a-z]/;
 var digit = /[0-9]/
 var table = new symbolTable();
+var QUOT = /["]/;
 
 function symstart(){ //called from AST.js
 console.log("this is the AST from AST.js " + ASTREE.getNodes());
@@ -111,16 +112,40 @@ function processNode(){ //start processing the tree nodes from the AST
 	
 	}
 	else if (ASTREE.getNodes()[i] == 'AssignmentStatement'){ 
-		
+		var idtoId;
+		var id2Type ;
 		
 		i++;
-		var id1 = ASTREE.getNodes()[i]; //get the first half the assignment
-		table.retrieveSymbol(id1); //check to make the sure the symbol is decalred
-		
+		var id1 = ASTREE.getNodes()[i]; //get the first half the assignment//check to make the sure the symbol is decalred
+		var id1Type = table.retrieveSymbol(id1); //returns the type for type check
+		alert(id1Type); //
 		i++;
 		var id2 = ASTREE.getNodes()[i]; //get the second half of the assignment
-
-		table.typeCheck(id1,id2); //run the type check
+		
+		if (id2.search(QUOT) != -1){ //is a string
+			id2Type = "string";
+			alert("assign to string");
+			idtoId = false;
+		}
+		else if (id2 == 'boolvaltrue' || id == 'boolvalfalse'){ //is true/false
+			id2Type = "boolval";
+			alert("assign to true/false");
+			idtoId = false;
+		}
+		else if (id2.search(digit) != -1){ //is a number
+			id2Type = "digit";
+			alert("assign to digit");
+			idtoId = false;
+			
+		}
+		else{
+			alert("assign to another id");
+		    id2Type = table.retrieveSymbol(id2); //is another id
+			alert(id2Type);
+			idtoId = true;
+		}
+		
+		table.typeCheck(id1Type,id2Type,idtoId); //run the type check
 	
 	}
 	else if ( (ASTREE.getNodes()[i]).search(letter) != -1 && ((ASTREE.getNodes()[i]).length) <= 2){ //check for 1 letter symbols, ref
@@ -219,6 +244,8 @@ function symbolTable(){
 			if (symtable[l][2] == z && symtable[l][1] == name){ //check current scope
 				document.getElementById("AStree").value += 'Retrieved symbol ' + name + ' from scope ' + z + '\n';
 				symbolRetrieved = true;
+				var idType = symtable[l][0];
+				return idType;
 				break;
 				
 			}
@@ -264,8 +291,51 @@ function symbolTable(){
 	}
 	
 	
-	this.typeCheck = function(id1,id2){
+	this.typeCheck = function(id1Type,id2Type,idtoId){
 		
+		
+		if ( idtoId){
+			
+			if(id1Type != id2Type){
+				alert("type mismatch");
+				
+			}
+			
+			else{
+				alert("types match");
+			}
+			
+			
+		}
+		else{
+			
+			if (id1Type == ' int' && id2Type != 'digit'){
+					document.getElementById("AStree").value += ' error type mismatch int';
+					alert("type mismatch int");
+					
+				}
+				
+			if (id1Type == ' string' && id2Type != 'string'){
+				document.getElementById("AStree").value += ' error type mismatch string';
+					alert("type mismatch string");
+				}
+				
+			if (id1Type == ' boolean'  && id2Type != 'boolval'){
+				document.getElementById("AStree").value += ' error type mismatch boolean';
+					alert("type mismatch bool");
+
+
+					
+					
+				}
+				
+			
+			
+			
+		}
+		
+		
+		/*
 		for (s = 0; s < symtable.length; s++){
 			if (symtable[s][1] == id1 && symtable[s][2] == scopePointer){ //looking for symbols in scope
 				var id1Type = symtable[s][0];
@@ -307,6 +377,7 @@ function symbolTable(){
 			}
 			
 		}
+		*/
 		
 		
 		
