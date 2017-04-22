@@ -98,6 +98,7 @@ function processNode(){ //start processing the tree nodes from the AST
 	
 	if (ASTREE.getNodes()[i] == 'block'){ //if the node is a block, open a new scope
 		table.openScope();
+		
 	}
 	else if (ASTREE.getNodes()[i] == 'VarDecl'){ //if a variable is being decalred, enter the next two nodes into the symbol table
 	
@@ -182,6 +183,7 @@ function symbolTable(){
 			
 	}
 	this.closeScope = function(){
+		scopePointer--;
 		
 	}
 	
@@ -201,7 +203,7 @@ function symbolTable(){
 	   for (w = 0; w < symtable.length; w++){
 		
 		   if (symtable[w][1] == name && symtable[w][2] == scopePointer){ //if the symbol is declared in the current scope
-			   document.getElementById("AStree").value += "trying to declare a symbol used in this scope";
+			   document.getElementById("AStree").value += "ERROR trying to declare a symbol used in this scope";
 			   addSymbol = false;
 			   
 		   }
