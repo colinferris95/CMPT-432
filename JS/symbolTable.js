@@ -100,6 +100,10 @@ function processNode(){ //start processing the tree nodes from the AST
 		table.openScope();
 		
 	}
+	else if(ASTREE.getNodes()[i] == 'leaveScope'){
+		table.closeScope();
+		
+	}
 	else if (ASTREE.getNodes()[i] == 'VarDecl'){ //if a variable is being decalred, enter the next two nodes into the symbol table
 	
 		i++;

@@ -154,6 +154,7 @@ function ASTparse_Block(){
 	
 	
 	//ASTmatchSpecChars('}',ASTparseCounter);
+	ASTREE.addNode('leaveScope', 'leaf'); //experiment
 	ASTREE.endChildren();
 	ASTparseCounter = ASTparseCounter + 1;
 	
@@ -754,15 +755,25 @@ function Tree() {
             // this looks at least a little tree-like.
             for (var i = 0; i < depth; i++)
             {
+				if(node.name == 'leaveScope'){ //experiment
+					
+				}
+				else{
                 traversalResult += "-";
+				}
             }
 
             // If there are no children (i.e., leaf nodes)...
             if (!node.children || node.children.length === 0)
             {
                 // ... note the leaf node.
+				if(node.name == 'leaveScope'){ //experiment
+					
+				}
+				else{
                 traversalResult += "[" + node.name + "]";
                 traversalResult += "\n";
+				}
             }
             else
             {
