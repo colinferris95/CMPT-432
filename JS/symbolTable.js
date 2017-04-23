@@ -123,30 +123,30 @@ function processNode(){ //start processing the tree nodes from the AST
 		i++;
 		var id1 = ASTREE.getNodes()[i]; //get the first half the assignment//check to make the sure the symbol is decalred
 		var id1Type = table.retrieveSymbol(id1); //returns the type for type check
-		alert(id1Type); //
+		//alert(id1Type); //
 		i++;
 		var id2 = ASTREE.getNodes()[i]; //get the second half of the assignment
 		
 		if (id2.search(QUOT) != -1){ //is a string
 			id2Type = "string";
-			alert("assign to string");
+			//alert("assign to string");
 			idtoId = false;
 		}
 		else if (id2 == 'boolvaltrue' || id == 'boolvalfalse'){ //is true/false
 			id2Type = "boolval";
-			alert("assign to true/false");
+			//alert("assign to true/false");
 			idtoId = false;
 		}
 		else if (id2.search(digit) != -1){ //is a number
 			id2Type = "digit";
-			alert("assign to digit");
+			//alert("assign to digit");
 			idtoId = false;
 			
 		}
 		else{
 			alert("assign to another id");
 		    id2Type = table.retrieveSymbol(id2); //is another id
-			alert(id2Type);
+			//alert(id2Type);
 			idtoId = true;
 		}
 		
@@ -298,17 +298,19 @@ function symbolTable(){
 	
 	
 	this.typeCheck = function(id1Type,id2Type,idtoId){
-		
+		document.getElementById("AStree").value += 'Checking assignment of ' + id1Type + ' and ' + id2Type + '\n';
 		
 		if ( idtoId){
 			
 			if(id1Type != id2Type){
-				alert("type mismatch");
+				document.getElementById("AStree").value += "ERROR type mismatch";
+				
 				
 			}
 			
 			else{
-				alert("types match");
+				
+				document.getElementById("AStree").value += "types match";
 			}
 			
 			
@@ -316,19 +318,19 @@ function symbolTable(){
 		else{
 			
 			if (id1Type == ' int' && id2Type != 'digit'){
-					document.getElementById("AStree").value += ' error type mismatch int';
-					alert("type mismatch int");
+					document.getElementById("AStree").value += ' error type mismatch int' + '\n';
+					
 					
 				}
 				
 			if (id1Type == ' string' && id2Type != 'string'){
-				document.getElementById("AStree").value += ' error type mismatch string';
-					alert("type mismatch string");
+				document.getElementById("AStree").value += ' error type mismatch string' + '\n';
+				
 				}
 				
 			if (id1Type == ' boolean'  && id2Type != 'boolval'){
-				document.getElementById("AStree").value += ' error type mismatch boolean';
-					alert("type mismatch bool");
+				document.getElementById("AStree").value += ' error type mismatch boolean' + '\n';
+			
 
 
 					
