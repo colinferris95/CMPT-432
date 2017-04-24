@@ -3,7 +3,7 @@
 
 //test program 1 passes the lexer with no errors
 function Program1(){
-	document.getElementById("textInput").value = ' { print("true") \n   int a \n   a = 2 \n }$	'
+	document.getElementById("textInput").value = ' {int a boolean b {string c a = 5 b = true c = "inta" print(c)} print(b) print(a) }$ {int a {boolean b a = 1 } print(b)} $ '
 	
 	
 	
