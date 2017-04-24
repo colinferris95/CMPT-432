@@ -64,7 +64,7 @@ function ASTparseStart(){
 
 //start parsing
 function ASTparser(){
-	document.getElementById("AStree").value += "ASTparser: parse()"+ '\n';
+	//document.getElementById("AStree").value += "ASTparser: parse()"+ '\n';
 	ASTinitParseToken();
 	ASTparse_Program();
 	
@@ -74,7 +74,7 @@ function ASTparser(){
 //production Program ::== Block $
 
 function ASTparse_Program(){
-	document.getElementById("AStree").value += "ASTparser: ASTparse_Program()" + '\n';
+	//document.getElementById("AStree").value += "ASTparser: ASTparse_Program()" + '\n';
 	
 
 	//ASTREE.addNode('program', 'branch');
@@ -92,7 +92,7 @@ function ASTparse_Program(){
 	ASTparseCounter = ASTparseCounter + 1;
 
 	
-	document.getElementById("AStree").value += "ASTparser: Parsing complete" + '\n' + '\n';
+	//document.getElementById("AStree").value += "ASTparser: Parsing complete" + '\n' + '\n';
 	
 	
 	document.getElementById("AStree").value += ASTREE.toString();
@@ -127,7 +127,7 @@ function ASTparse_Program(){
 //production Block ::== { StatementList }
 
 function ASTparse_Block(){
-	document.getElementById("AStree").value += "ASTparser: ASTparse_Block()"+ '\n';
+	//document.getElementById("AStree").value += "ASTparser: ASTparse_Block()"+ '\n';
 	
 	
 
@@ -146,7 +146,7 @@ function ASTparse_Block(){
 	
 	
 	if (ASTparseCounter == 1){
-			document.getElementById("AStree").value += "ASTparser: ASTASTparse_StatementList()" + '\n';
+			//document.getElementById("AStree").value += "ASTparser: ASTASTparse_StatementList()" + '\n';
 		//ASTREE.addNode('StatementList', 'branch');
 		//ASTREE.endChildren();
 	}
@@ -176,7 +176,7 @@ function ASTparse_StatementList(){
 	var ASTtempType = tokenstreamCOPY[ASTparseCounter][1]; //check type of token
 
 	if (ASTtempDesc == ' print' || ASTtempType == 'identifier' || ASTtempType == 'type' || ASTtempDesc == ' while' || ASTtempDesc == ' if' || ASTtempDesc == '{' ){ //if next token is a statment
-		document.getElementById("AStree").value += "ASTparser: ASTASTparse_StatementList()" + '\n';
+		//document.getElementById("AStree").value += "ASTparser: ASTASTparse_StatementList()" + '\n';
 		//ASTREE.addNode('StatementList', 'branch');
 		
 		
@@ -211,7 +211,7 @@ function ASTparse_StatementList(){
 //          			::== Block
 
 function ASTparse_Statement(){
-	document.getElementById("AStree").value += "ASTparser: ASTparse_Statement()" + '\n';
+	//document.getElementById("AStree").value += "ASTparser: ASTparse_Statement()" + '\n';
 
 	//ASTREE.addNode('Statement', 'branch');
 
@@ -269,7 +269,7 @@ function ASTparse_Statement(){
 
 //Production PrintStatement ::== print ( Expr ) 
 function ASTparse_PrintStatement(){
-	document.getElementById("AStree").value += "ASTparser: ASTparse_PrintStatement()" + '\n';
+	//document.getElementById("AStree").value += "ASTparser: ASTparse_PrintStatement()" + '\n';
 	ASTREE.addNode('PrintStatment', 'branch');
 
 	
@@ -289,7 +289,7 @@ function ASTparse_PrintStatement(){
 	
 	//ASTmatchSpecChars (')',ASTparseCounter);
 	
-	ASTREE.endChildren();
+	//ASTREE.endChildren();
 
 	ASTparseCounter = ASTparseCounter + 1;
 	
@@ -299,7 +299,7 @@ function ASTparse_PrintStatement(){
 
 //Production AssignmentStatement ::== Id = Expr
 function ASTparse_AssignmentStatement(){
-	document.getElementById("AStree").value += "ASTparser: ASTparse_AssignmentStatement()" + '\n';
+	//document.getElementById("AStree").value += "ASTparser: ASTparse_AssignmentStatement()" + '\n';
 	ASTREE.addNode('AssignmentStatement', 'branch');
 
 	
@@ -322,7 +322,7 @@ function ASTparse_AssignmentStatement(){
 
 //Production VarDecl ::== type Id
 function ASTparse_VarDecl(){
-	document.getElementById("AStree").value += "ASTparser: ASTparse_VarDecl()" + '\n';
+	//document.getElementById("AStree").value += "ASTparser: ASTparse_VarDecl()" + '\n';
 	ASTREE.addNode('VarDecl', 'branch');
 
 	
@@ -333,14 +333,14 @@ function ASTparse_VarDecl(){
 	
 	ASTparse_ID();
 	ASTREE.endChildren();
-	ASTREE.endChildren();
-	ASTREE.endChildren();
+	//ASTREE.endChildren();
+	//ASTREE.endChildren();
 	
 }
 
 //Production WhileStatement ::== while BooleanExpr Block
 function ASTparse_WhileStatement(){
-	document.getElementById("AStree").value += "ASTparser: ASTparse_WhileStatement()" + '\n';
+	//document.getElementById("AStree").value += "ASTparser: ASTparse_WhileStatement()" + '\n';
 	ASTREE.addNode('WhileStatement', 'branch');
 
 	
@@ -359,7 +359,7 @@ function ASTparse_WhileStatement(){
 
 //production IfStatement ::== if BooleanExpr Block
 function ASTparse_IfStatement(){
-	document.getElementById("AStree").value += "ASTparser: ASTparse_IfStatement()" + '\n';
+	//document.getElementById("AStree").value += "ASTparser: ASTparse_IfStatement()" + '\n';
 	ASTREE.addNode('IfStatement', 'branch');
 
 	
@@ -382,7 +382,7 @@ function ASTparse_IfStatement(){
 //     ::== Id
 
 function ASTparse_Expr(){
-	document.getElementById("AStree").value += "ASTparser: ASTparse_Expr()" + '\n';
+	//document.getElementById("AStree").value += "ASTparser: ASTparse_Expr()" + '\n';
 	//ASTREE.addNode('Expr', 'branch');
 
 	
@@ -390,7 +390,7 @@ function ASTparse_Expr(){
 	var ASTtempType = tokenstreamCOPY[ASTparseCounter][1]; //check type of token
 	if(ASTtempType == 'digit'){
 		ASTparse_IntExpr();
-		ASTREE.endChildren();
+		//ASTREE.endChildren();
 		
 		
 	
@@ -398,11 +398,11 @@ function ASTparse_Expr(){
 	}
 	else if (ASTtempDesc == ' "'){
 		ASTparse_StringExpr();
-		ASTREE.endChildren();
+		//ASTREE.endChildren();
 	}
 	else if (ASTtempDesc == ' (' || ASTtempType == 'boolval'){
 		ASTparse_BooleanExpr();
-		ASTREE.endChildren();
+		//ASTREE.endChildren();
 	
 		
 	}
@@ -424,7 +424,7 @@ function ASTparse_Expr(){
 //production IntExpr ::== digit intop Expr
 //					 ::== digit
 function ASTparse_IntExpr(){
-	document.getElementById("AStree").value += "ASTparser: ASTparse_IntExpr()" + '\n';
+	//document.getElementById("AStree").value += "ASTparser: ASTparse_IntExpr()" + '\n';
 	//ASTREE.addNode('IntExpr', 'branch');
 
 	
@@ -451,7 +451,7 @@ function ASTparse_IntExpr(){
 
 //production StringExpr ::== " CharList "
 function ASTparse_StringExpr(){
-	document.getElementById("AStree").value += "ASTparser: ASTparse_StringExpr()" + '\n';
+	//document.getElementById("AStree").value += "ASTparser: ASTparse_StringExpr()" + '\n';
 	//ASTREE.addNode('StringExpr', 'branch');
 	
 	//ASTmatchSpecChars(' "',ASTparseCounter);
@@ -473,7 +473,7 @@ function ASTparse_StringExpr(){
 //						 ::== boolval
 
 function ASTparse_BooleanExpr(){
-	document.getElementById("AStree").value += "ASTparser: ASTparse_BooleanExpr()" + '\n';
+	//document.getElementById("AStree").value += "ASTparser: ASTparse_BooleanExpr()" + '\n';
 	
 
 	
@@ -513,7 +513,7 @@ function ASTparse_BooleanExpr(){
 //production Id ::== char
 
 function ASTparse_ID(){
-	document.getElementById("AStree").value += "ASTparser: ASTparse_ID()" + '\n';
+	//document.getElementById("AStree").value += "ASTparser: ASTparse_ID()" + '\n';
 	//ASTREE.addNode('Id', 'branch');
 
 	
@@ -528,7 +528,7 @@ function ASTparse_ID(){
 //					  ::== ε
 
 function ASTASTparse_charList(){
-	document.getElementById("AStree").value += "ASTparser: ASTASTparse_charList()" + '\n';
+	//document.getElementById("AStree").value += "ASTparser: ASTASTparse_charList()" + '\n';
 	//ASTREE.addNode('CharList', 'branch');
 
 	
@@ -540,7 +540,7 @@ function ASTASTparse_charList(){
 		
 		//ASTmatchSpecChars(ASTtempDesc,ASTparseCounter);
 		ASTREE.addNode(('"' + ASTtempDesc + '"'), 'leaf');
-		ASTREE.endChildren();
+		//ASTREE.endChildren();
 		ASTparseCounter = ASTparseCounter + 1;
 	}
 	
@@ -556,7 +556,7 @@ function ASTASTparse_charList(){
 //production type ::== int | string | boolean
 
 function ASTparse_type(){
-	document.getElementById("AStree").value += "ASTparser: ASTparse_type()" + '\n';
+	//document.getElementById("AStree").value += "ASTparser: ASTparse_type()" + '\n';
 	//ASTREE.addNode('Type', 'branch');;
 
 
@@ -584,7 +584,7 @@ function ASTparse_type(){
 
 //production char ::== a | b | c ... z
 function ASTparse_char(){
-	document.getElementById("AStree").value += "ASTparser: ASTparse_char()" + '\n';
+	//document.getElementById("AStree").value += "ASTparser: ASTparse_char()" + '\n';
 	//ASTREE.addNode('char', 'branch');
 
 	
@@ -607,7 +607,7 @@ function parse_space(){
 
 //production digit ::== 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0
 function ASTparse_digit(){
-	document.getElementById("AStree").value += "ASTparser: ASTparse_digit()" + '\n';
+	//document.getElementById("AStree").value += "ASTparser: ASTparse_digit()" + '\n';
 	ASTREE.addNode('digit', 'branch');
 
 	
@@ -621,7 +621,7 @@ function ASTparse_digit(){
 //production boolop ::== == | !=
 
 function ASTparse_boolop(){
-	document.getElementById("AStree").value += "ASTparser: ASTparse_boolop()" + '\n';
+	//document.getElementById("AStree").value += "ASTparser: ASTparse_boolop()" + '\n';
 	//ASTREE.addNode('boolop', 'branch');
 
 	
@@ -644,7 +644,7 @@ function ASTparse_boolop(){
 
 //production boolval ::== false | true
 function ASTparse_boolval(){
-	document.getElementById("AStree").value += "ASTparser: ASTparse_boolval()" + '\n';
+	//document.getElementById("AStree").value += "ASTparser: ASTparse_boolval()" + '\n';
 	//ASTREE.addNode('boolval', 'branch');
 
 	
@@ -652,12 +652,12 @@ function ASTparse_boolval(){
 	var ASTtempType = tokenstreamCOPY[ASTparseCounter][1]; //check type of token
 	if (ASTtempDesc == ' false'){
 		ASTREE.addNode('boolvalfalse','leaf');
-		ASTREE.endChildren();
+		//ASTREE.endChildren();
 		ASTparseCounter = ASTparseCounter + 1;
 	}
 	else if (ASTtempDesc == ' true'){
 		ASTREE.addNode('boolvaltrue','leaf');
-		ASTREE.endChildren();
+		//ASTREE.endChildren();
 		ASTparseCounter = ASTparseCounter + 1;
 	}
 	//ASTREE.endChildren();
@@ -665,7 +665,7 @@ function ASTparse_boolval(){
 
 //production intop ::== +
 function ASTparse_intop(){
-	document.getElementById("AStree").value += "ASTparser: ASTparse_intop()" + '\n';
+	//document.getElementById("AStree").value += "ASTparser: ASTparse_intop()" + '\n';
 	ASTREE.addNode('intop', 'branch');
 
 	

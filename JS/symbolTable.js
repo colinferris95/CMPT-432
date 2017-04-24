@@ -179,6 +179,7 @@ function symbolTable(){
 	var scopePointer = -1; //start the scope pointer (at -1 so the first scope is 0)
 	var i = 0;
 	var addSymbol;
+	var semanticSucess = true;
 	
 	this.openScope = function(){
 		scopePointer++; //declare a new scope
@@ -209,6 +210,7 @@ function symbolTable(){
 		   if (symtable[w][1] == name && symtable[w][2] == scopePointer){ //if the symbol is declared in the current scope
 			   document.getElementById("AStree").value += "ERROR trying to declare a symbol used in this scope";
 			   addSymbol = false;
+			   semanticSucess = false;
 			   
 		   }
 		   
@@ -239,6 +241,7 @@ function symbolTable(){
 			if (symtable.length == 0){ //if the symbol table is empty, then the symbol is certainly not declared
 			 
 			 document.getElementById("AStree").value += 'symbol has not been declared, ERROR'
+			 semanticSucess = false;
 			
 		}
 		
@@ -276,21 +279,29 @@ function symbolTable(){
 		
 		if (symbolRetrieved == false){
 			document.getElementById("AStree").value += ' The symbol' + name + ' has not been declared, ERROR' + '\n';
+			semanticSucess = false;
 			
 		}
 		
 	}
 	
 	this.outputTable = function(name){
-		document.getElementById("AStree").value +=' \n' + 'Name  Type  Scope ';
+		
+		if (semanticSucess){
+			document.getElementById("AStree").value +=' \n' + 'Name  Type  Scope ';
 		for (x = 0; x < symtable.length; x++){
 			document.getElementById("AStree").value += ' \n';
 			document.getElementById("AStree").value += ' ' + symtable[x][1];
 			document.getElementById("AStree").value += '        ' + symtable[x][0];
 			document.getElementById("AStree").value += '        ' + symtable[x][2];
 			document.getElementById("AStree").value += ' \n';
+			document.getElementById("AStree").value += ' \n';
 			
 			
+		}
+		}
+		else{
+			document.getElementById("AStree").value += 'Errors in semantic analysis, table not produced';
 		}
 		
 		
@@ -304,7 +315,7 @@ function symbolTable(){
 			
 			if(id1Type != id2Type){
 				document.getElementById("AStree").value += "ERROR type mismatch";
-				
+				semanticSucess = false;
 				
 			}
 			
@@ -319,18 +330,18 @@ function symbolTable(){
 			
 			if (id1Type == ' int' && id2Type != 'digit'){
 					document.getElementById("AStree").value += ' error type mismatch int' + '\n';
-					
+					semanticSucess = false;
 					
 				}
 				
 			if (id1Type == ' string' && id2Type != 'string'){
 				document.getElementById("AStree").value += ' error type mismatch string' + '\n';
-				
+				semanticSucess = false;
 				}
 				
 			if (id1Type == ' boolean'  && id2Type != 'boolval'){
 				document.getElementById("AStree").value += ' error type mismatch boolean' + '\n';
-			
+				semanticSucess = false;
 
 
 					
