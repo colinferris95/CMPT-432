@@ -110,7 +110,7 @@ function generation(){
 	}
 	// start back patching by giving the variables an address
 	for(z = 0; z < staticTable.length; z++){
-		alert(heapCounter);
+		//alert(heapCounter);
 		hexString = heapCounter.toString(16);
 		staticTable[z][2] = hexString;
 		heapCounter++;

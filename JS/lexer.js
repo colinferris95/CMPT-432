@@ -245,7 +245,7 @@ function isID(currentchar,forward,input){
 				
 				
 			case 2:
-				if ((input[forward]).search(letter) != -1){ //if each character added is also a letter, keep building the toekn
+				if ((input[forward]).search(letter) != -1 ){ //if each character added is also a letter, keep building the toekn
 					tokenCheck = true;
 					state = 2;
 					tokeninstall = tokeninstall + input[forward];;
@@ -586,7 +586,7 @@ function isQuot(currentchar,forward,input){
 				}
 			
 				if ((input[forward]).search(QUOT) == -1){ //if the character is also a letter, move on to case 2 to build an unrecognized token 
-					if ((input[forward]).search(letter) != -1){
+					if ((input[forward]).search(letter) != -1 || (input[forward]).search(space) != -1){
 					state = 1;
 					tokeninstall = tokeninstall + input[forward];; //continue building the token
 					forward++;//move the forward counter
