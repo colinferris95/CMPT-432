@@ -402,7 +402,7 @@ function parse_Expr(){
 		parse_StringExpr();
 		CSTREE.endChildren();
 	}
-	else if (tempDesc == ' (' || tempType == 'boolval'){
+	else if (tempDesc == '(' || tempType == 'boolval'){
 		parse_BooleanExpr();
 		CSTREE.endChildren();
 	
@@ -475,6 +475,7 @@ function parse_StringExpr(){
 //						 ::== boolval
 
 function parse_BooleanExpr(){
+	alert('booleanexpr');
 	document.getElementById("tree").value += "PARSER: parse_BooleanExpr()" + '\n';
 	
 
