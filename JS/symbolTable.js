@@ -167,6 +167,7 @@ function processNode(){ //start processing the tree nodes from the AST
 
 	}
 	table.outputTable(); //display the symbol table
+	codeGenStart();
 	table = new symbolTable(); //clear the table for the next program
 }
 
