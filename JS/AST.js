@@ -400,7 +400,7 @@ function ASTparse_Expr(){
 		ASTparse_StringExpr();
 		//ASTREE.endChildren();
 	}
-	else if (ASTtempDesc == ' (' || ASTtempType == 'boolval'){
+	else if (ASTtempDesc == '(' || ASTtempType == 'boolval'){
 		ASTparse_BooleanExpr();
 		//ASTREE.endChildren();
 	

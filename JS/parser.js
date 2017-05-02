@@ -475,7 +475,7 @@ function parse_StringExpr(){
 //						 ::== boolval
 
 function parse_BooleanExpr(){
-	alert('booleanexpr');
+	
 	document.getElementById("tree").value += "PARSER: parse_BooleanExpr()" + '\n';
 	
 

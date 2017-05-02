@@ -117,6 +117,7 @@ function processNode(){ //start processing the tree nodes from the AST
 	
 	}
 	else if (ASTREE.getNodes()[i] == 'AssignmentStatement'){ 
+	
 		var idtoId;
 		var id2Type ;
 		
@@ -143,8 +144,31 @@ function processNode(){ //start processing the tree nodes from the AST
 			idtoId = false;
 			
 		}
+		
+		else if (id2 =='isEq' ){
+			
+			var part1 = ASTREE.getNodes()[i+1];
+			var part2 = ASTREE.getNodes()[i+2];
+			//alert('part1' + part1);
+			//alert('part2' + part2);
+			if (part2 == 'isEq'){ //workaround for boolean hell
+				var temp1 = ASTREE.getNodes()[i+2];
+				var temp2 = ASTREE.getNodes()[i+3];
+				table.typeCheck(temp1,temp2,idtoId);
+				part2 = 'boolvaltrue';
+			}
+			
+			table.typeCheck(part1,part2,idtoId);
+			id2Type = 'boolval';
+			idtoId = false;
+			
+			
+			
+			
+			
+		}
 		else{
-			alert("assign to another id");
+			//alert("assign to another id");
 		    id2Type = table.retrieveSymbol(id2); //is another id
 			//alert(id2Type);
 			idtoId = true;
@@ -310,6 +334,7 @@ function symbolTable(){
 	
 	
 	this.typeCheck = function(id1Type,id2Type,idtoId){
+		
 		document.getElementById("AStree").value += 'Checking assignment of ' + id1Type + ' and ' + id2Type + '\n';
 		
 		if ( idtoId){
@@ -348,7 +373,58 @@ function symbolTable(){
 					
 					
 				}
+			if (id1Type == 'boolval'  && id2Type != 'boolval'){
+				document.getElementById("AStree").value += ' error type mismatch boolean' + '\n';
+				semanticSucess = false;
+
+
+					
+					
+				}
+				//alert(id1Type);
+				//alert(id2Type);
 				
+			if (id1Type =='boolvaltrue'){
+			if ( id1Type =='boolvaltrue' && id2Type == 'boolvaltrue'  ){
+				
+
+					
+					
+				}
+			else if (id2Type == 'boolvalfalse'){
+					
+
+					
+				}
+				else{
+					document.getElementById("AStree").value += ' error type mismatch boolval' + '\n';
+				semanticSucess = false;
+				}
+				
+			}
+			if (id1Type =='boolvalfalse'){
+				
+			if ( id1Type =='boolvalfalse' && id2Type == 'boolvaltrue'  ){
+				
+
+					
+					
+				}
+			else if (id2Type == 'boolvalfalse'){
+					
+
+					
+				}
+				else{
+					document.getElementById("AStree").value += ' error type mismatch boolval' + '\n';
+				semanticSucess = false;
+				}
+				
+		
+			
+			
+				
+			}
 			
 			
 			
