@@ -294,9 +294,10 @@ function symbolTable(){
 		
 	
 		
-		for (l = 0; l < symtable.length; l++){
+		for (l = symtable.length - 1; l >= 0 ; l--){
 			for (z = scopePointer; z >= 0; z--){
-			
+			//alert("scope " + symtable[l][2]);
+			//alert("name " + symtable[l][1]);
 			if (symtable[l][2] == z && symtable[l][1] == name){ //check current scope
 				document.getElementById("AStree").value += 'Retrieved symbol ' + name + ' from scope ' + z + '\n';
 				symbolRetrieved = true;
