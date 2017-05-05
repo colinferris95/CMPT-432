@@ -473,33 +473,72 @@ function ASTparse_StringExpr(){
 //						 ::== boolval
 
 function ASTparse_BooleanExpr(){
-	//document.getElementById("AStree").value += "ASTparser: ASTparse_BooleanExpr()" + '\n';
+	
+	document.getElementById("AStree").value += "PARSER: parse_BooleanExpr()" + '\n';
 	
 
 	
 	var ASTtempDesc = tokenstreamCOPY[ASTparseCounter][0]; //check desc of token
 	var ASTtempType = tokenstreamCOPY[ASTparseCounter][1]; //check type of token
 	if (ASTtempDesc == '('){
-		//ASTmatchSpecChars('(',ASTparseCounter);
+		//matchSpecChars('(',parseCounter);
+		alert(tokenstreamCOPY[ASTparseCounter + 1][0]);
+		if (  (tokenstreamCOPY[ASTparseCounter + 1][0]) == ' "'  ){
+			alert('boolean branch path ast');
+			ASTparseCounter = ASTparseCounter + 4;
+			alert(tokenstreamCOPY[ASTparseCounter][0]);
+			ASTparse_boolop();
 		
-		//ASTREE.addNode('BooleanExpr', 'branch');
+			ASTparseCounter = ASTparseCounter - 4;
+			alert(tokenstreamCOPY[ASTparseCounter][0]);
+			ASTparse_Expr();
+	
+			ASTparseCounter = ASTparseCounter + 1;
+		
+	
+			alert(tokenstreamCOPY[ASTparseCounter][0]);
+			ASTparse_Expr();
+	
+			//matchSpecChars(')',parseCounter);
+			ASTparseCounter = ASTparseCounter + 1;
+			
+			
+		}
+		//CSTREE.addNode('BooleanExpr', 'branch');
+		else{
 		
 		ASTparseCounter = ASTparseCounter + 2;
-		
+		alert(tokenstreamCOPY[ASTparseCounter][0]);
 		ASTparse_boolop();
 		
 		ASTparseCounter = ASTparseCounter - 2;
+		alert(tokenstreamCOPY[ASTparseCounter][0]);
+		ASTparse_Expr();
+	
+		ASTparseCounter = ASTparseCounter + 1;
+		
+	
+		alert(tokenstreamCOPY[ASTparseCounter][0]);
+		ASTparse_Expr();
+	
+		//matchSpecChars(')',parseCounter);
+		ASTparseCounter = ASTparseCounter + 1;
+		}
+		/*
+		ASTparseCounter = ASTparseCounter + 1;
+		
 		
 		ASTparse_Expr();
 	
 		
-		
-		ASTparseCounter = ASTparseCounter + 1;
+		ASTparse_boolop();
+	
 		
 		ASTparse_Expr();
 	
-		//ASTmatchSpecChars(')',ASTparseCounter);
+		//matchSpecChars(')',parseCounter);
 		ASTparseCounter = ASTparseCounter + 1;
+		*/
 		
 	}
 	else{

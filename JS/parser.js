@@ -390,6 +390,7 @@ function parse_Expr(){
 	
 	var tempDesc = tokenstreamCOPY[parseCounter][0]; //check desc of token
 	var tempType = tokenstreamCOPY[parseCounter][1]; //check type of token
+	
 	if(tempType == 'digit'){
 		parse_IntExpr();
 		CSTREE.endChildren();
@@ -488,6 +489,7 @@ function parse_BooleanExpr(){
 		CSTREE.addNode('BooleanExpr', 'branch');
 		
 		parseCounter = parseCounter + 1;
+		
 		
 		parse_Expr();
 	

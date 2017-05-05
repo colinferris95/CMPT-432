@@ -167,6 +167,28 @@ function processNode(){ //start processing the tree nodes from the AST
 			
 			
 		}
+		else if (id2 =='notEq' ){
+			
+			var part1 = ASTREE.getNodes()[i+1];
+			var part2 = ASTREE.getNodes()[i+2];
+			//alert('part1' + part1);
+			//alert('part2' + part2);
+			if (part2 == 'isEq'){ //workaround for boolean hell
+				var temp1 = ASTREE.getNodes()[i+2];
+				var temp2 = ASTREE.getNodes()[i+3];
+				table.typeCheck(temp1,temp2,idtoId);
+				part2 = 'boolvaltrue';
+			}
+			
+			table.typeCheck(part1,part2,idtoId);
+			id2Type = 'boolval';
+			idtoId = false;
+			
+			
+			
+			
+			
+		}
 		else{
 			//alert("assign to another id");
 		    id2Type = table.retrieveSymbol(id2); //is another id
@@ -340,14 +362,14 @@ function symbolTable(){
 		if ( idtoId){
 			
 			if(id1Type != id2Type){
-				document.getElementById("AStree").value += "ERROR type mismatch";
+				document.getElementById("AStree").value += "ERROR type mismatch" + '\n';
 				semanticSucess = false;
 				
 			}
 			
 			else{
 				
-				document.getElementById("AStree").value += "types match";
+				document.getElementById("AStree").value += "types match" + '\n';
 			}
 			
 			
