@@ -270,7 +270,7 @@ function ASTparse_Statement(){
 //Production PrintStatement ::== print ( Expr ) 
 function ASTparse_PrintStatement(){
 	//document.getElementById("AStree").value += "ASTparser: ASTparse_PrintStatement()" + '\n';
-	ASTREE.addNode('PrintStatment', 'branch');
+	ASTREE.addNode('PrintStatement', 'branch');
 
 	
 	//ASTmatchSpecChars(' print',ASTparseCounter);

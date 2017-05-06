@@ -62,7 +62,7 @@ function generation(){
 			heapCounter++;
 			heapExecEnv[heapCounter] = 'T'+ tempVar; //temp location
 			heapCounter++;
-			heapExecEnv[heapCounter] = 'XX'; 
+			heapExecEnv[heapCounter] = '00'; 
 			heapCounter++;
 			
 			i = i + 2
@@ -94,7 +94,7 @@ function generation(){
 				if (staticTable[j][1] == ASTREE.getNodes()[i + 1]){
 					heapExecEnv[heapCounter] = staticTable[j][0];
 					heapCounter++;
-					heapExecEnv[heapCounter] = 'XX'; 
+					heapExecEnv[heapCounter] = '00'; 
 					heapCounter++;
 					
 				}
@@ -103,19 +103,77 @@ function generation(){
 			
 			
 		}
+		else if(ASTREE.getNodes()[i] == 'PrintStatement'){
+			heapExecEnv[heapCounter] = 'AC'; //load the y register
+			heapCounter++;
+			
+			// need to the load the mem address if its a variable
+			var printVar = ASTREE.getNodes()[i + 1] ;
+			for(t = 0; t < staticTable.length; t++){
+				if (staticTable[t][1] == printVar){
+					//alert(heapExecEnv[heapCounter]);
+					//alert(staticTable[t][0]);
+					heapExecEnv[heapCounter] = staticTable[t][0]; //temp location
+					heapCounter++;
+					heapExecEnv[heapCounter] = '00' //temp location
+					heapCounter++;
+				}
+				
+			}
+			
+			heapExecEnv[heapCounter] = 'A2'; //load the x register
+			heapCounter++;
+			heapExecEnv[heapCounter] = '01'; //
+			heapCounter++;
+			heapExecEnv[heapCounter] = 'FF'; //
+			heapCounter++;
+			
+			
+			
+			
+			
+			
+		}
 	
 	
 	
 	
 	}
+	var hexString2;
+	heapCounter++;
 	// start back patching by giving the variables an address
+	
 	for(z = 0; z < staticTable.length; z++){
-		//alert(heapCounter);
-		hexString = heapCounter.toString(16);
-		staticTable[z][2] = hexString;
-		heapCounter++;
+		
+		hexString = heapCounter.toString(16); //convert counter to hex
+		hexString = hexString.toUpperCase();
+		for (p = 0; p < heapExecEnv.length; p++){
+			
+			if( staticTable[z][0] == heapExecEnv[p]){
+				
+				if (hexString.length == 1){
+					hexString2 = '0' + hexString;
+					heapExecEnv[p] = hexString2;
+				}
+				else{
+					heapExecEnv[p] = hexString;
+				}
+				//alert(hexString2);
+				
+				
+			}
+			
+		}
+	
+		staticTable[z][2] = hexString; // change the temp Txx value to the correct hex value
+		//heapCounter++; 
+		
+		
+		
+		
 		
 	}
+	
 	
 	for (x = heapCounter; x < heapExecEnv.length; x++){
 		heapExecEnv[x] = '00';
