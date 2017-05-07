@@ -33,6 +33,7 @@
 var heapExecEnv = [];
 heapExecEnv.length = 255;
 var heapCounter = 0;
+var memCounter = 255;
 
 var staticTable = [];
 var tempVar =0;
@@ -78,7 +79,57 @@ function generation(){
 			heapCounter++;
 			
 			
+			if ((ASTREE.getNodes()[i + 2]).search(QUOT) != -1){
+				var string = (ASTREE.getNodes()[i + 2]).replace(/\s/g, '');
+				string = string.split("").reverse().join("");
+				
+				for (s = 0; s < string.length; s++){
+					if(string[s].search(QUOT) != -1){
+						s++
+					}
+					if(string[s] == undefined){
+						
+					}
+					else{
+					//alert(string[s]);
+					hexStringVar = string[s].hexEncode(); //convert counter to hex
+					hexStringVar = hexStringVar.toUpperCase();
+					//alert(hexStringVar);
+					heapExecEnv[memCounter] = hexStringVar; //store the string at the bottom
+					memCounter--;
+					}
+					
+				}
+				
+				hexStringLoc = memCounter.toString(16); //convert counter to hex
+				hexStringLoc = hexStringLoc.toUpperCase();
 			
+				heapExecEnv[heapCounter] = hexStringLoc //location of the string THIS NEEDS TO BE DIFFERENT
+				heapCounter++;
+
+				heapExecEnv[heapCounter] = '8D'; //Store the acc in memory
+				heapCounter++;
+				
+				for (f = 0; f < staticTable.length; f++){
+				
+				
+				if (staticTable[f][1] == ASTREE.getNodes()[i + 1]){
+					heapExecEnv[heapCounter] = staticTable[f][0];
+					heapCounter++;
+					heapExecEnv[heapCounter] = '00'; 
+					heapCounter++;
+					
+				}
+							
+			}
+				
+				
+				
+				
+				
+			}
+			
+			else{
 			
 			
 			
@@ -102,6 +153,7 @@ function generation(){
 			}
 			
 			
+			}
 		}
 		else if(ASTREE.getNodes()[i] == 'PrintStatement'){
 			heapExecEnv[heapCounter] = 'AC'; //load the y register
@@ -123,7 +175,7 @@ function generation(){
 			
 			heapExecEnv[heapCounter] = 'A2'; //load the x register
 			heapCounter++;
-			heapExecEnv[heapCounter] = '01'; //
+			heapExecEnv[heapCounter] = '02'; //
 			heapCounter++;
 			heapExecEnv[heapCounter] = 'FF'; //
 			heapCounter++;
@@ -175,7 +227,7 @@ function generation(){
 	}
 	
 	
-	for (x = heapCounter; x < heapExecEnv.length; x++){
+	for (x = heapCounter; x < memCounter; x++){
 		heapExecEnv[x] = '00';
 		
 	}
@@ -187,5 +239,17 @@ function generation(){
 	
 	
 	
+}
+
+String.prototype.hexEncode = function(){
+    var hex, i;
+
+    var result = "";
+    for (i=0; i<this.length; i++) {
+        hex = this.charCodeAt(i).toString(16);
+        result += (hex).slice(-4);
+    }
+
+    return result
 }
 
