@@ -195,23 +195,33 @@ function generation(){
 	}
 	var hexString2;
 	heapCounter++;
+	
+	//change the values in the static table
+	for(e = 0; e < staticTable.length; e++){
+		hexString = heapCounter.toString(16); //convert counter to hex
+		hexString = hexString.toUpperCase();
+		if (hexString.length == 1){
+			hexString2 = '0' + hexString;
+			staticTable[e][2] = hexString2;
+		}
+		staticTable[e][2] = hexString;
+		heapCounter++
+		
+	}
+	
+	
 	// start back patching by giving the variables an address
 	
 	for(z = 0; z < staticTable.length; z++){
 		
-		hexString = heapCounter.toString(16); //convert counter to hex
-		hexString = hexString.toUpperCase();
+		
 		for (p = 0; p < heapExecEnv.length; p++){
 			
 			if( staticTable[z][0] == heapExecEnv[p]){
 				
-				if (hexString.length == 1){
-					hexString2 = '0' + hexString;
-					heapExecEnv[p] = hexString2;
-				}
-				else{
-					heapExecEnv[p] = hexString;
-				}
+				
+					heapExecEnv[p] = staticTable[z][2];
+				
 				//alert(hexString2);
 				
 				
@@ -227,6 +237,8 @@ function generation(){
 		
 		
 	}
+	
+	
 	
 	
 	for (x = heapCounter; x < memCounter; x++){
