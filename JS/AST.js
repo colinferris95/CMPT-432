@@ -482,21 +482,21 @@ function ASTparse_BooleanExpr(){
 	var ASTtempType = tokenstreamCOPY[ASTparseCounter][1]; //check type of token
 	if (ASTtempDesc == '('){
 		//matchSpecChars('(',parseCounter);
-		alert(tokenstreamCOPY[ASTparseCounter + 1][0]);
+		//alert(tokenstreamCOPY[ASTparseCounter + 1][0]);
 		if (  (tokenstreamCOPY[ASTparseCounter + 1][0]) == ' "'  ){
-			alert('boolean branch path ast');
+			//alert('boolean branch path ast');
 			ASTparseCounter = ASTparseCounter + 4;
-			alert(tokenstreamCOPY[ASTparseCounter][0]);
+			//alert(tokenstreamCOPY[ASTparseCounter][0]);
 			ASTparse_boolop();
 		
 			ASTparseCounter = ASTparseCounter - 4;
-			alert(tokenstreamCOPY[ASTparseCounter][0]);
+			//alert(tokenstreamCOPY[ASTparseCounter][0]);
 			ASTparse_Expr();
 	
 			ASTparseCounter = ASTparseCounter + 1;
 		
 	
-			alert(tokenstreamCOPY[ASTparseCounter][0]);
+			//alert(tokenstreamCOPY[ASTparseCounter][0]);
 			ASTparse_Expr();
 	
 			//matchSpecChars(')',parseCounter);
@@ -508,17 +508,17 @@ function ASTparse_BooleanExpr(){
 		else{
 		
 		ASTparseCounter = ASTparseCounter + 2;
-		alert(tokenstreamCOPY[ASTparseCounter][0]);
+		//alert(tokenstreamCOPY[ASTparseCounter][0]);
 		ASTparse_boolop();
 		
 		ASTparseCounter = ASTparseCounter - 2;
-		alert(tokenstreamCOPY[ASTparseCounter][0]);
+		//lert(tokenstreamCOPY[ASTparseCounter][0]);
 		ASTparse_Expr();
 	
 		ASTparseCounter = ASTparseCounter + 1;
 		
 	
-		alert(tokenstreamCOPY[ASTparseCounter][0]);
+		//alert(tokenstreamCOPY[ASTparseCounter][0]);
 		ASTparse_Expr();
 	
 		//matchSpecChars(')',parseCounter);

@@ -39,7 +39,13 @@ var staticTable = [];
 var tempVar =0;
 var addrCounter = 0;
 
+var jumpTable = [];
+var tempJumpVar =0;
+
+
 var rex = /\S/;
+var letter = /[a-z]/; //alpha characters
+var digit = /[0-9]/; //number character
 
 
 
@@ -68,7 +74,7 @@ function generation(){
 			
 			i = i + 2
 			
-			//					//temp loc     var name             address
+			//					//temp loc     var name             address maybe add type for print statment
 			staticTable.push([('T'+ tempVar),ASTREE.getNodes()[i], addrCounter ]);
 			addrCounter = addrCounter + 2;
 			tempVar++;
@@ -188,7 +194,99 @@ function generation(){
 			
 			
 		}
+		else if(ASTREE.getNodes()[i] == 'IfStatement'){
+			//(input[forward]).search(letter)
+			if ( ((ASTREE.getNodes()[i +2]).length <= 2) && (ASTREE.getNodes()[i +2]).search(letter) != -1 ) { //if the first part of the iseq is a variable
+				heapExecEnv[heapCounter] = 'AE'; //load the x register with the first variable
+				heapCounter++;
+				var iseqVar1 = ASTREE.getNodes()[i + 2] ;
+				for(y = 0; y < staticTable.length; y++){
+				if (staticTable[y][1] == iseqVar1){
+					//alert(heapExecEnv[heapCounter]);
+					//alert(staticTable[t][0]);
+					heapExecEnv[heapCounter] = staticTable[y][0]; //temp location
+					heapCounter++;
+					heapExecEnv[heapCounter] = '00' //temp location
+					heapCounter++;
+				}
+				
+			}
+				
+			}
+			
+			if ( ((ASTREE.getNodes()[i +3]).length <= 2) && (ASTREE.getNodes()[i +2]).search(letter) != -1 ) { //if the first part of the iseq is a variable
+				heapExecEnv[heapCounter] = 'EC'; //compare x register with contents of second var
+				heapCounter++;
+				var iseqVar2 = ASTREE.getNodes()[i + 3] ;
+				for(q = 0; q < staticTable.length; q++){
+				if (staticTable[q][1] == iseqVar2){
+					//alert(heapExecEnv[heapCounter]);
+					//alert(staticTable[t][0]);
+					heapExecEnv[heapCounter] = staticTable[q][0]; //temp location
+					heapCounter++;
+					heapExecEnv[heapCounter] = '00' //temp location
+					heapCounter++;
+				}
+				
+			}
+				
+			}
+			
+			heapExecEnv[heapCounter] = 'D0'; //branch on not equal
+			heapCounter++;
+			heapExecEnv[heapCounter] = 'J'+ tempJumpVar; //temp location
+			heapCounter++;
+			
+			
+			//					//temp loc     var name             address maybe add type for print statment
+			jumpTable.push([('J'+ tempJumpVar),heapCounter ]);
+			tempJumpVar++;
+			
+		}
+		
+		else if(ASTREE.getNodes()[i] == 'leaveScope'){
+			var hexDigit;
+			
+			for(r = 0; r < jumpTable.length; r++){
+		
+			
+				for (m = 0; m < heapExecEnv.length; m++){
+			
+					if( jumpTable[r][0] == heapExecEnv[m]){
+						alert('jump table value ' + jumpTable[r][1]);
+						alert(heapCounter);
+						var jumpValue = heapCounter - jumpTable[r][1] ;
+						alert(jumpValue);
+						
+						hexDigit = jumpValue.toString(16); //convert counter to hex
+						hexDigit = hexDigit.toUpperCase();
+						
+						if (hexDigit.length == 1){
+							hexDigit = '0' +hexDigit;
+						}
+							
+				
+						heapExecEnv[m] = hexDigit;
+				
+						//alert(hexString2);
+						
+				
+				
+				}
+			
+			}
 	
+			jumpTable[r][0]  = "replaced";
+			//heapCounter++; 
+		
+		
+		
+		
+		
+			}
+			
+			
+		}
 	
 	
 	
@@ -250,6 +348,7 @@ function generation(){
 	document.getElementById("code").value += '\n';
 	
 	console.log(staticTable);
+	console.log(jumpTable);
 	
 	
 	
