@@ -100,6 +100,8 @@ function generation(){
 					}
 					
 				}
+				heapExecEnv[memCounter] = '00'
+				memCounter--;
 				
 				hexStringLoc = memCounter.toString(16); //convert counter to hex
 				hexStringLoc = hexStringLoc.toUpperCase();
