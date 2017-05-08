@@ -150,12 +150,23 @@ function generation(){
 				
 			}
 			
+			
 			else{
 			
+			if(ASTREE.getNodes()[i + 2] == 'boolvaltrue'){
+				heapExecEnv[heapCounter] = '01'; 
+				heapCounter++;
 			
+			}
+			else if(ASTREE.getNodes()[i + 2] == 'boolvalfalse'){
+				heapExecEnv[heapCounter] = '00'; 
+				heapCounter++;
+			}
+			else{
 			
 			heapExecEnv[heapCounter] = '0' + ASTREE.getNodes()[i + 2].trim();		
 			heapCounter++;
+			}
 			
 			heapExecEnv[heapCounter] = '8D'; //Store the acc in memory
 			heapCounter++;
