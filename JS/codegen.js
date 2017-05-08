@@ -217,7 +217,7 @@ function generation(){
 			
 			
 			}
-			else if(printVar.search(digit) != -1){
+			else if(printVar.search(digit) != -1){ //printing numbers
 			
 				heapExecEnv[heapCounter] = 'A9'; //load the acc with a constant
 				heapCounter++;
@@ -248,6 +248,72 @@ function generation(){
 				tempVar++;
 				
 			}
+			else{ //printing strings
+			
+			var hexPrintStringVar;
+			var hexPrintStringLoc;
+			var printString = (ASTREE.getNodes()[i + 1]).replace(/\s/g, '');
+				printString = printString.split("").reverse().join("");
+				
+				for (w = 0; w < printString.length; w++){
+					if(printString[w].search(QUOT) != -1){
+						w++
+					}
+					if(printString[w] == undefined){
+						
+					}
+					else{
+					//alert(string[s]);
+					hexPrintStringVar = printString[w].hexEncode(); //convert counter to hex
+					hexPrintStringVar = hexPrintStringVar.toUpperCase();
+					//alert(hexStringVar);
+					heapExecEnv[memCounter] = hexPrintStringVar; //store the string at the bottom
+					memCounter--;
+					}
+					
+				}
+				heapExecEnv[memCounter] = '00'
+				memCounter--;
+				
+				
+				hexPrintStringLoc = memCounter.toString(16); //convert counter to hex
+				hexPrintStringLoc = hexPrintStringLoc.toUpperCase();
+				
+				heapExecEnv[heapCounter] = 'AD'; //load the acc from mem
+				heapCounter++;
+			
+				heapExecEnv[heapCounter] = hexPrintStringLoc //location of the string 
+				heapCounter++;
+				
+				heapExecEnv[heapCounter] = '00'; 
+				heapCounter++;
+				
+				heapExecEnv[heapCounter] = 'A0'; //load the acc from mem
+				heapCounter++;
+				
+				heapExecEnv[heapCounter] = hexPrintStringLoc //location of the string 
+				heapCounter++;
+
+				heapExecEnv[heapCounter] = '8D'; //Store the acc in memory
+				heapCounter++;
+				heapExecEnv[heapCounter] = 'T'+ tempVar; //temp location
+				heapCounter++;
+				heapExecEnv[heapCounter] = '00'; 
+				heapCounter++;
+				heapExecEnv[heapCounter] = 'A2'; //load the x register
+				heapCounter++;
+				heapExecEnv[heapCounter] = '02'; //
+				heapCounter++;
+				heapExecEnv[heapCounter] = 'FF'; //
+				heapCounter++;
+				
+				
+				
+				staticTable.push([('T'+ tempVar),hexPrintStringVar,'x','x' ]);
+				tempVar++;
+				
+				
+			}
 			
 			
 			
@@ -256,8 +322,11 @@ function generation(){
 			
 			
 		}
-		else if(ASTREE.getNodes()[i] == 'IfStatement'){
+		else if(ASTREE.getNodes()[i] == 'IfStatement' || ASTREE.getNodes()[i] == 'WhileStatement'){
 			//(input[forward]).search(letter)
+			
+			
+				
 			if ( ((ASTREE.getNodes()[i +2]).length <= 2) && (ASTREE.getNodes()[i +2]).search(letter) != -1 ) { //if the first part of the iseq is a variable
 				heapExecEnv[heapCounter] = 'AE'; //load the x register with the first variable
 				heapCounter++;
@@ -276,7 +345,7 @@ function generation(){
 				
 			}
 			
-			if ( ((ASTREE.getNodes()[i +3]).length <= 2) && (ASTREE.getNodes()[i +2]).search(letter) != -1 ) { //if the first part of the iseq is a variable
+			if ( ((ASTREE.getNodes()[i +3]).length <= 2) && (ASTREE.getNodes()[i +2]).search(letter) != -1 ) { //if the second part of the iseq is a variable
 				heapExecEnv[heapCounter] = 'EC'; //compare x register with contents of second var
 				heapCounter++;
 				var iseqVar2 = ASTREE.getNodes()[i + 3] ;
@@ -285,12 +354,59 @@ function generation(){
 					//alert(heapExecEnv[heapCounter]);
 					//alert(staticTable[t][0]);
 					heapExecEnv[heapCounter] = staticTable[q][0]; //temp location
+					var iseq2 = heapExecEnv[heapCounter];
 					heapCounter++;
 					heapExecEnv[heapCounter] = '00' //temp location
 					heapCounter++;
 				}
 				
 			}
+				
+			}
+			
+			if (ASTREE.getNodes()[i +1] == 'notEq'){
+				
+				heapExecEnv[heapCounter] = 'A9'; 
+				heapCounter++;
+				heapExecEnv[heapCounter] = '00'; 
+				heapCounter++;
+				heapExecEnv[heapCounter] = 'D0'; 
+				heapCounter++;
+				heapExecEnv[heapCounter] = '02'; 
+				heapCounter++;
+				heapExecEnv[heapCounter] = 'A9'; 
+				heapCounter++;
+				heapExecEnv[heapCounter] = '01'; 
+				heapCounter++;
+				heapExecEnv[heapCounter] = 'A9'; 
+				heapCounter++;
+				heapExecEnv[heapCounter] = '00'; 
+				heapCounter++;
+				heapExecEnv[heapCounter] = 'D0'; 
+				heapCounter++;
+				heapExecEnv[heapCounter] = '02'; 
+				heapCounter++;
+				heapExecEnv[heapCounter] = 'A9'; 
+				heapCounter++;
+				heapExecEnv[heapCounter] = '01'; 
+				heapCounter++;
+				heapExecEnv[heapCounter] = 'A2'; 
+				heapCounter++;
+				heapExecEnv[heapCounter] = '00'; 
+				heapCounter++;
+				heapExecEnv[heapCounter] = '8D'; 
+				heapCounter++;
+				heapExecEnv[heapCounter] = iseq2; 
+				heapCounter++;
+				heapExecEnv[heapCounter] = '00'; 
+				heapCounter++;
+				heapExecEnv[heapCounter] = 'EC'; 
+				heapCounter++;
+				heapExecEnv[heapCounter] = iseq2; 
+				heapCounter++;
+				heapExecEnv[heapCounter] = '00'; 
+				heapCounter++;
+				
 				
 			}
 			
@@ -303,6 +419,14 @@ function generation(){
 			//					//temp loc     var name             address maybe add type for print statment
 			jumpTable.push([('J'+ tempJumpVar),heapCounter ]);
 			tempJumpVar++;
+			
+			
+			//}
+			
+			
+			
+			
+			
 			
 		}
 		
