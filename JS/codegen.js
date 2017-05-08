@@ -213,7 +213,7 @@ function generation(){
 			}
 				heapExecEnv[heapCounter] = 'A2'; //load the x register
 				heapCounter++;
-				alert(printType);
+				//alert(printType);
 				if (printType == " int"){
 					heapExecEnv[heapCounter] = '01'; //
 					heapCounter++;
@@ -450,10 +450,10 @@ function generation(){
 				for (m = 0; m < heapExecEnv.length; m++){
 			
 					if( jumpTable[r][0] == heapExecEnv[m]){
-						alert('jump table value ' + jumpTable[r][1]);
-						alert(heapCounter);
+						//alert('jump table value ' + jumpTable[r][1]);
+						//alert(heapCounter);
 						var jumpValue = heapCounter - jumpTable[r][1] ;
-						alert(jumpValue);
+						//alert(jumpValue);
 						
 						hexDigit = jumpValue.toString(16); //convert counter to hex
 						hexDigit = hexDigit.toUpperCase();
