@@ -46,11 +46,24 @@ var tempJumpVar =0;
 var rex = /\S/;
 var letter = /[a-z]/; //alpha characters
 var digit = /[0-9]/; //number character
-
+document.getElementById("code").value = ' ';
 
 
 
 function codeGenStart(){
+	
+	 heapExecEnv = [];
+	 heapExecEnv.length = 255;
+	 heapCounter = 0;
+	 memCounter = 255;
+
+	 staticTable = [];
+	 tempVar =0;
+	 addrCounter = 0;
+
+	 jumpTable = [];
+	 tempJumpVar =0;
+	
 	
 	console.log("CODE GEN::: this is the AST from AST.js " + ASTREE.getNodes());
 	generation();
@@ -75,7 +88,7 @@ function generation(){
 			i = i + 2
 			
 			//					//temp loc     var name             address maybe add type for print statment
-			staticTable.push([('T'+ tempVar),ASTREE.getNodes()[i], addrCounter ]);
+			staticTable.push([('T'+ tempVar),ASTREE.getNodes()[i], addrCounter, ASTREE.getNodes()[i-1]  ]);
 			addrCounter = addrCounter + 2;
 			tempVar++;
 			
@@ -164,11 +177,15 @@ function generation(){
 			}
 		}
 		else if(ASTREE.getNodes()[i] == 'PrintStatement'){
-			heapExecEnv[heapCounter] = 'AC'; //load the y register
-			heapCounter++;
+			var printType;
+			
+			
 			
 			// need to the load the mem address if its a variable
 			var printVar = ASTREE.getNodes()[i + 1] ;
+			if (printVar.length <= 2 && printVar.search(letter) != -1){ //if we are printing the value of a variable
+			heapExecEnv[heapCounter] = 'AC'; //load the y register
+			heapCounter++;
 			for(t = 0; t < staticTable.length; t++){
 				if (staticTable[t][1] == printVar){
 					//alert(heapExecEnv[heapCounter]);
@@ -177,16 +194,61 @@ function generation(){
 					heapCounter++;
 					heapExecEnv[heapCounter] = '00' //temp location
 					heapCounter++;
+					
+					printType = staticTable[t][3];
+
 				}
 				
 			}
+				heapExecEnv[heapCounter] = 'A2'; //load the x register
+				heapCounter++;
+				alert(printType);
+				if (printType == " int"){
+					heapExecEnv[heapCounter] = '01'; //
+					heapCounter++;
+				}
+				else{
+					heapExecEnv[heapCounter] = '02'; //
+					heapCounter++;
+				}
 			
-			heapExecEnv[heapCounter] = 'A2'; //load the x register
-			heapCounter++;
-			heapExecEnv[heapCounter] = '02'; //
-			heapCounter++;
-			heapExecEnv[heapCounter] = 'FF'; //
-			heapCounter++;
+				heapExecEnv[heapCounter] = 'FF'; //
+				heapCounter++;
+			
+			
+			}
+			else if(printVar.search(digit) != -1){
+			
+				heapExecEnv[heapCounter] = 'A9'; //load the acc with a constant
+				heapCounter++;
+				heapExecEnv[heapCounter] = '0'+printVar.trim();
+				heapCounter++;
+				heapExecEnv[heapCounter] = 'A2'; //load the x register
+				heapCounter++;
+				heapExecEnv[heapCounter] = '01'; //
+				heapCounter++;
+				
+				heapExecEnv[heapCounter] = '8D'; //Store the acc in memory
+				heapCounter++;
+				heapExecEnv[heapCounter] = 'T'+ tempVar; //temp location
+				heapCounter++;
+				heapExecEnv[heapCounter] = '00'; 
+				heapCounter++;
+				
+				heapExecEnv[heapCounter] = 'AC'; //Store the acc in memory
+				heapCounter++;
+				heapExecEnv[heapCounter] = 'T'+ tempVar; //temp location
+				heapCounter++;
+				heapExecEnv[heapCounter] = '00'; 
+				heapCounter++;
+				heapExecEnv[heapCounter] = 'FF'; //
+				heapCounter++;
+				
+				staticTable.push([('T'+ tempVar),printVar,'x','x' ]);
+				tempVar++;
+				
+			}
+			
 			
 			
 			
@@ -298,11 +360,14 @@ function generation(){
 	for(e = 0; e < staticTable.length; e++){
 		hexString = heapCounter.toString(16); //convert counter to hex
 		hexString = hexString.toUpperCase();
+		
 		if (hexString.length == 1){
 			hexString2 = '0' + hexString;
 			staticTable[e][2] = hexString2;
 		}
+		else{
 		staticTable[e][2] = hexString;
+		}
 		heapCounter++
 		
 	}
@@ -345,6 +410,7 @@ function generation(){
 	}
 	
 	document.getElementById("code").value += heapExecEnv.join(" ");
+	document.getElementById("code").value += '\n';
 	document.getElementById("code").value += '\n';
 	
 	console.log(staticTable);
