@@ -5,8 +5,7 @@ Professor Alan Labouseur
 
 Project One
 'Begin	your	compiler	by	writing	a	lexer	that	validates	source	code	against	
-the	grammar	found	on	our	class	web	site	at	http://www.labouseur.com/
-courses/compilers/grammar.pdf.'
+the	grammar	found	on	our	class	web	site	at	http://www.labouseur.com/courses/compilers/grammar.pdf.'
 
 Project Two
 '1. Project	one	working	perfectly.	
@@ -27,10 +26,8 @@ rules	we	discussed	in	class.'
 Project Four
 '1. Projects	one,	two,	and	three	working	perfectly.	
 2. Write	a	code	generator	that	takes	your	AST	and	generates	6502a	
-machine	code	(found	at	http://www.labouseur.com/courses/compilers/
-6502a-instruction-set.pdf)	for	our	language	grammar	found	on	our	class	
-web	site	at	http://www.labouseur.com/courses/compilers/
-grammar.pdf.'
+machine	code	(found	at	http://www.labouseur.com/courses/compilers/6502a-instruction-set.pdf)	for	our	language	grammar	found	on	our	class	
+web	site	at	http://www.labouseur.com/courses/compilers/grammar.pdf.'
 
 Will be using javascript (most likely).
 
