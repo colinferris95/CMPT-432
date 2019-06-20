@@ -54,3 +54,6 @@ How To Run:
 
 *****KNOWN ISSUE*******
 The lexer will think there is another program after the last '$' symbol and scan another empty program
+
+
+Live at: https://colinferris95.github.io/CMPT-432/index.html
