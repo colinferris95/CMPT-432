@@ -19,8 +19,7 @@ Project Three
 '1. Projects	one	and	two	working	perfectly.	
 2. Create	an	AST	from	the	tokens	or	from	the	CST.	Display	it.	
 3. Write	a	semantic	analyzer	that	scope-checks	and	type-checks	the	AST	
-based	on	the	grammar	found	on	our	class	web	site	at	http://
-www.labouseur.com/courses/compilers/grammar.pdf	and	the	type	
+based	on	the	grammar	found	on	our	class	web	site	at	http://www.labouseur.com/courses/compilers/grammar.pdf	and	the	type	
 rules	we	discussed	in	class.'
 
 Project Four
